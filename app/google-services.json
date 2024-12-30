@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "797817311525",
+    "firebase_url": "https://camera-5825a-default-rtdb.firebaseio.com",
+    "project_id": "camera-5825a",
+    "storage_bucket": "camera-5825a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:797817311525:android:d5897a1ff7f566344a4acc",
+        "android_client_info": {
+          "package_name": "com.law.booking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "797817311525-n1b1fopgee9pgo7h52kk2p4fmbdo0mak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.law.booking",
+            "certificate_hash": "e7b6f9d1514109601261051a48397d294a8b5c39"
+          }
+        },
+        {
+          "client_id": "797817311525-mt8l7oek69h2og26llolskcsj3htv8t2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFZpHGHgm8s3itVKgR_80SWWqsIIZl3lQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "797817311525-c9s865s8fvvmhjqub8h3urmjk4aclp5n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

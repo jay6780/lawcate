@@ -248,9 +248,8 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         ImageView messageImg = findViewById(R.id.messageImg);
         messageImg.setOnClickListener(view -> intentchat());
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknum);
-        if(badgenum == null){
+        if(badgenum.isEmpty() || badgenum.equals("null")){
             badgeCount.setText("0");
-            SPUtils.getInstance().put(AppConstans.booknum, "0");
         }else{
             badgeCount.setVisibility(View.VISIBLE);
             badgeCount.setText(badgenum);
@@ -822,7 +821,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                         if (TextUtils.isEmpty(packages)) {
                             availedmess = "Hi, I'm " + username + "\n" +
                                     "I availed:\n" +
-                                    "Service Name: " + serviceName + "\n" +
+                                    "Law Name: " + serviceName + "\n" +
                                     "Selected schedule: " + "time: " + time + "\n" +
                                     "date: " + date + "\n" +
                                     "Number of Heads: " + heads + "\n" +
@@ -833,7 +832,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                         } else {
                             availedmess = "Hi, I'm " + username + "\n" +
                                     "I availed:\n" +
-                                    "Service Name: " + serviceName + "\n" +
+                                    "Law Name " + serviceName + "\n" +
                                     "Which package: " + serviceNamesList + "\n" +
                                     "Selected schedule: " + "time: " + time + "\n" +
                                     "date: " + date + "\n" +

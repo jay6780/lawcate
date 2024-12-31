@@ -54,14 +54,13 @@ public class AddService_view extends AppCompatActivity {
     private Uri imageUri;
     private AppCompatButton saved;
     private TextView name;
-    private Spinner genderSpinner;
     private String gender,imageUrl,key,serviceName,Price;
     private String TAG = "AddService_view";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_service);
-        changeStatusBarColor(getResources().getColor(R.color.bgColor));
+        changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -73,19 +72,15 @@ public class AddService_view extends AppCompatActivity {
         servicename = findViewById(R.id.name);
         price = findViewById(R.id.price);
         addphoto = findViewById(R.id.ImageService);
-        genderSpinner = findViewById(R.id.genderSpinner);
         saved = findViewById(R.id.saved);
         add = findViewById(R.id.add);
         name = findViewById(R.id.title);
-        name.setText("Update service");
+        name.setText("Update Law info");
         back = findViewById(R.id.back);
         back.setOnClickListener(view -> onBackPressed());
         add.setVisibility(View.GONE);
         initClickers();
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.gender_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        genderSpinner.setAdapter(adapter);
+
 
 
 
@@ -97,12 +92,6 @@ public class AddService_view extends AppCompatActivity {
         Log.d(TAG,"Price: "+Price);
         servicename.setText(serviceName);
         price.setText(Price);
-        if (gender != null) {
-            int spinnerPosition = adapter.getPosition(gender);
-            genderSpinner.setSelection(spinnerPosition);
-
-        }
-
         Glide.with(AddService_view.this)
                 .load(imageUrl)
                 .apply(RequestOptions.circleCropTransform())
@@ -179,10 +168,8 @@ public class AddService_view extends AppCompatActivity {
     private void saveServiceData(Uri imageUri) {
         String serviceName = servicename.getText().toString().trim();
         String priceText = price.getText().toString().trim();
-        String selectedGender = genderSpinner.getSelectedItem().toString();
-
-        if (serviceName.isEmpty() || priceText.isEmpty() || selectedGender.equals("Gender")) {
-            Toast.makeText(this, "Please set Proper gender", Toast.LENGTH_SHORT).show();
+        if (serviceName.isEmpty() || priceText.isEmpty()) {
+            Toast.makeText(this, "Please set data", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -200,9 +187,9 @@ public class AddService_view extends AppCompatActivity {
             return;
         }
         if (imageUri != null) {
-            uploadImageToFirebase(imageUri, serviceName, servicePrice, selectedGender);
+            uploadImageToFirebase(imageUri, serviceName, servicePrice, "");
         } else {
-            saveServiceToDatabase(serviceName, servicePrice, imageUrl, selectedGender);
+            saveServiceToDatabase(serviceName, servicePrice, imageUrl, "");
         }
     }
 

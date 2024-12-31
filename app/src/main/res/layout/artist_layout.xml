@@ -96,7 +96,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/Mywhite"
+            android:background="@color/purple_theme"
             android:orientation="vertical">
         <TextView
             android:id="@+id/address"
@@ -110,7 +110,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:text="@string/address"
-            android:textColor="@color/maroon"
+            android:textColor="@color/white"
             android:textSize="12sp" />
             <TextView
                 android:id="@+id/experience"
@@ -125,7 +125,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="experience : "
-                android:textColor="@color/maroon"
+                android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -138,7 +138,7 @@
 
         android:layout_marginStart="120dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/circle_btn3"
+        android:background="@drawable/circle_btn"
         android:text="@string/appointment"
         android:textColor="@color/white"
         android:textSize="15sp" />

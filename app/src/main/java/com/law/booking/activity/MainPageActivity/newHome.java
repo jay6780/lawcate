@@ -67,6 +67,7 @@ import com.law.booking.activity.events.history_book_event;
 import com.law.booking.activity.events.setEvent_admin;
 import com.law.booking.activity.myfavorites;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
+import com.law.booking.activity.tools.DialogUtils.UserProviderDialog;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
@@ -571,22 +572,26 @@ public class newHome extends AppCompatActivity {
         TextView badgeCount = findViewById(R.id.badge_count);
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknum,"0");
         Log.d("bookCount","BookCountUser: "+badgenum);
-        if(badgenum == null) {
+        if(badgenum.equals(null)) {
             badgeCount.setText("0");
-          return;
+        }else{
+            badgeCount.setVisibility(View.VISIBLE);
+            badgeCount.setText(badgenum);
         }
-        badgeCount.setVisibility(View.VISIBLE);
-        badgeCount.setText(badgenum);
+
     }
     private void initAdminBook() {
         startService(new Intent(this, MessageNotificationService.class));
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknumAdmin, "0");
-        if (badgenum == null) {
+
+
+        Log.d("bookCount","BookCountUser: "+badgenum);
+        if (badgenum.equals("null")) {
             badge_count_admin.setText("0");
-            return;
+        }else{
+            badge_count_admin.setVisibility(View.VISIBLE);
+            badge_count_admin.setText(badgenum);
         }
-        badge_count_admin.setVisibility(View.VISIBLE);
-        badge_count_admin.setText(badgenum);
 
         adminbell.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -835,6 +840,13 @@ public class newHome extends AppCompatActivity {
                             startService(new Intent(newHome.this, MessageNotificationService.class));
                             requestPermissions2();
                             showNotiff();
+
+                            boolean isCorporate = dataSnapshot.hasChild("isCorporate");
+                            if(!isCorporate){
+                                UserProviderDialog userProviderDialog = new UserProviderDialog();
+                                userProviderDialog.serviceDialog(newHome.this);
+                            }
+
                             boolean isSuperAdmin = dataSnapshot.hasChild("isSuperAdmin") && Boolean.TRUE.equals(dataSnapshot.child("isSuperAdmin").getValue(Boolean.class));
                             if (isSuperAdmin) {
                                 setSuperAdmin.setVisibility(View.VISIBLE);

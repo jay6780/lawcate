@@ -75,7 +75,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/inter"
                 android:layout_marginTop="10dp"
-                android:text="@string/setupservice"
+                android:text="Setting up the Law"
                 android:textColor="@color/white"
                 android:textSize="15sp" />
 

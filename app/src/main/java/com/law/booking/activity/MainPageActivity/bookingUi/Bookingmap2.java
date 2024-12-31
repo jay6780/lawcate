@@ -746,7 +746,7 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
                     savedlocationLink(userId,locationLink);
                         availedmess = "Hi, I'm " + username + "\n" +
                                 "I availed:\n" +
-                                "Service Name: " + serviceName + "\n" +
+                                "Law Name: " + serviceName + "\n" +
                                 "Selected schedule: " + "time: " + time + "\n" +
                                 "date: " + date + "\n" +
                                 "Number of Heads: " + heads + "\n" +

@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.law.booking.activity.Application.TinkerApplications;
 import com.law.booking.activity.MainPageActivity.login;
 import com.law.booking.R;
 
@@ -56,10 +57,8 @@ public class Createadmin extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), login.class);
-                FirebaseAuth.getInstance().signOut();
-                startActivity(intent);
-                finish();
+                TinkerApplications app = (TinkerApplications) Createadmin.this.getApplication();
+                app.clearUserData(false,Createadmin.this);
             }
         });
 

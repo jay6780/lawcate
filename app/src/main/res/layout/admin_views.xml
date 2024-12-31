@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:gravity="center_vertical"
-                android:text="Create Provider"
+                android:text="Create Lawyer"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -149,7 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:gravity="center_vertical"
-                android:text="Create Provider"
+                android:text="Create Lawyer"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -313,29 +313,49 @@
             android:id="@+id/bottom_seperator"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="#E03681" />
+            android:background="@color/white" />
         <LinearLayout
             android:id="@+id/logout_admin"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:weightSum="5"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginLeft="15dp"
-                android:src="@mipmap/logout_pink"/>
 
-            <TextView
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/linear1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/white"
-                android:fontFamily="@font/inter"
-                android:text="@string/logout"
-                android:textSize="14sp"/>
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@mipmap/logout_white"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/linear2"
+                android:layout_width="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/inter"
+                    android:text="@string/logout"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

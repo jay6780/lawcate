@@ -83,7 +83,7 @@ public class providerProfile2 extends AppCompatActivity {
         userLenghtexp = findViewById(R.id.lenghtofservice);
         messagebtn = findViewById(R.id.message);
         key = getIntent().getStringExtra("key");
-        profiletxt.setText(R.string.artistsdetails);
+        profiletxt.setText("Lawyer details");
         isOnline = getIntent().getBooleanExtra("isOnline", false);
         Log.d(TAG, "Is Online: " + isOnline);
         SPUtils.getInstance().put(AppConstans.KEY, key);
@@ -165,14 +165,15 @@ public class providerProfile2 extends AppCompatActivity {
         startService(new Intent(this, MessageNotificationService.class));
         TextView badgeCount = findViewById(R.id.badge_count);
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknum);
-        if(badgenum == null){
+        Log.d("badgenum","Badge: "+badgenum);
+        if(badgenum.isEmpty() || badgenum.equals("null")){
             badgeCount.setText("0");
-            SPUtils.getInstance().put(AppConstans.booknum, "0");
         }else{
             badgeCount.setVisibility(View.VISIBLE);
             badgeCount.setText(badgenum);
 
         }
+
         bell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

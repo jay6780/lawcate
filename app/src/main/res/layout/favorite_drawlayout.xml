@@ -9,7 +9,7 @@
     <include layout="@layout/activity_header" />
     <View
         android:layout_width="match_parent"
-        android:background="#E03681"
+        android:background="@color/white"
         android:layout_height="2dp">
     </View>
     <include layout="@layout/favorite_nav" />

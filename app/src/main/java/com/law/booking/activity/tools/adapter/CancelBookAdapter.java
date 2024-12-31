@@ -50,7 +50,7 @@ public class CancelBookAdapter extends RecyclerView.Adapter<CancelBookAdapter.Bo
         holder.time.setText(booking.getTime());
         holder.date.setText(booking.getDate());
         holder.cancel.setText(context.getString(R.string.appointment_failed));
-        holder.servicename.setText(context.getString(R.string.service_name)+": "+booking.getServiceName());
+        holder.servicename.setText("Law name"+": "+booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": "+booking.getPrice());
         Glide.with(holder.itemView.getContext())
                 .load(booking.getImage())

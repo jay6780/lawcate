@@ -60,6 +60,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
     private SkeletonScreen skeletonScreen;
     private LinearLayout bannercontent, linearView;
     private SmartRefreshLayout refreshLayout;
+    private boolean isCorporate = true;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -343,13 +344,51 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
 
                 switch (v.getId()) {
                     case R.id.linear1:
-                        startActivity(new Intent(getActivity(), hmua.class));
+                        boolean isCorporate = true;
+                        Intent intent = new Intent(getActivity(), hmua.class);
+                        intent.putExtra("title", "Corporate");
+                        intent.putExtra("isCorporate", isCorporate);
+                        startActivity(intent);
                         break;
                     case R.id.linear2:
-                        startActivity(new Intent(getActivity(), Event_provider.class));
+                        boolean isFamily = true;
+                        Intent intent3 = new Intent(getActivity(), hmua.class);
+                        intent3.putExtra("title", "Family");
+                        intent3.putExtra("isFamily", isFamily);
+                        startActivity(intent3);
                         break;
+
+                    case R.id.linear3:
+                        boolean isCriminal = true;
+                        Intent intent2 = new Intent(getActivity(), hmua.class);
+                        intent2.putExtra("title", "Criminal");
+                        intent2.putExtra("isCriminal", isCriminal);
+                        startActivity(intent2);
+                        break;
+
+                    case R.id.linear4:
+                        boolean isImmigration = true;
+                        Intent intent4 = new Intent(getActivity(), hmua.class);
+                        intent4.putExtra("title", "Immigration");
+                        intent4.putExtra("isImmigration", isImmigration);
+                        startActivity(intent4);
+                        break;
+
+                    case R.id.linear5:
+                        boolean isProperty = true;
+                        Intent intent5 = new Intent(getActivity(), hmua.class);
+                        intent5.putExtra("title", "Property");
+                        intent5.putExtra("isProperty", isProperty);
+                        startActivity(intent5);
+                        break;
+
                     case R.id.ViewAll:
-                        startActivity(new Intent(getActivity(), hmua.class));
+                        boolean isAll = true;
+                        Intent intent6 = new Intent(getActivity(), hmua.class);
+                        intent6.putExtra("title", "All lawyers");
+                        intent6.putExtra("isAll", isAll);
+                        startActivity(intent6);
+
                         break;
                     case R.id.ViewAll_artist:
                         startActivity(new Intent(getActivity(), Event_provider.class));
@@ -363,8 +402,12 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
     private void idListeners(View view, View.OnClickListener clickListener) {
         view.findViewById(R.id.linear1).setOnClickListener(clickListener);
         view.findViewById(R.id.linear2).setOnClickListener(clickListener);
+        view.findViewById(R.id.linear3).setOnClickListener(clickListener);
+        view.findViewById(R.id.linear4).setOnClickListener(clickListener);
+        view.findViewById(R.id.linear5).setOnClickListener(clickListener);
         view.findViewById(R.id.ViewAll).setOnClickListener(clickListener);
         view.findViewById(R.id.ViewAll_artist).setOnClickListener(clickListener);
+
     }
 
     @Override

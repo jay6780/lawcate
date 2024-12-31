@@ -16,7 +16,11 @@ public class Usermodel {
     private String address;
     private String key;
     private String timestamp;
-
+    private boolean isCorporate;
+    private boolean isCriminal;
+    private boolean isFamily;
+    private boolean isImmigration;
+    private boolean isProperty;
     public Usermodel() {
     }
 
@@ -32,6 +36,26 @@ public class Usermodel {
         this.birthday = birthday;
     }
 
+
+    public boolean isCorporate() {
+        return isCorporate;
+    }
+
+    public boolean isCriminal() {
+        return isCriminal;
+    }
+
+    public boolean isFamily() {
+        return isFamily;
+    }
+
+    public boolean isImmigration() {
+        return isImmigration;
+    }
+
+    public boolean isProperty() {
+        return isProperty;
+    }
 
     public boolean isSuperAdmin() {
         return isSuperAdmin;

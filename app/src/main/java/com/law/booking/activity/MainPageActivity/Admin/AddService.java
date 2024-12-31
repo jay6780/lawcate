@@ -52,12 +52,11 @@ public class AddService extends AppCompatActivity {
     private Uri imageUri;
     private AppCompatButton saved;
     private TextView name;
-    private Spinner genderSpinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_service);
-        changeStatusBarColor(getResources().getColor(R.color.bgColor));
+        changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -69,19 +68,14 @@ public class AddService extends AppCompatActivity {
         servicename = findViewById(R.id.name);
         price = findViewById(R.id.price);
         addphoto = findViewById(R.id.ImageService);
-        genderSpinner = findViewById(R.id.genderSpinner);
         saved = findViewById(R.id.saved);
         add = findViewById(R.id.add);
         name = findViewById(R.id.title);
-        name.setText("Add service");
+        name.setText("Add Law");
         back = findViewById(R.id.back);
         back.setOnClickListener(view -> onBackPressed());
         add.setVisibility(View.GONE);
         initClickers();
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.gender_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        genderSpinner.setAdapter(adapter);
 
     }
 
@@ -152,12 +146,11 @@ public class AddService extends AppCompatActivity {
     private void saveServiceData(Uri imageUri) {
         String serviceName = servicename.getText().toString().trim();
         int servicePrice = Integer.parseInt(price.getText().toString().trim());
-        String selectedGender = genderSpinner.getSelectedItem().toString();
 
-        if (!serviceName.isEmpty() && servicePrice > 0 && imageUri != null && !selectedGender.equals("Select Gender")) {
-            uploadImageToFirebase(imageUri, serviceName, servicePrice, selectedGender);
+        if (!serviceName.isEmpty() && servicePrice > 0 && imageUri != null) {
+            uploadImageToFirebase(imageUri, serviceName, servicePrice, "");
         } else {
-            Toast.makeText(this, "Please provide valid service name, price, image, and select a gender", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please provide valid law data", Toast.LENGTH_SHORT).show();
         }
     }
 

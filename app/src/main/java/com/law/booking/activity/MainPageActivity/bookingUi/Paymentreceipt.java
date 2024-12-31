@@ -100,9 +100,8 @@ public class Paymentreceipt extends AppCompatActivity {
         startService(new Intent(this, MessageNotificationService.class));
         TextView badgeCount = findViewById(R.id.badge_count);
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknum);
-        if(badgenum == null){
+        if(badgenum.isEmpty() || badgenum.equals("null")){
             badgeCount.setText("0");
-            SPUtils.getInstance().put(AppConstans.booknum, "0");
         }else{
             badgeCount.setVisibility(View.VISIBLE);
             badgeCount.setText(badgenum);

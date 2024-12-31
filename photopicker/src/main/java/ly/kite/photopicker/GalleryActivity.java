@@ -56,9 +56,9 @@ public class GalleryActivity extends Activity implements LoaderManager.LoaderCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         if (getActionBar() != null) {
-            getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#740938")));
+            getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7E5CAD")));
         }
-        changeStatusBarColor(Color.parseColor("#740938"));
+        changeStatusBarColor(Color.parseColor("#7E5CAD"));
         if (savedInstanceState != null) {
             Parcelable[] selected = savedInstanceState.getParcelableArray(KEY_SELECTED_PHOTOS);
             for (Parcelable parcelable : selected) {

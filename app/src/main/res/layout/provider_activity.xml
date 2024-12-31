@@ -74,7 +74,7 @@
         <LinearLayout
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:background="@color/Mywhite"
+            android:background="@color/purple_theme"
             android:gravity="center"
             android:orientation="vertical">
             <TextView
@@ -84,7 +84,7 @@
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/inter"
                 android:text="@string/years"
-                android:textColor="@color/maroon"
+                android:textColor="@color/white"
                 android:textSize="12sp" />
             <TextView
                 android:id="@+id/lenghtofservice"
@@ -94,7 +94,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/inter"
                 android:text="Length of service"
-                android:textColor="@color/maroon"
+                android:textColor="@color/white"
                 android:textSize="12sp" />
         </LinearLayout>
 

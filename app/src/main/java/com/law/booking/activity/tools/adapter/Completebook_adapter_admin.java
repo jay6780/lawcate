@@ -62,7 +62,7 @@ public class Completebook_adapter_admin extends RecyclerView.Adapter<Completeboo
                 context.startActivity(intent);
             }
         });
-        holder.servicename.setText("Availed: "+booking.getServiceName());
+        holder.servicename.setText("Law name: "+booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": "+booking.getPrice());
         Glide.with(holder.itemView.getContext())
                 .load(booking.getImage())

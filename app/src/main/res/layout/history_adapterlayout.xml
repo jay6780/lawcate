@@ -33,7 +33,7 @@
                 android:background="@drawable/circle_btn3"
                 android:gravity="center"
                 android:text="1:00pm"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="15sp" />
 
             <ImageView
@@ -73,7 +73,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/Mywhite"
+                android:background="@color/purple_theme"
                 android:orientation="vertical"
                 android:padding="8dp">
 
@@ -86,7 +86,7 @@
                     android:paddingStart="10dp"
                     android:paddingRight="10dp"
                     android:text="date"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="12sp" />
 
                 <TextView
@@ -97,7 +97,7 @@
                     android:paddingStart="10dp"
                     android:paddingRight="10dp"
                     android:text="date"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="12sp" />
 
                 <TextView
@@ -108,7 +108,7 @@
                     android:paddingStart="10dp"
                     android:paddingRight="10dp"
                     android:text="date"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -125,7 +125,7 @@
             android:layout_toRightOf="@+id/ll1"
             android:background="@drawable/cancel_bg"
             android:text="@string/cancel"
-            android:textColor="#740938"
+            android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>
 

@@ -257,12 +257,7 @@ public class Rating_userview extends AppCompatActivity {
                 adjustMargin(userImage, 20);
                 adjustMargin(usernameTxt, 20);
             }
-
-            if (gender.equals(service.getGender().isEmpty())) {
-                processServiceWithoutGender(service, services);
-            }else{
                 services.add(service);
-            }
         }
     }
 

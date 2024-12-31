@@ -224,10 +224,8 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                     if (dataSnapshot.exists()) {
                         Usermodel user = dataSnapshot.getValue(Usermodel.class);
                         if (user != null) {
-                            String gender = user.getGender();
-                            Log.d(TAG, "Gender: " + gender);
-                            fetchServices(gender);
-                            fetchPortfolio(gender);
+                            fetchServices();
+                            fetchPortfolio();
                         }
                     }
                 }
@@ -240,7 +238,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
         }
     }
 
-    private void fetchPortfolio(String gender) {
+    private void fetchPortfolio() {
         portfoilio = FirebaseDatabase.getInstance().getReference("Service").child(key);
         portfolioevent = FirebaseDatabase.getInstance().getReference("EventOrg").child(key);
         portfoilio.addValueEventListener(new ValueEventListener() {
@@ -250,13 +248,8 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Service service = snapshot.getValue(Service.class);
                     if (service != null) {
-                        if ("Female".equals(gender) && "Female".equals(service.getGender())) {
-                            services.add(service);
-                            fetchPortfoliorecycler(services);
-                        } else if ("Male".equals(gender) && "Male".equals(service.getGender())) {
-                            services.add(service);
-                            fetchPortfoliorecycler(services);
-                        }
+                        services.add(service);
+                        fetchPortfoliorecycler(services);
                     }
                 }
             }
@@ -295,7 +288,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
         portfolioRecycler.setAdapter(portfolioAdapter);
     }
 
-    private void fetchServices(String gender) {
+    private void fetchServices() {
         serviceRef = FirebaseDatabase.getInstance().getReference("Service").child(key);
         eventOrg = FirebaseDatabase.getInstance().getReference("EventOrg").child(key);
         String discountServiceName = SPUtils.getInstance().getString(AppConstans.discountservicename);
@@ -307,10 +300,8 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Service service = snapshot.getValue(Service.class);
                     if (service != null) {
-                        String serviceGender = service.getGender();
                         String serviceName = service.getName();
-                        if (serviceGender != null && serviceGender.equals(gender) &&
-                                (discountServiceName == null || discountServiceName.isEmpty() ||
+                        if ((discountServiceName == null || discountServiceName.isEmpty() ||
                                         (serviceName != null && serviceName.equals(discountServiceName)))) {
                             services.add(service);
                             fetchRecycler(services);

@@ -52,9 +52,9 @@ public class DeviceFolderActivity extends Activity implements LoaderManager.Load
         setContentView(R.layout.activity_device_folder);
 
         if (getActionBar() != null) {
-            getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#740938")));
+            getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7E5CAD")));
         }
-        changeStatusBarColor(Color.parseColor("#740938"));
+        changeStatusBarColor(Color.parseColor("#7E5CAD"));
         this.gridView = (GridView) findViewById(R.id.gridview);
         adapter = new FolderCursorAdapter();
         gridView.setAdapter(adapter);

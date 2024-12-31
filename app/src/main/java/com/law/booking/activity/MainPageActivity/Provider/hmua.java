@@ -47,7 +47,7 @@ public class hmua extends AppCompatActivity {
     private LinearLayout  ll_skeleton;
     private boolean isSkeletonShown = false;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
-
+    String title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +65,17 @@ public class hmua extends AppCompatActivity {
         providerList = new ArrayList<>();
         providerAdapter = new ArtistAdapter(providerList, this);
         providerRecycler.setAdapter(providerAdapter);
-        profiletxt.setText("Lawyers");
+
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("title");
+        boolean corporate = intent.getBooleanExtra("isCorporate", false);
+        boolean criminal = intent.getBooleanExtra("isCriminal", false);
+        boolean family = intent.getBooleanExtra("isFamily", false);
+        boolean immigration = intent.getBooleanExtra("isImmigration", false);
+        boolean property = intent.getBooleanExtra("isProperty", false);
+        boolean isAll = intent.getBooleanExtra("isAll", false);
+
+        profiletxt.setText(title);
         initSkeleton();
         changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         ActionBar actionBar = getSupportActionBar();
@@ -77,14 +87,39 @@ public class hmua extends AppCompatActivity {
         gunting.setOnClickListener(view -> onBackPressed());
         messageImg.setOnClickListener(view -> intenttochat());
         bell.setOnClickListener(view -> intentToHistory());
+
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                providerList.clear();
+                providerList.clear(); // Clear the list before adding new data
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Usermodel usermodel = snapshot.getValue(Usermodel.class);
-                    usermodel.setKey(snapshot.getKey());
-                    providerList.add(usermodel);
+                    if (usermodel != null) {
+                        usermodel.setKey(snapshot.getKey());
+                        Boolean isCorporate = snapshot.child("isCorporate").getValue(Boolean.class);
+                        Boolean isCriminal = snapshot.child("isCriminal").getValue(Boolean.class);
+                        Boolean isFamily = snapshot.child("isFamily").getValue(Boolean.class);
+                        Boolean isImmigration = snapshot.child("isImmigration").getValue(Boolean.class);
+                        Boolean isProperty = snapshot.child("isProperty").getValue(Boolean.class);
+
+//                        Log.d("UserModel", "User: " + usermodel.getKey() +
+//                                ", isCorporate: " + isCorporate +
+//                                ", isCriminal: " + isCriminal +
+//                                ", isProperty: " + isProperty);
+
+                        boolean matches = (corporate && isCorporate != null && isCorporate) ||
+                                (criminal && isCriminal != null && isCriminal) ||
+                                (family && isFamily != null && isFamily) ||
+                                (immigration && isImmigration != null && isImmigration) ||
+                                (property && isProperty != null && isProperty);
+
+                        if (matches) {
+                            providerList.add(usermodel);
+                        }else if(isAll){
+                            providerList.add(usermodel);
+                        }
+                    }
                 }
                 providerAdapter.notifyDataSetChanged();
             }
@@ -95,14 +130,13 @@ public class hmua extends AppCompatActivity {
                 Log.e("User_list", "DatabaseError: " + databaseError.getMessage());
             }
         });
-    }
 
-    private void initbadgeCount() {
+    }
+        private void initbadgeCount() {
         TextView badgeCount = findViewById(R.id.badge_count);
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknum);
-        if(badgenum == null){
+        if(badgenum.isEmpty() || badgenum.equals("null")){
             badgeCount.setText("0");
-            SPUtils.getInstance().put(AppConstans.booknum, "0");
         }else{
             badgeCount.setVisibility(View.VISIBLE);
             badgeCount.setText(badgenum);

@@ -119,13 +119,12 @@ public class Guess_summary extends AppCompatActivity {
         startService(new Intent(this, MessageNotificationService.class));
         TextView badgeCount = findViewById(R.id.badge_count);
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknum);
-        if(badgenum == null){
+        if(badgenum.equals("null")){
             badgeCount.setText("0");
-            return;
+        }else{
+            badgeCount.setVisibility(View.VISIBLE);
+            badgeCount.setText(badgenum);
         }
-
-        badgeCount.setVisibility(View.VISIBLE);
-        badgeCount.setText(badgenum);
 
         msgbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,7 +176,7 @@ public class Guess_summary extends AppCompatActivity {
         phonumbervalue.setText(phonenumber);
         back.setOnClickListener(view -> onBackPressed());
         payment_spinner.setText(paymentMethod);
-        service.setText("Service I availed");
+        service.setText("Law I book");
 
     }
 

@@ -27,7 +27,9 @@ import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserProviderDialog {
 
@@ -47,54 +49,44 @@ public class UserProviderDialog {
                 dialog.dismiss());
 
         Saved.setOnClickListener(v -> {
-            Saveddatafromservice(dialogView, dialog);
+            Saveddatafromservice(dialogView, dialog,activity);
         });
         dialog.show();
     }
-    private void Saveddatafromservice(View dialogView, DialogPlus dialog) {
+    private void Saveddatafromservice(View dialogView, DialogPlus dialog, Activity activity) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Service").child(user.getUid());
-            List<String> selectedServices = new ArrayList<>();
+            DatabaseReference adminRef = FirebaseDatabase.getInstance()
+                    .getReference("Lawyer")
+                    .child(user.getUid());
 
-            RadioButton light_makeup  = dialogView.findViewById(R.id.light_makeup);
-            RadioButton smokey  = dialogView.findViewById(R.id.smokey);
-            RadioButton weeding	 = dialogView.findViewById(R.id.weeding);
-            RadioButton graduation  = dialogView.findViewById(R.id.graduation );
+            // Get references to RadioButtons
+            RadioButton corporate = dialogView.findViewById(R.id.corporate);
+            RadioButton family = dialogView.findViewById(R.id.family);
+            RadioButton criminal = dialogView.findViewById(R.id.criminal);
+            RadioButton immigration = dialogView.findViewById(R.id.immigration);
+            RadioButton property = dialogView.findViewById(R.id.property);
 
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("isCorporate", corporate.isChecked());
+            updates.put("isFamily", family.isChecked());
+            updates.put("isCriminal", criminal.isChecked());
+            updates.put("isImmigration", immigration.isChecked());
+            updates.put("isProperty", property.isChecked());
 
-            if (light_makeup.isChecked()) {
-                selectedServices.add("Light Makeup");
-            }
-            if (smokey.isChecked()) {
-                selectedServices.add("Smokey-eye Makeup");
-            }
-            if (weeding.isChecked()) {
-                selectedServices.add("Wedding makeup");
-            }
-            if (graduation .isChecked()) {
-                selectedServices.add("Graduation light makeup look");
-            }
-            if (!selectedServices.isEmpty()) {
-                String key = databaseRef.push().getKey();
-                for (String serviceName : selectedServices) {
-                    Service service = new Service(serviceName, 0,"","",key);
-                    databaseRef.push().setValue(service).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(dialogView.getContext(), "Service saved successfully!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(dialogView.getContext(), "Error saving service!", Toast.LENGTH_SHORT).show();
-                        }
+            adminRef.updateChildren(updates)
+                    .addOnSuccessListener(unused -> {
+                        Toast.makeText(activity, "Data saved successfully!", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Saveddatafromservice", "Failed to save data: " + e.getMessage());
                     });
-                }
-                dialog.dismiss();
-            } else {
-                Toast.makeText(dialogView.getContext(), "No service selected!", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(dialogView.getContext(), "User not logged in!", Toast.LENGTH_SHORT).show();
+
+            // Dismiss the dialog
+            dialog.dismiss();
         }
     }
+
 
     public void savedData2(Context context, String serviceName, int prices) {
         DialogPlus dialog = DialogPlus.newDialog(context)

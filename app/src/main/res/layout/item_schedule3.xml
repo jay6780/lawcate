@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/Mywhite"
+            android:background="@color/purple_theme"
             android:orientation="vertical"
             android:padding="8dp">
             <TextView
@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/calendar_pink"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:paddingStart="10dp"
                 android:paddingRight="10dp"
                 android:text="date"
@@ -37,7 +37,7 @@
                 android:layout_marginTop="5dp"
                 android:paddingStart="10dp"
                 android:paddingRight="10dp"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:drawableStart="@drawable/clock_pink"
                 android:text="time"
                 android:textSize="12sp"

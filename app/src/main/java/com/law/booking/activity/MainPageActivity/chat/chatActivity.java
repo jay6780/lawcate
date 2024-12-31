@@ -473,7 +473,7 @@ public class chatActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                     String welcomeMessage = "Hi, my name is: " + username + "\n" +
                                                             "Address: " + address + "\n" +
                                                             "How may I help you?\n" +
-                                                            "My services are: " + serviceNames.toString() + ".";
+                                                            "The law can I solve: " + serviceNames.toString() + ".";
                                                     new Handler().postDelayed(() -> {
                                                         sendInitialMessage(providerEmail, welcomeMessage, username, image, key);
                                                     }, 1500);

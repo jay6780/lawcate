@@ -41,8 +41,6 @@ public class ImageAdapter extends BannerAdapter<Discounts, ImageAdapter.ServiceV
             holder.serviceName.setLayoutParams(params);
             holder.serviceName.setTextSize(12);
             holder.explorebtn.setVisibility(View.GONE);
-            holder.hair.setVisibility(View.GONE);
-            holder.girl.setVisibility(View.GONE);
             holder.percent.setVisibility(View.GONE);
         } else {
             holder.serviceName.setText(data.getServiceName());
@@ -51,8 +49,6 @@ public class ImageAdapter extends BannerAdapter<Discounts, ImageAdapter.ServiceV
             params.removeRule(RelativeLayout.CENTER_IN_PARENT);
             holder.serviceName.setLayoutParams(params);
             holder.explorebtn.setVisibility(View.VISIBLE);
-            holder.hair.setVisibility(View.VISIBLE);
-            holder.girl.setVisibility(View.VISIBLE);
             holder.percent.setVisibility(View.VISIBLE);
         }
 
@@ -86,12 +82,9 @@ public class ImageAdapter extends BannerAdapter<Discounts, ImageAdapter.ServiceV
     class ServiceViewHolder extends RecyclerView.ViewHolder {
         TextView serviceName, percent;
         AppCompatButton explorebtn;
-        ImageView girl,hair;
         public ServiceViewHolder(View view) {
             super(view);
             explorebtn = view.findViewById(R.id.explorebtn);
-            hair = view.findViewById(R.id.hair);
-            girl = view.findViewById(R.id.girl);
             serviceName = view.findViewById(R.id.service_name);
             percent = view.findViewById(R.id.percent);
         }

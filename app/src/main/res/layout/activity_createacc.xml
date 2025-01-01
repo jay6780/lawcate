@@ -6,50 +6,8 @@
     android:background="@color/purple_theme"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/gunting"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:src="@mipmap/scissors" />
-
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="20dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:src="@mipmap/logowelcome" />
-
-    <TextView
-        android:id="@+id/style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/logo"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="23dp"
-        android:fontFamily="@font/inter"
-        android:text="STYLE"
-        android:textColor="@color/white"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/sync"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/style"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="28dp"
-        android:fontFamily="@font/inter"
-        android:text="SYNC"
-        android:textColor="@color/white"
-        android:textSize="10sp" />
-
     <TextView
         android:id="@+id/signin"
-        android:layout_below="@+id/gunting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -82,7 +40,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="210dp"
+        android:layout_marginTop="150dp"
         android:background="@drawable/rounded_top2"
         android:orientation="vertical">
 

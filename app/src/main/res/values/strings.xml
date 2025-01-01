@@ -53,9 +53,9 @@
     <string name="forgotpassword">Forgot Password?</string>
     <string name="recovertEmail">Please enter recovery email address</string>
     <string name="resetpassword">Reset password</string>
-    <string name="signmsg"> Log in to StyleSync and unlock the best in beauty and style. Your next transformation is just a click away!</string>
-    <string name="signupmsg">Sign up now to discover and book top-notch beauty services in your area!</string>
-    <string name="restmsg">Reset Your Password and Get Back to Beauty with StyleSync. Don’t worry, we’ll help you get back on track in no time!</string>
+    <string name="signmsg"> Log in to Lawcate and unlock the best in lawyers in your area</string>
+    <string name="signupmsg">Sign up now to discover and book top-notch Lawyer to your area!</string>
+    <string name="restmsg">Reset Your Password and Get Back to Lawcate. Don’t worry, we’ll help you get back on track in no time!</string>
     <string name="add_event">Add event</string>
     <string name="selectimg">Please select an image</string>
     <string name="crop_failed">Crop failed</string>

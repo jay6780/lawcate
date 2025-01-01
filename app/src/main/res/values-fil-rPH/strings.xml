@@ -48,9 +48,9 @@
     <string name="welcome">Maligayang pagdating</string>
     <string name="welcomemsg">Maligayang pagdating sa StyleSync – Ang Iyong Ultimate Destination para sa Kagandahan at Estilo! Tuklasin ang mga nangungunang serbisyo sa pagpapaganda, mag-book ng mga appointment nang madali, at baguhin ang iyong hitsura nang walang kahirap-hirap!</string>
     <string name="personal">Gumawa ng personal na account</string>
-    <string name="signmsg"> Mag-log in sa StyleSync at i-unlock ang pinakamahusay sa kagandahan at istilo. Ang iyong susunod na pagbabago ay isang click na lang!</string>
-    <string name="signupmsg">Mag-sign up ngayon upang matuklasan at mag-book ng mga nangungunang serbisyo sa pagpapaganda sa iyong lugar!</string>
-    <string name="restmsg">I-reset ang Iyong Password at Bumalik sa Kagandahan gamit ang StyleSync. Huwag mag-alala, tutulungan ka naming makabalik sa tamang oras!</string>
+    <string name="signmsg"> Mag-log in sa Lawcate at i-unlock ang pinakamahusay na Abogado sa inyong lugar</string>
+    <string name="signupmsg">Mag-sign up ngayon upang matuklasan at mag-book ng mga nangungunang serbisyo sa Abogado sa iyong lugar!</string>
+    <string name="restmsg">I-reset ang Iyong Password at Bumalik sa Kagandahan gamit ang Lawcate. Huwag mag-alala, tutulungan ka naming makabalik sa tamang oras!</string>
     <string name="add_event">Magdagdag ng kaganapan</string>
     <string name="selectimg">Mangyaring pumili ng larawan</string>
     <string name="crop_failed">Nabigo ang pag-crop</string>

@@ -24,9 +24,10 @@ public class Change_langact extends AppCompatActivity {
     private Spinner languageSpinner;
     private String selectedLanguage;
     private ImageView back;
-    private RelativeLayout rl1;
     String textvalue = SPUtils.getInstance().getString(AppConstans.selectLang);
     private String TAG = "Change_langact";
+    private RelativeLayout rl1,law_switch;
+    private View lawview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +35,22 @@ public class Change_langact extends AppCompatActivity {
 
         back = findViewById(R.id.back);
         rl1 = findViewById(R.id.relative_switch);
+        law_switch = findViewById(R.id.law_switch);
+        lawview = findViewById(R.id.lawview);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
         changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         Log.d(TAG,"selectedLang: "+textvalue);
+
+        if(SPUtils.getInstance().getBoolean(AppConstans.userType)){
+            law_switch.setVisibility(View.VISIBLE);
+            lawview.setVisibility(View.VISIBLE);
+        }else{
+            law_switch.setVisibility(View.GONE);
+            lawview.setVisibility(View.GONE);
+        }
 
         languageSpinner = findViewById(R.id.languageSpinner);
         String[] languageOptions = {"Default", "English", "Filipino"};

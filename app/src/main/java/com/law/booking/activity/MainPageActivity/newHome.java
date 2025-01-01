@@ -856,7 +856,8 @@ public class newHome extends AppCompatActivity {
                             startService(new Intent(newHome.this, MessageNotificationService.class));
                             requestPermissions2();
                             showNotiff();
-
+                            boolean Lawyer = true;
+                            SPUtils.getInstance().put(AppConstans.userType,Lawyer);
                             boolean isCorporate = dataSnapshot.hasChild("isCorporate");
                             if(!isCorporate){
                                 UserProviderDialog userProviderDialog = new UserProviderDialog();
@@ -919,6 +920,8 @@ public class newHome extends AppCompatActivity {
                                     if (dataSnapshot.exists()) {
                                         boolean hasGender = dataSnapshot.hasChild("gender");
                                         boolean hasEmail = dataSnapshot.hasChild("email");
+                                        boolean Lawyer = false;
+                                        SPUtils.getInstance().put(AppConstans.userType,Lawyer);
                                         Usermodel user = dataSnapshot.getValue(Usermodel.class);
                                         if (user != null) {
                                             String name = user.getName();

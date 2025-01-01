@@ -92,4 +92,5 @@ public class AppConstans {
     public static final String userAddress = "userAddress";
     public static final String Notification = "Notification";
     public static final String favoriteId = "favoriteId";
+    public static final String userType = "userType";
 }

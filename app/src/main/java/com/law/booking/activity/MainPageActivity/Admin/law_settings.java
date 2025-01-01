@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 public class law_settings extends AppCompatActivity {
     TextView username;
     TextView isCriminalText,IsCorporateText,isFamilyText,isImmigrationText,isPropertyText;
+    ImageView back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,11 +40,13 @@ public class law_settings extends AppCompatActivity {
         changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         username = findViewById(R.id.username);
         isCriminalText = findViewById(R.id.isCriminal);
+        back = findViewById(R.id.back);
         IsCorporateText = findViewById(R.id.IsCorporate);
         isFamilyText = findViewById(R.id.isFamily);
         isImmigrationText = findViewById(R.id.isImmigration);
         isPropertyText = findViewById(R.id.isProperty);
         username.setText("Law settings");
+        back.setOnClickListener(view -> onBackPressed());
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         initGuessData(userId);
     }

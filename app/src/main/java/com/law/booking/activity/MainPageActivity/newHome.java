@@ -1026,7 +1026,7 @@ public class newHome extends AppCompatActivity {
     private void initAdminSaveData(String username, String email, String image, String phone, String name, String address, String age, String lengthOfService) {
         SPUtils.getInstance().put(AppConstans.AdminUsername,username);
         SPUtils.getInstance().put(AppConstans.Adminemail,email);
-        SPUtils.getInstance().put(AppConstans.userEmail, userEmail);
+        SPUtils.getInstance().put(AppConstans.userEmail, email);
         SPUtils.getInstance().put(AppConstans.AdminImage,image);
         SPUtils.getInstance().put(AppConstans.AdminPhone,phone);
         SPUtils.getInstance().put(AppConstans.AdminFullname,name);
@@ -1039,7 +1039,7 @@ public class newHome extends AppCompatActivity {
         SPUtils.getInstance().put(AppConstans.EventUsername,username);
         SPUtils.getInstance().put(AppConstans.Eventemail,email);
         SPUtils.getInstance().put(AppConstans.EventImage,image);
-        SPUtils.getInstance().put(AppConstans.userEmail, userEmail);
+        SPUtils.getInstance().put(AppConstans.userEmail, email);
         SPUtils.getInstance().put(AppConstans.EventPhone,phone);
         SPUtils.getInstance().put(AppConstans.EventFullname,name);
         SPUtils.getInstance().put(AppConstans.EventAdress,address);

@@ -226,7 +226,11 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Usermodel usermodel = snapshot.getValue(Usermodel.class);
                     usermodel.setKey(snapshot.getKey());
-                    providerList.add(usermodel);
+                    Boolean isSuperAdmin = snapshot.child("isSuperAdmin").getValue(Boolean.class);
+                    if ((isSuperAdmin == null || !isSuperAdmin)) {
+                        providerList.add(usermodel);
+                    }
+
                 }
                 providerAdapter.notifyDataSetChanged();
             }

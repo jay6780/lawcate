@@ -11,11 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +47,14 @@ public class SetAdminadapter extends RecyclerView.Adapter<SetAdminadapter.Provid
     public void onBindViewHolder(@NonNull SetAdminadapter.ProviderViewHolder holder, int position) {
         Usermodel provider = providerList.get(position);
         holder.provider_name.setText(provider.getName());
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (userId.equals(provider.getKey())) {
+            holder.cancel.setAlpha(0.5f);
+            holder.cancel.setEnabled(false);
+        }else{
+            holder.cancel.setEnabled(true);
+            holder.cancel.setAlpha(1f);
+        }
         Glide.with(context)
                 .load(provider.getImage())
                 .placeholder(R.mipmap.man)
@@ -72,32 +82,41 @@ public class SetAdminadapter extends RecyclerView.Adapter<SetAdminadapter.Provid
                 Log.e("SetAdminAdapter", "Failed to check admin status: " + error.getMessage());
             }
         });
+
         holder.setasAdmin.setOnClickListener(view -> {
             adminRef.child("isSuperAdmin").setValue(true)
                     .addOnSuccessListener(unused -> {
-                        Toast.makeText(context,"Success set as Super Admin: "+provider.getName(),Toast.LENGTH_SHORT).show();
-                        holder.setasAdmin.setVisibility(View.GONE);
-                        holder.cancel.setVisibility(View.VISIBLE);
+                        Toast.makeText(context, "Success set as Super Admin: " + provider.getName(), Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
                         Log.e("SetAdminAdapter", "Failed to set as SuperAdmin: " + e.getMessage());
                     });
+
+
         });
 
         holder.cancel.setOnClickListener(view -> {
-            adminRef.child("isSuperAdmin").removeValue()
-                    .addOnSuccessListener(unused -> {
-                        Log.d("SetAdminAdapter", "Successfully removed SuperAdmin");
-                        Toast.makeText(context,"Remove as Super Admin: "+provider.getName(),Toast.LENGTH_SHORT).show();
-                        holder.setasAdmin.setVisibility(View.VISIBLE);
-                        holder.cancel.setVisibility(View.GONE);
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("SetAdminAdapter", "Failed to remove SuperAdmin: " + e.getMessage());
-                    });
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Confirm Removal");
+                builder.setMessage("Are you sure you want to remove  Admin status?");
+                builder.setPositiveButton("Yes", (dialog, which) -> {
+                    adminRef.child("isSuperAdmin").removeValue()
+                            .addOnSuccessListener(unused -> {
+                                Log.d("SetAdminAdapter", "Successfully removed SuperAdmin");
+                                Toast.makeText(context, "Removed as Super Admin: " + provider.getName(), Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("SetAdminAdapter", "Failed to remove SuperAdmin: " + e.getMessage());
+                                    });
+                        });
+                        builder.setNegativeButton("No", (dialog, which) -> {
+                            dialog.dismiss(); // Close the dialog if the user cancels
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
         });
-    }
 
+    }
 
     public void updateList(ArrayList<Usermodel> newList) {
         providerList = newList;

@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.law.booking.R;
 import com.law.booking.activity.Application.TinkerApplications;
+import com.law.booking.activity.MainPageActivity.Admin.law_settings;
 import com.law.booking.activity.MainPageActivity.newHome;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
@@ -25,7 +26,7 @@ public class admin_settings extends AppCompatActivity {
     private Spinner languageSpinner;
     private String selectedLanguage;
     private ImageView back;
-    private RelativeLayout rl1;
+    private RelativeLayout rl1,law_switch;
     String textvalue = SPUtils.getInstance().getString(AppConstans.selectLang);
     private String TAG = "Change_langact";
     @Override
@@ -35,6 +36,7 @@ public class admin_settings extends AppCompatActivity {
 
         back = findViewById(R.id.back);
         rl1 = findViewById(R.id.relative_switch);
+        law_switch = findViewById(R.id.law_switch);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -54,6 +56,8 @@ public class admin_settings extends AppCompatActivity {
                 break;
             }
         }
+
+        law_switch.setOnClickListener(view -> intentTolaw());
         languageSpinner.setSelection(selectedPosition);
 
         languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -89,6 +93,11 @@ public class admin_settings extends AppCompatActivity {
 
         back.setOnClickListener(view -> onBackPressed());
         rl1.setOnClickListener(view -> switchaccount());
+    }
+
+    private void intentTolaw() {
+        Intent intent = new Intent(getApplicationContext(), law_settings.class);
+        startActivity(intent);
     }
 
     private void switchaccount() {

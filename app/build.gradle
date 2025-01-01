@@ -9,8 +9,8 @@ android {
         applicationId "com.law.booking"
         minSdk 21
         targetSdk 28
-        versionCode 116
-        versionName "1.1.6"
+        versionCode 117
+        versionName "1.1.7"
 
         dexOptions {
             jumboMode = true
@@ -106,4 +106,5 @@ dependencies {
     implementation 'com.github.MasayukiSuda:BubbleLayout:v1.2.2'
     implementation 'com.facebook.android:facebook-login:latest.release'
     implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation 'com.github.BeppiMenozzi:TriStateToggleButton:1.1.4'
 }

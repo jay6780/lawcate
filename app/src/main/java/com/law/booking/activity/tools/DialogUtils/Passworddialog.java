@@ -84,7 +84,7 @@ public class Passworddialog {
     }
 
     private void proceedWithLogin(String userId, Context context) {
-        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("Guess").child(userId);
+        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("Client").child(userId);
         ValueEventListener studentListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -119,6 +119,7 @@ public class Passworddialog {
         AlertDialog dialog = builder.create();
         retry.setOnClickListener(v -> {
             String newPassword = passwordInput.getText().toString().trim();
+            SPUtils.getInstance().put(AppConstans.passwordkey_admin, newPassword);
             account_manager.setPassword(newPassword);
             loginWithAccount_admin(account_manager, context);
             dialog.dismiss();
@@ -163,7 +164,7 @@ public class Passworddialog {
     }
 
     private void proceedWithLogin_admin(String userId, Context context) {
-        DatabaseReference adminref = FirebaseDatabase.getInstance().getReference().child("ADMIN").child(userId);
+        DatabaseReference adminref = FirebaseDatabase.getInstance().getReference().child("Lawyer").child(userId);
         ValueEventListener adminListerner = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

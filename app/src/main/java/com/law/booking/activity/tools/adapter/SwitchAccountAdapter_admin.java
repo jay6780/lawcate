@@ -137,7 +137,7 @@ public class SwitchAccountAdapter_admin extends RecyclerView.Adapter<SwitchAccou
 
 
     private void proceedWithLogin(String userId) {
-        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("ADMIN").child(userId);
+        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("Lawyer").child(userId);
         ValueEventListener studentListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

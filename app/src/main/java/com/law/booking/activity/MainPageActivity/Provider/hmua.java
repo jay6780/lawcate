@@ -102,11 +102,7 @@ public class hmua extends AppCompatActivity {
                         Boolean isFamily = snapshot.child("isFamily").getValue(Boolean.class);
                         Boolean isImmigration = snapshot.child("isImmigration").getValue(Boolean.class);
                         Boolean isProperty = snapshot.child("isProperty").getValue(Boolean.class);
-
-//                        Log.d("UserModel", "User: " + usermodel.getKey() +
-//                                ", isCorporate: " + isCorporate +
-//                                ", isCriminal: " + isCriminal +
-//                                ", isProperty: " + isProperty);
+                        Boolean isSuperAdmin = snapshot.child("isSuperAdmin").getValue(Boolean.class);
 
                         boolean matches = (corporate && isCorporate != null && isCorporate) ||
                                 (criminal && isCriminal != null && isCriminal) ||
@@ -114,9 +110,7 @@ public class hmua extends AppCompatActivity {
                                 (immigration && isImmigration != null && isImmigration) ||
                                 (property && isProperty != null && isProperty);
 
-                        if (matches) {
-                            providerList.add(usermodel);
-                        }else if(isAll){
+                        if ((matches || isAll) && (isSuperAdmin == null || !isSuperAdmin)) {
                             providerList.add(usermodel);
                         }
                     }

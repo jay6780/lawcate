@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.law.booking.activity.MainPageActivity.Admin.history_book_admin;
+import com.law.booking.activity.MainPageActivity.Admin.law_settings;
 import com.law.booking.activity.settingsAdmin.admin_settings;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Utils.AppConstans;

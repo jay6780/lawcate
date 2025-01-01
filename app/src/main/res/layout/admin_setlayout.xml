@@ -52,7 +52,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="30dp"
         android:layout_toRightOf="@+id/card1"
-        android:background="@drawable/circle_btn3"
+        android:background="@drawable/circle_btn"
         android:text="Remove"
         android:textColor="@color/white"
         android:textSize="12sp" />
@@ -64,7 +64,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="30dp"
         android:layout_toRightOf="@+id/card1"
-        android:background="@drawable/circle_btn3"
+        android:background="@drawable/circle_btn"
         android:padding="10dp"
         android:text="Set as Admin"
         android:textColor="@color/white"

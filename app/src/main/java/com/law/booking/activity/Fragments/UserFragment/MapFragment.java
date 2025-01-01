@@ -67,6 +67,9 @@ import com.law.booking.activity.tools.Model.RouteFetcher;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.adapter.MapResultAdapter;
 import com.law.booking.R;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,7 +84,7 @@ import java.util.Map;
 
 import okhttp3.OkHttpClient;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefreshListener {
     private GoogleMap googleMap;
     private MapResultAdapter adapter;
     private List<String> searchResults = new ArrayList<>();
@@ -98,14 +101,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Marker currentLocationMarker;
     private LocationCallback locationCallback;
     private boolean isMapReady = false;
+    private SmartRefreshLayout refreshLayout;
+    private Bundle mapstate;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmentmap, container, false);
         mapSearch = view.findViewById(R.id.map_search);
         RecyclerView mapResult = view.findViewById(R.id.mapResult);
+        refreshLayout = view.findViewById(R.id.refreshLayout);
         mapResult.setVisibility(View.GONE);
         mapView = view.findViewById(R.id.mapview);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setEnableRefresh(true);
         mapResult.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new MapResultAdapter(searchResults, address -> {
             selectedAddress = address;
@@ -142,7 +150,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         client = new OkHttpClient();
 
-        initMap(mapView, savedInstanceState);
+
+        mapstate = savedInstanceState;
+        initMap(mapView, mapstate);
         return view;
     }
     private void moveCameraToAddress(String selectedAddress) {
@@ -253,7 +263,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .snippet("No providers found")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         googleMap.addMarker(destinationMarkerOptions);
-        Toast.makeText(getContext(), "No providers found at this address", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "No Lawyers found at this address", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -559,9 +569,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             placesClient.findAutocompletePredictions(request).addOnSuccessListener(response -> {
                 searchResults.clear();
                 for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                    if (prediction.getFullText(null).toString().toLowerCase().contains("zamboanga")) {
-                        searchResults.add(prediction.getFullText(null).toString());
-                    }
+                    searchResults.add(prediction.getFullText(null).toString());
                 }
                 adapter.notifyDataSetChanged();
             }).addOnFailureListener(e -> {
@@ -615,4 +623,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        refreshLayout.getLayout().postDelayed(() -> {
+            boolean isRefreshSuccessful = fetchDataFromSource();
+            if (isRefreshSuccessful) {
+                refreshLayout.finishRefresh();
+            } else {
+                refreshLayout.finishRefresh(false);
+            }
+        }, 100);
+}
+
+    private boolean fetchDataFromSource() {
+        try {
+            initMap(mapView, mapstate);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

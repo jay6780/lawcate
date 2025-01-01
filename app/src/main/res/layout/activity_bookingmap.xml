@@ -4,21 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Mywhite">
-
+    android:background="@color/white">
     <include
         android:id="@+id/headermenu"
         layout="@layout/newprofilemenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapview"
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/footer"
-        android:layout_below="@+id/headermenu" />
+        app:srlAccentColor="#00000000"
+        app:srlEnableNestedScrolling="false"
+        app:srlEnablePreviewInEditMode="false"
+        android:layout_below="@+id/headermenu"
+        app:srlFooterTranslationViewId="@+id/nested_scroll"
+        app:srlPrimaryColor="#00000000">
 
+
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="150dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/footer"
+            android:layout_below="@+id/refreshLayout">
+        <com.google.android.gms.maps.MapView
+        android:id="@+id/mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <RelativeLayout
         android:id="@+id/footer"
@@ -106,7 +122,7 @@
             android:padding="10dp"
             android:text="Message"
             android:textColor="@color/white" />
-
     </RelativeLayout>
-
+        </RelativeLayout>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </RelativeLayout>

@@ -76,6 +76,9 @@ import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.R;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,11 +92,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback {
+public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback , OnRefreshListener {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final float POLYLINE_DISTANCE_THRESHOLD = 10f;
     private GoogleMap googleMap;
-    private TextView ages, userAddress, userLenghtexp, name,profiletxt;
+    private TextView ages, userAddress, userLenghtexp, name, profiletxt;
     private ImageView profileimage, backBtn;
     AppCompatButton messagebtn;
     private String chatRoomId;
@@ -115,7 +118,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
     private Polyline polyline;
     private List<LatLng> routePoints = new ArrayList<>();
     private String transactionId;
-    private LatLng destinationLocation,startLocation;
+    private LatLng destinationLocation, startLocation;
     private ProgressDialog progressDialog;
     private String availedmess;
     private LatLng previousStartLocation = null;
@@ -124,7 +127,10 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
     private String locationLink;
     private boolean isLocationFetchDelayed = false;
     private List<String> serviceNamesList;
+    private SmartRefreshLayout refreshLayout;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
+    private Bundle mapbundle;
+    private boolean isRefresh = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +146,10 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         userLenghtexp = findViewById(R.id.lenghtofservice);
         messagebtn = findViewById(R.id.message);
         mapView = findViewById(R.id.mapview);
+        refreshLayout = findViewById(R.id.refreshLayout);
         profiletxt.setText(R.string.map);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setEnableRefresh(true);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -162,16 +171,16 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         age = getIntent().getStringExtra("age");
         lengthOfservice = getIntent().getStringExtra("lengthOfService");
         key = getIntent().getStringExtra("key");
-        Log.d(TAG,"key: "+key);
-        ages.setText(getString(R.string.age) +": "+ (age != null ? age : "N/A"));
-        userLenghtexp.setText(getString(R.string.years)+": "+ (lengthOfservice != null ? lengthOfservice : "N/A"));
+        Log.d(TAG, "key: " + key);
+        ages.setText(getString(R.string.age) + ": " + (age != null ? age : "N/A"));
+        userLenghtexp.setText(getString(R.string.years) + ": " + (lengthOfservice != null ? lengthOfservice : "N/A"));
         Log.d(TAG, "Storing Provider Name: " + providerName);
         SPUtils.getInstance().put(AppConstans.providerName, providerName);
         Log.d(TAG, "Storing Email: " + email);
         SPUtils.getInstance().put(AppConstans.providers, key);
         SPUtils.getInstance().put(AppConstans.email, email);
-        name.setText(getString(R.string.name) +": "+ (providerName != null ? providerName : "N/A"));
-        userAddress.setText(getString(R.string.address)+": " + (address != null ? address : "N/A"));
+        name.setText(getString(R.string.name) + ": " + (providerName != null ? providerName : "N/A"));
+        userAddress.setText(getString(R.string.address) + ": " + (address != null ? address : "N/A"));
         Log.d(TAG, "email: " + email);
         Log.d(TAG, "providerName: " + providerName);
         Log.d(TAG, "image: " + image);
@@ -183,9 +192,10 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                 .placeholder(R.drawable.baseline_person_24)
                 .error(R.drawable.baseline_person_24)
                 .into(profileimage);
-        messagebtn.setOnClickListener(view -> checkAndCreateChatRoom(email, providerName, image,serviceName,availedmess));
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
+        messagebtn.setOnClickListener(view -> checkAndCreateChatRoom(email, providerName, image, serviceName, availedmess));
+        mapbundle = savedInstanceState;
+        initMap(mapView, mapbundle);
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String currentUserId = currentUser.getUid();
@@ -200,6 +210,11 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
             }
         });
 
+    }
+
+    private void initMap(MapView mapView, Bundle savedInstanceState) {
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
     }
 
     private void loadPackagesAndUserInfo(String currentUserId, String time, String heads, String cash, String serviceName, String price, String date) {
@@ -226,7 +241,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                             for (DataSnapshot serviceSnapshot : snapshot.getChildren()) {
                                 String packages = serviceSnapshot.child("packages").getValue(String.class);
                                 Log.d(TAG, "Service Name: " + serviceName + ", Packages: " + packages);
-                                SPUtils.getInstance().put(AppConstans.RecentPackage,packages);
+                                SPUtils.getInstance().put(AppConstans.RecentPackage, packages);
                             }
                         } else {
                             Log.d(TAG, "No matching service found for: " + serviceName);
@@ -248,9 +263,9 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         ImageView messageImg = findViewById(R.id.messageImg);
         messageImg.setOnClickListener(view -> intentchat());
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknum);
-        if(badgenum.isEmpty() || badgenum.equals("null")){
+        if (badgenum.isEmpty() || badgenum.equals("null")) {
             badgeCount.setText("0");
-        }else{
+        } else {
             badgeCount.setVisibility(View.VISIBLE);
             badgeCount.setText(badgenum);
 
@@ -269,13 +284,13 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
 
     private void intentchat() {
         Intent intent = new Intent(getApplicationContext(), User_list.class);
-        SPUtils.getInstance().put(AppConstans.discount,"");
+        SPUtils.getInstance().put(AppConstans.discount, "");
         startActivity(intent);
         finish();
 
     }
 
-    private void checkAndCreateChatRoom(String providerEmail, String providerName, String image,String serviceName,String availedmessage) {
+    private void checkAndCreateChatRoom(String providerEmail, String providerName, String image, String serviceName, String availedmessage) {
         String currentUserEmail = SPUtils.getInstance().getString(AppConstans.userEmail);
         String chatRoomId = createChatRoomId(currentUserEmail, providerEmail);
         databaseReference.child("chatRooms").child(chatRoomId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -284,7 +299,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                 if (!snapshot.exists()) {
                     ChatRoom chatRoom = new ChatRoom();
                     String timestamp = String.valueOf(System.currentTimeMillis());
-                    chatRoom.setUsers(Arrays.asList("timestamp: "+timestamp,currentUserEmail, providerEmail));
+                    chatRoom.setUsers(Arrays.asList("timestamp: " + timestamp, currentUserEmail, providerEmail));
                     chatroomIds.child("chatRooms").child(chatRoomId).setValue(chatRoom)
                             .addOnSuccessListener(aVoid -> {
                                 Intent intent = new Intent(getApplicationContext(), chatActivity.class);
@@ -317,14 +332,14 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                         Toast.makeText(getApplicationContext(), "Availed Success", Toast.LENGTH_SHORT).show();
                         intent.putExtra("availedmessage", availedmessage);
                         intent.putExtra("serviceName", serviceName);
-                    }else{
-                        Toast.makeText(getApplicationContext(),"Already Availed",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Already Availed", Toast.LENGTH_SHORT).show();
                         SPUtils spUtils = SPUtils.getInstance();
                         String previousdata = null;
-                        spUtils.put(AppConstans.previousService,previousdata);
+                        spUtils.put(AppConstans.previousService, previousdata);
                         intent.putExtra("availedmessage", previousdata);
                         intent.putExtra("serviceName", previousdata);
-                        Log.d(TAG,"Cleared: "+previousdata);
+                        Log.d(TAG, "Cleared: " + previousdata);
                     }
                     startActivity(intent);
                     finish();
@@ -365,8 +380,8 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     public void onBackPressed() {
-        SPUtils.getInstance().put(AppConstans.discountservicename,"");
-        SPUtils.getInstance().put(AppConstans.discount,"");
+        SPUtils.getInstance().put(AppConstans.discountservicename, "");
+        SPUtils.getInstance().put(AppConstans.discount, "");
         finish();
         super.onBackPressed();
     }
@@ -394,7 +409,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                     destinationLocation = new LatLng(destinationLatitude, destinationLongitude);
                     String latLngString = destinationLocation.latitude + "," + destinationLocation.longitude;
                     SPUtils.getInstance().put(AppConstans.laslocation, latLngString);
-                    updateMapLine(startLocation,destinationLocation);
+                    updateMapLine(startLocation, destinationLocation);
                     moveCameraToAddress();
                 }
                 isLocationFetchInProgress = false;
@@ -421,6 +436,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         startLocationFetch(transactionId);
         requestAndSetUserLocation();
     }
+
     @SuppressLint("MissingPermission")
     private void requestAndSetUserLocation() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -454,6 +470,14 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                 currentLocationMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title(locationText.toString()));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
                 currentLocationMarker.showInfoWindow();
+
+                if(isRefresh){
+                    currentLocationMarker.setVisible(false);
+                }else{
+                    currentLocationMarker.setVisible(true);
+                }
+
+
             }
         } catch (IOException e) {
             Log.e("MapFragment", "Geocoding failed: " + e.getMessage());
@@ -471,7 +495,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                 }
                 for (Location location : locationResult.getLocations()) {
                     locationLink = "https://www.google.com/maps/?q=" + location.getLatitude() + "," + location.getLongitude();
-                    SPUtils.getInstance().put(AppConstans.locationlink,locationLink);
+                    SPUtils.getInstance().put(AppConstans.locationlink, locationLink);
                     Log.d(TAG, "User location: " + locationLink);
                     updateCurrentLocationMarker();
                 }
@@ -504,6 +528,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         }
         fetchRouteData(startLocation, destinationLocation);
     }
+
     private void updateCurrentLocationMarker() {
         LatLng nearestPoint = findNearestPointOnPolyline(userLocation, routePoints);
         if (nearestPoint != null) {
@@ -529,6 +554,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
             }
         }
     }
+
     private void animateMarkerToPosition(final Marker marker, final LatLng targetPosition) {
         if (marker == null || targetPosition == null) return;
         final LatLng startPosition = marker.getPosition();
@@ -564,6 +590,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         }
         return nearestPoint;
     }
+
     private void fetchUserDetailsAndAddMarker(LatLng userLocation) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -615,6 +642,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
             Log.e(TAG, "Current user is null");
         }
     }
+
     private void loadAdminMarker(Usermodel admin, LatLng userLocation) {
         if (isDestroyed() || isFinishing()) {
             Log.e(TAG, "Activity is destroyed or finishing, skipping image load.");
@@ -659,7 +687,8 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                             }
 
                             @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {}
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
                         });
             }
         } catch (IOException e) {
@@ -790,7 +819,8 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                     try {
                         // Attempt to deserialize the service names list
                         String serviceListJson = SPUtils.getInstance().getString(AppConstans.serviceNamesList, "[]");
-                        Type type = new TypeToken<List<String>>() {}.getType();
+                        Type type = new TypeToken<List<String>>() {
+                        }.getType();
                         serviceNamesList = new Gson().fromJson(serviceListJson, type);
 
                         if (serviceNamesList == null || serviceNamesList.isEmpty()) {
@@ -813,7 +843,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                             String[] latLngArray = latlang.split(",");
                             if (latLngArray.length == 2) {
                                 locationLink = "https://www.google.com/maps/?q=" + latLngArray[0] + "," + latLngArray[1];
-                                savedlocationLink(userId,locationLink);
+                                savedlocationLink(userId, locationLink);
                             }
                         }
 
@@ -918,7 +948,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
     @Override
     public void onStop() {
         super.onStop();
-        if (mapView != null && googleMap !=null) {
+        if (mapView != null && googleMap != null) {
             mapView.onStop();
             googleMap.clear();
         }
@@ -927,7 +957,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mapView != null && googleMap !=null) {
+        if (mapView != null && googleMap != null) {
             mapView.onDestroy();
             googleMap.clear();
         }
@@ -942,4 +972,31 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        refreshLayout.getLayout().postDelayed(() -> {
+            boolean isRefreshSuccessful = fetchDataFromSource();
+            if (isRefreshSuccessful) {
+                refreshLayout.finishRefresh();
+            } else {
+                refreshLayout.finishRefresh(false);
+            }
+        }, 100);
+    }
+
+    private boolean fetchDataFromSource() {
+        try {
+            if (googleMap != null) {
+                googleMap.clear();
+                isRefresh = true;
+                initMap(mapView,mapbundle);
+                startLocationFetch(transactionId);
+                requestAndSetUserLocation();
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

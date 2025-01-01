@@ -228,7 +228,11 @@ public class newHome extends AppCompatActivity {
                     case 1:
                         bottomNavigationView.setSelectedItemId(R.id.nav_calendar);
                         break;
+
                     case 2:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_location);
+                        break;
+                    case 3:
                         bottomNavigationView.setSelectedItemId(R.id.nav_profile);
                         break;
                 }
@@ -263,8 +267,20 @@ public class newHome extends AppCompatActivity {
                         profiletxt.setVisibility(View.GONE);
                         gunting.setVisibility(View.GONE);
                         return true;
+
+
+                    case R.id.nav_location:
+                        viewPager.setCurrentItem(2);
+                        avatar_user.setVisibility(View.VISIBLE);
+                        username_user.setVisibility(View.VISIBLE);
+                        location_address_user.setVisibility(View.VISIBLE);
+                        //gone
+                        profiletxt.setVisibility(View.GONE);
+                        gunting.setVisibility(View.GONE);
+                        return true;
+
                     case R.id.nav_profile:
-                        viewPager.setCurrentItem(4);
+                        viewPager.setCurrentItem(3);
                         avatar_user.setVisibility(View.GONE);
                         username_user.setVisibility(View.GONE);
                         location_address_user.setVisibility(View.GONE);

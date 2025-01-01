@@ -3,13 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white2"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:background="@color/white2">
 
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom"
+        app:srlAccentColor="#00000000"
+        app:srlEnableNestedScrolling="false"
+        app:srlEnablePreviewInEditMode="false"
+        app:srlFooterTranslationViewId="@+id/nested_scroll"
+        app:srlPrimaryColor="#00000000">
+
+    <com.scwang.smart.refresh.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         app:cardCornerRadius="20dp"
         android:layout_marginTop="10dp">
         <LinearLayout
@@ -35,12 +53,11 @@
         android:id="@+id/mapResult"
         android:layout_width="match_parent"
         android:layout_height="150dp"/>
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapview"
-        android:layout_marginTop="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapview"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </LinearLayout>

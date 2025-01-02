@@ -260,7 +260,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
         MarkerOptions destinationMarkerOptions = new MarkerOptions()
                 .position(destinationLocation)
                 .title(addressText)
-                .snippet("No providers found")
+                .snippet("No lawyers found")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         googleMap.addMarker(destinationMarkerOptions);
         Toast.makeText(getContext(), "No Lawyers found at this address", Toast.LENGTH_SHORT).show();

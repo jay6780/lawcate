@@ -49,6 +49,13 @@ public class law_settings extends AppCompatActivity {
         back.setOnClickListener(view -> onBackPressed());
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         initGuessData(userId);
+
+        IsCorporateText.setText("Corporate");
+        isCriminalText.setText("Criminal");
+        isFamilyText.setText("Family");
+        isImmigrationText.setText("Immigration");
+        isPropertyText.setText("Property");
+
     }
 
 
@@ -63,11 +70,6 @@ public class law_settings extends AppCompatActivity {
                     Boolean isImmigration = dataSnapshot.child("isImmigration").getValue(Boolean.class);
                     Boolean isProperty = dataSnapshot.child("isProperty").getValue(Boolean.class);
                     initSetValue(isCorporate,isCriminal,isFamily,isImmigration,isProperty);
-                    IsCorporateText.setText("Corporate");
-                    isCriminalText.setText("Criminal");
-                    isFamilyText.setText("Family");
-                    isImmigrationText.setText("Immigration");
-                    isPropertyText.setText("Property");
                 }
             }
 

@@ -27,8 +27,8 @@
 
         <it.beppi.tristatetogglebutton_library.TriStateToggleButton
             android:id="@+id/IsCorporate_toggle"
-            android:layout_width="80dp"
-            android:layout_height="35dp"
+            android:layout_width="60dp"
+            android:layout_height="25dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
             app:tbIsMidSelectable="false" />
@@ -56,13 +56,14 @@
             android:layout_marginTop="5dp"
             android:textSize="15sp"
             android:textStyle="bold" />
+
         <it.beppi.tristatetogglebutton_library.TriStateToggleButton
-            android:layout_width="80dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="10dp"
             android:id="@+id/isCriminal_toggle"
+            android:layout_width="60dp"
+            android:layout_height="25dp"
             android:layout_alignParentEnd="true"
-            app:tbIsMidSelectable="false"/>
+            android:layout_marginEnd="10dp"
+            app:tbIsMidSelectable="false" />
 
 
     </RelativeLayout>
@@ -86,13 +87,14 @@
             android:layout_marginTop="5dp"
             android:textSize="15sp"
             android:textStyle="bold" />
+
         <it.beppi.tristatetogglebutton_library.TriStateToggleButton
-            android:layout_width="80dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="10dp"
             android:id="@+id/isFamily_toggle"
+            android:layout_width="60dp"
+            android:layout_height="25dp"
             android:layout_alignParentEnd="true"
-            app:tbIsMidSelectable="false"/>
+            android:layout_marginEnd="10dp"
+            app:tbIsMidSelectable="false" />
     </RelativeLayout>
 
     <View
@@ -114,13 +116,14 @@
             android:layout_marginTop="5dp"
             android:textSize="15sp"
             android:textStyle="bold" />
+
         <it.beppi.tristatetogglebutton_library.TriStateToggleButton
-            android:layout_width="80dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="10dp"
             android:id="@+id/isImmigration_toggle"
+            android:layout_width="60dp"
+            android:layout_height="25dp"
             android:layout_alignParentEnd="true"
-            app:tbIsMidSelectable="false"/>
+            android:layout_marginEnd="10dp"
+            app:tbIsMidSelectable="false" />
 
 
     </RelativeLayout>
@@ -144,13 +147,14 @@
             android:layout_marginTop="5dp"
             android:textSize="15sp"
             android:textStyle="bold" />
+
         <it.beppi.tristatetogglebutton_library.TriStateToggleButton
-            android:layout_width="80dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="10dp"
             android:id="@+id/isProperty_toggle"
+            android:layout_width="60dp"
+            android:layout_height="25dp"
             android:layout_alignParentEnd="true"
-            app:tbIsMidSelectable="false"/>
+            android:layout_marginEnd="10dp"
+            app:tbIsMidSelectable="false" />
 
 
     </RelativeLayout>

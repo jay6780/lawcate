@@ -193,8 +193,10 @@ public class HistoryBookFragment extends Fragment {
                         timestamp
                 );
                 bookingList.add(booking);
+
                 booknumber++;
                 String booknum = String.valueOf(booknumber);
+                Log.d("HistoryBook","booknum: "+booknum);
                 SPUtils.getInstance().put(AppConstans.booknum, booknum);
                 Log.d(TAG, "bookNum: " + booknum);
             }

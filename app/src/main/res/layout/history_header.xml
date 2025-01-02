@@ -13,7 +13,7 @@
         android:layout_marginTop="5dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:src="@mipmap/scissors_white" />
+        android:src="@mipmap/back_white" />
 
     <TextView
         android:id="@+id/profiletxt"

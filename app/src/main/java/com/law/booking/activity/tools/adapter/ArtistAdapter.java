@@ -51,10 +51,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
     @Override
     public void onBindViewHolder(@NonNull ProviderViewHolder holder, int position) {
         Usermodel provider = providerList.get(position);
-        String name = context.getString(R.string.name);
         String address = context.getString(R.string.address);
         String years = context.getString(R.string.years);
-        holder.nameTextView.setText(name+": "+provider.getUsername());
+        holder.nameTextView.setText(provider.getUsername());
 
         if(provider.getLengthOfService() == null){
             holder.experience.setText("N/A");

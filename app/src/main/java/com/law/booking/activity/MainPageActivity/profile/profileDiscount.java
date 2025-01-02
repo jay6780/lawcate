@@ -98,7 +98,6 @@ public class profileDiscount extends AppCompatActivity {
             return;
         }
         String location = getString(R.string.address);
-        String names = getString(R.string.name);
         String taon = getString(R.string.yearss);
         inititle();
         image = getIntent().getStringExtra("image");
@@ -118,7 +117,7 @@ public class profileDiscount extends AppCompatActivity {
         Log.d(TAG, "Storing Email: " + email);
         SPUtils.getInstance().put(AppConstans.providers, key);
         SPUtils.getInstance().put(AppConstans.email, email);
-        name.setText(names+": " + (providerName != null ? providerName : "N/A"));
+        name.setText((providerName != null ? providerName : "N/A"));
         userAddress.setText(location+": " + (address != null ? address : "N/A"));
         messageImg.setOnClickListener(view -> chat());
         initTabs();

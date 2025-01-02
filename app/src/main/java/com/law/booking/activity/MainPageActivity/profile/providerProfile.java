@@ -98,7 +98,6 @@ public class providerProfile extends AppCompatActivity {
             return;
         }
         String location = getString(R.string.address);
-        String names = getString(R.string.name);
         String taon = getString(R.string.yearss);
         image = getIntent().getStringExtra("image");
         providerName = getIntent().getStringExtra("username");
@@ -114,7 +113,7 @@ public class providerProfile extends AppCompatActivity {
         SPUtils.getInstance().put(AppConstans.email, email);
 
         initShowbook();
-        name.setText(names+": " + (providerName != null ? providerName : "N/A"));
+        name.setText((providerName != null ? providerName : "N/A"));
         userAddress.setText(location+": " + (address != null ? address : "N/A"));
         messageImg.setOnClickListener(view -> chat());
         initTabs();

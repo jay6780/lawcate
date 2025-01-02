@@ -46,7 +46,7 @@ public class SetAdminadapter extends RecyclerView.Adapter<SetAdminadapter.Provid
     @Override
     public void onBindViewHolder(@NonNull SetAdminadapter.ProviderViewHolder holder, int position) {
         Usermodel provider = providerList.get(position);
-        holder.provider_name.setText(provider.getName());
+        holder.provider_name.setText(provider.getUsername());
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (userId.equals(provider.getKey())) {
             holder.cancel.setAlpha(0.5f);

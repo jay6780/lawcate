@@ -144,6 +144,7 @@ public class AddService extends AppCompatActivity {
     }
 
     private void saveServiceData(Uri imageUri) {
+        try {
         String serviceName = servicename.getText().toString().trim();
         int servicePrice = Integer.parseInt(price.getText().toString().trim());
 
@@ -151,6 +152,9 @@ public class AddService extends AppCompatActivity {
             uploadImageToFirebase(imageUri, serviceName, servicePrice, "");
         } else {
             Toast.makeText(this, "Please provide valid law data", Toast.LENGTH_SHORT).show();
+        }
+        }catch (NumberFormatException e){
+            Toast.makeText(this,"Please provided valid price",Toast.LENGTH_SHORT).show();
         }
     }
 

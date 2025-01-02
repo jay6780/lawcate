@@ -110,7 +110,7 @@ public class providerProfile5 extends AppCompatActivity {
         Log.d(TAG, "Storing Email: " + email);
         SPUtils.getInstance().put(AppConstans.providers, key);
         SPUtils.getInstance().put(AppConstans.email, email);
-        name.setText(names+": " + (providerName != null ? providerName : "N/A"));
+        name.setText((providerName != null ? providerName : "N/A"));
         userAddress.setText(location+": " + (address != null ? address : "N/A"));
         initTabs();
         Glide.with(this)

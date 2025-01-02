@@ -24,6 +24,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/newlogo"
+        android:exported="true"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/newlogo"
         android:supportsRtl="true"

@@ -43,6 +43,7 @@ import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.ArtistAdapter;
 import com.law.booking.activity.tools.adapter.ArtistAdapter2;
+import com.law.booking.activity.tools.adapter.emptyAdapter_package;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
@@ -67,6 +68,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
     private SmartRefreshLayout refreshLayout;
     private SkeletonScreen skeletonScreen;
     private String favoriteId;
+    private emptyAdapter_package empty;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +88,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
         TopArt = findViewById(R.id.TopArt);
         rl = findViewById(R.id.user_viewsmenu);
         rl.setVisibility(View.VISIBLE);
+        empty = new emptyAdapter_package(this);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -202,7 +205,6 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
     private void initFirebase(String favoriteId) {
         providerList = new ArrayList<>();
         providerAdapter = new ArtistAdapter(providerList, this);
-        artistRecycler.setAdapter(providerAdapter);
         databaseReference = FirebaseDatabase.getInstance().getReference("Lawyer").child(favoriteId);
         artistRecycler.setLayoutManager(new LinearLayoutManager(this));
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -212,9 +214,19 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
                     Usermodel usermodel = dataSnapshot.getValue(Usermodel.class);
                     if (usermodel != null) {
                         usermodel.setKey(dataSnapshot.getKey());
-                        providerList.add(usermodel);
+                        Boolean isSuperAdmin = dataSnapshot.child("isSuperAdmin").getValue(Boolean.class);
+                        if ((isSuperAdmin == null || !isSuperAdmin)) {
+                            providerList.add(usermodel);
+                        }
                     }
                     providerAdapter.notifyDataSetChanged();
+                    if(providerList.isEmpty()){
+                        artistRecycler.setAdapter(empty);
+                        TopArt.setVisibility(View.GONE);
+                    }else{
+                        artistRecycler.setAdapter(providerAdapter);
+                        TopArt.setVisibility(View.VISIBLE);
+                    }
 
                 }
             }

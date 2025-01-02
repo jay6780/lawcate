@@ -38,6 +38,7 @@ import com.law.booking.activity.tools.adapter.ArtistAdapter2;
 import com.law.booking.activity.tools.adapter.ImageAdapter;
 
 import com.law.booking.R;
+import com.law.booking.activity.tools.adapter.emptyAdapter_package;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
@@ -61,6 +62,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
     private LinearLayout bannercontent, linearView;
     private SmartRefreshLayout refreshLayout;
     private boolean isCorporate = true;
+    private emptyAdapter_package empty;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -209,10 +211,9 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
         databaseReference2 = FirebaseDatabase.getInstance().getReference("Events");
         artistRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         providerList = new ArrayList<>();
+        empty = new emptyAdapter_package(getActivity());
         providerAdapter = new ArtistAdapter(providerList, getActivity());
-        artistRecycler.setAdapter(providerAdapter);
 
-        // Initialize eventOrg RecyclerView for eventOrgList
         eventOrg.setLayoutManager(new LinearLayoutManager(getActivity()));
         eventOrgList = new ArrayList<>();
         eventOrgAdapter = new ArtistAdapter2(eventOrgList, getActivity());
@@ -233,6 +234,11 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
 
                 }
                 providerAdapter.notifyDataSetChanged();
+                if (providerList.isEmpty()) {
+                    artistRecycler.setAdapter(empty);
+                } else {
+                    artistRecycler.setAdapter(providerAdapter);
+                }
             }
 
             @Override

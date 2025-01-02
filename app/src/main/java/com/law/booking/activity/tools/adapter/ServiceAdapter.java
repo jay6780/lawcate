@@ -89,8 +89,6 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
                                                                                     serviceList.remove(position);
                                                                                     notifyItemRemoved(position);
                                                                                     Toast.makeText(view.getContext(), "Service deleted: " + serviceNameToDelete, Toast.LENGTH_SHORT).show();
-                                                                                } else {
-                                                                                    Toast.makeText(view.getContext(), "Invalid position or empty list.", Toast.LENGTH_SHORT).show();
                                                                                 }
                                                                             });
                                                                 }

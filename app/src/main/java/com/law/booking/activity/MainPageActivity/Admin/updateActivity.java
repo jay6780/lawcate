@@ -54,7 +54,12 @@ public class updateActivity extends AppCompatActivity {
         String key = reference.push().getKey();
         if (key != null) {
             reference.child(key).setValue(new ApkDetails(apkUrl, apkVersionName, apkName))
-                    .addOnSuccessListener(aVoid -> Toast.makeText(updateActivity.this, "APK Details saved successfully!", Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(updateActivity.this, "APK Details saved successfully!", Toast.LENGTH_SHORT).show();
+                        apkUrlEditText.setText("");
+                        apkVersionNameEditText.setText("");
+                        apkNameEditText.setText("");
+                    })
                     .addOnFailureListener(e -> Toast.makeText(updateActivity.this, "Failed to save APK Details", Toast.LENGTH_SHORT).show());
         }
     }

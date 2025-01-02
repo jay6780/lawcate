@@ -32,6 +32,7 @@ import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.ArtistAdapter;
+import com.law.booking.activity.tools.adapter.emptyAdapter_package;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,7 @@ public class hmua extends AppCompatActivity {
     private boolean isSkeletonShown = false;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     String title;
+    private emptyAdapter_package empty;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +66,7 @@ public class hmua extends AppCompatActivity {
         ll_skeleton.setVisibility(View.VISIBLE);
         providerList = new ArrayList<>();
         providerAdapter = new ArtistAdapter(providerList, this);
-        providerRecycler.setAdapter(providerAdapter);
+        empty = new emptyAdapter_package(this);
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
@@ -116,6 +118,13 @@ public class hmua extends AppCompatActivity {
                     }
                 }
                 providerAdapter.notifyDataSetChanged();
+
+                if (providerList.isEmpty()) {
+                    providerRecycler.setAdapter(empty);
+                } else {
+                    providerRecycler.setAdapter(providerAdapter);
+                }
+
             }
 
             @Override

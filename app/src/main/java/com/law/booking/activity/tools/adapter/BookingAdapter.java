@@ -160,7 +160,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         });
 
         holder.itemView.setOnClickListener(view -> {
-            DatabaseReference events = FirebaseDatabase.getInstance().getReference("Events").child(booking.getKey());
+            DatabaseReference events = FirebaseDatabase.getInstance().getReference("ADMIN").child(booking.getKey());
             events.get().addOnCompleteListener(task -> {
                 Intent intent;
                 if (task.isSuccessful() && task.getResult().exists()) {
@@ -224,7 +224,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     private void checkIfUserIsGuess(String userId, String time, String heads, String cash, String serviceName, String price, String date, String address, String provideremail, String curruntUserEmail,
                                     String providerName, String image, Context context, String key, String age, String lengthOfservice, String phonenumber,String snapshotkey) {
         DatabaseReference guessRef = FirebaseDatabase.getInstance().getReference("Client").child(userId);
-        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("Events").child(key);  // Reference to check if the event exists
+        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("ADMIN").child(key);  // Reference to check if the event exists
         guessRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

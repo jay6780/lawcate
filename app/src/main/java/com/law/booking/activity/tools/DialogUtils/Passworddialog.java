@@ -244,7 +244,7 @@ public class Passworddialog {
     }
 
     private void proceedWithLogin_event(String userId, Context context) {
-        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child("Events").child(userId);
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child("ADMIN").child(userId);
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -1,10 +1,11 @@
-package com.law.booking.activity.events;
+package com.law.booking.activity.MainPageActivity.Admin;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,24 +18,25 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.law.booking.activity.tools.Model.Usermodel;
-import com.law.booking.activity.tools.adapter.SetEvntadapter;
 import com.law.booking.R;
+import com.law.booking.activity.tools.Model.Usermodel;
+import com.law.booking.activity.tools.adapter.Chat_supportadapter;
+import com.law.booking.activity.tools.adapter.SetAdminadapter;
 
 import java.util.ArrayList;
 
-public class setEvent_admin extends AppCompatActivity {
-
+public class admin_chatsupport extends AppCompatActivity {
     RecyclerView admin_recycler;
     private ArrayList<Usermodel> providerList;
     private DatabaseReference databaseReference;
-    private SetEvntadapter setAdminadapter;
+    private Chat_supportadapter setAdminadapter;
     private SearchView searchProvider;
     private ImageView back;
+    private TextView artist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set_event_admin);
+        setContentView(R.layout.activity_set_super_admin);
         changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -46,15 +48,17 @@ public class setEvent_admin extends AppCompatActivity {
         initFirebase();
         setupSearchView();
         back.setOnClickListener(view -> onBackPressed());
+        artist = findViewById(R.id.artist);
+        artist.setText("Admin List");
 
     }
 
 
     private void initFirebase() {
         databaseReference = FirebaseDatabase.getInstance().getReference("ADMIN");
-        admin_recycler.setLayoutManager(new LinearLayoutManager(setEvent_admin.this));
+        admin_recycler.setLayoutManager(new LinearLayoutManager(admin_chatsupport.this));
         providerList = new ArrayList<>();
-        setAdminadapter = new SetEvntadapter(providerList,setEvent_admin.this);
+        setAdminadapter = new Chat_supportadapter(providerList, admin_chatsupport.this);
         admin_recycler.setAdapter(setAdminadapter);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override

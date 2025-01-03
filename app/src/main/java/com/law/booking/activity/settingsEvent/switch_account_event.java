@@ -75,7 +75,7 @@ public class switch_account_event extends AppCompatActivity {
         for (Account_manager_admin account : storedAccounts) {
             storedEmails.add(account.getEmail());
         }
-        DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Events");
+        DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("ADMIN");
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

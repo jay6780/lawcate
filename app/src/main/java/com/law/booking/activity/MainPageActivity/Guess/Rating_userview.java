@@ -312,7 +312,7 @@ public class Rating_userview extends AppCompatActivity {
     private void initloadProviderdata() {
         if (key != null && !key.isEmpty()) {
             DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(key);
-            DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("Events").child(key);
+            DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("ADMIN").child(key);
 
             adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

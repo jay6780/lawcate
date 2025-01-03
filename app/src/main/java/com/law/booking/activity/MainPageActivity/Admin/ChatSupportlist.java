@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -25,22 +26,23 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.newHome;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
-import com.law.booking.activity.tools.adapter.EventUserAdapter;
+import com.law.booking.activity.tools.adapter.UserchatAdapter;
+import com.law.booking.activity.tools.adapter.chatsupport_adapter;
 import com.law.booking.activity.tools.adapter.emptyAdapter;
-import com.law.booking.R;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Event_userchat extends AppCompatActivity {
+public class ChatSupportlist extends AppCompatActivity {
     RecyclerView providerRecycler;
     DatabaseReference databaseReference, chatRooms;
     ArrayList<Usermodel> providerList;
-    EventUserAdapter providerAdapter;
+    chatsupport_adapter providerAdapter;
     private emptyAdapter emptyAdapter;
     private ImageView backBtn;
     private String currentUserEmail;
@@ -48,21 +50,23 @@ public class Event_userchat extends AppCompatActivity {
     private SkeletonScreen skeletonScreen;
     private LinearLayout ll_skeleton;
     private boolean isSkeletonShown = false;
-
+    private TextView profiletxt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_userchat);
+        setContentView(R.layout.admin_userlayout);
         providerRecycler = findViewById(R.id.provider);
         ll_skeleton = findViewById(R.id.ll_skeleton);
         backBtn = findViewById(R.id.back);
         userSearch = findViewById(R.id.search);
+        profiletxt = findViewById(R.id.profiletxt);
+        profiletxt.setText("Chat support");
         providerRecycler.setLayoutManager(new LinearLayoutManager(this));
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         chatRooms = FirebaseDatabase.getInstance().getReference("chatRooms");
-        databaseReference = FirebaseDatabase.getInstance().getReference("Lawyer");
+        databaseReference = FirebaseDatabase.getInstance().getReference("ADMIN");
         providerList = new ArrayList<>();
-        providerAdapter = new EventUserAdapter(providerList, this);
+        providerAdapter = new chatsupport_adapter(providerList, this);
         emptyAdapter = new emptyAdapter(this);
         providerRecycler.setAdapter(providerAdapter);
         ll_skeleton.setVisibility(View.VISIBLE);
@@ -86,7 +90,7 @@ public class Event_userchat extends AppCompatActivity {
                 .color(R.color.colorFontGreyDark)
                 .angle(20)
                 .show();
-        new android.os.Handler().postDelayed(() -> {
+        new Handler().postDelayed(() -> {
             skeletonScreen.hide();
             providerRecycler.setVisibility(View.VISIBLE);
             ll_skeleton.setVisibility(View.GONE);
@@ -197,12 +201,22 @@ public class Event_userchat extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String emailInDatabase = snapshot.child("email").getValue(String.class);
                     if (emailInDatabase != null && emailInDatabase.equals(targetEmail)) {
-                        Usermodel usermodel = snapshot.getValue(Usermodel.class);
-                        if (usermodel != null) {
-                            usermodel.setKey(snapshot.getKey());
-                            providerList.add(usermodel);
-                            providerAdapter.notifyDataSetChanged();
+                        boolean isDuplicate = false;
+                        for (Usermodel existingProvider : providerList) {
+                            if (existingProvider.getEmail().equals(emailInDatabase)) {
+                                isDuplicate = true;
+                                break;
+                            }
                         }
+                        if (!isDuplicate) {
+                            Usermodel usermodel = snapshot.getValue(Usermodel.class);
+                            if (usermodel != null) {
+                                usermodel.setKey(snapshot.getKey());
+                                providerList.add(usermodel);
+                                providerAdapter.notifyDataSetChanged();
+                            }
+                        }
+
                         providerFound = true;
                         break;
                     }
@@ -211,16 +225,18 @@ public class Event_userchat extends AppCompatActivity {
                 if (providerFound) {
                     providerAdapter.notifyDataSetChanged();
                 } else {
-                    Log.d("User_list", "No provider data found for email: " + targetEmail);
+                    Log.d("User_list", "No provider data found for email: " + targetEmail);;
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(Event_userchat.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChatSupportlist.this, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
                 Log.e("User_list", "DatabaseError: " + databaseError.getMessage());
             }
         });
     }
+
 
     private void changeStatusBarColor(int color) {
         Window window = getWindow();
@@ -230,8 +246,9 @@ public class Event_userchat extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent back = new Intent(getApplicationContext(), newHome.class);
-        startActivity(back);
+        Intent userChat = new Intent(getApplicationContext(), newHome.class);
+        startActivity(userChat);
+        overridePendingTransition(0, 0);
         finish();
         super.onBackPressed();
     }

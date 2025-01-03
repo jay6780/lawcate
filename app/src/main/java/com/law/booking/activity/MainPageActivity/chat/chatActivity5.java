@@ -58,18 +58,22 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.law.booking.activity.MainPageActivity.Admin.Event_userchat;
-import com.law.booking.activity.tools.DialogUtils.Dialog;
-import com.law.booking.activity.tools.Model.Message;
-import com.law.booking.activity.tools.Utils.AppConstans;
-import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.activity.tools.adapter.MessageAdapter3;
 import com.kevalpatel2106.emoticongifkeyboard.EmoticonGIFKeyboardFragment;
 import com.kevalpatel2106.emoticongifkeyboard.emoticons.Emoticon;
 import com.kevalpatel2106.emoticongifkeyboard.emoticons.EmoticonSelectListener;
 import com.kevalpatel2106.emoticonpack.android8.Android8EmoticonProvider;
 import com.kevalpatel2106.gifpack.giphy.GiphyGifProvider;
 import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.Admin.ChatSupportlist;
+import com.law.booking.activity.MainPageActivity.Admin.Event_userchat;
+import com.law.booking.activity.MainPageActivity.Admin.UserChat;
+import com.law.booking.activity.tools.DialogUtils.Dialog;
+import com.law.booking.activity.tools.Model.Message;
+import com.law.booking.activity.tools.Model.Service;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
+import com.law.booking.activity.tools.adapter.MessageAdapter2;
+import com.law.booking.activity.tools.adapter.chat_supportmsgadapter;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.yalantis.ucrop.UCrop;
 
@@ -79,12 +83,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import app.m4ntis.blinkingloader.BlinkingLoader;
 import ly.kite.photopicker.Photo;
 import ly.kite.photopicker.PhotoPicker;
 
-public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallback {
+public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallback, chat_supportmsgadapter.HelpLayoutHandler {
     private static final int REQUEST_CODE_PHOTO_PICKER = 1;
     private ImageView back, avatar, send, imagePick, emoji, location,
             imageonline;
@@ -94,7 +99,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
     private String chatRoomId, providerName,address,key;
     private DatabaseReference databaseReference, guessRef, adminRef;
     private ArrayList<Message> messageList;
-    private MessageAdapter3 messageAdapter;
+    private chat_supportmsgadapter messageAdapter;
     private String image;
     private Uri imageUri;
     private String providerEmail;
@@ -102,7 +107,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference2;
     RelativeLayout relativeLayout;
-    private static final String TAG = "chatActivty3";
+    private static final String TAG = "chatActivty5";
     FrameLayout frameLayout,mapFrame;
     EmoticonGIFKeyboardFragment emoticonFragment;
     FragmentTransaction fragmentTransaction;
@@ -110,8 +115,6 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
     private static final int EXPANDED_WIDTH = 250;
     private static final int COLLAPSED_WIDTH = 190;
     private String locationUrl = "";
-    private String cancelledmessage;
-
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
     }
@@ -123,6 +126,10 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
     private DialogPlus dialogPlus;
     private String lengthOfService,age;
     private BlinkingLoader dotLoading1;
+    private String cancelledmessage;
+    private View sending;
+    private LinearLayout help_layout;
+    private TextView others,verify_account;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,20 +137,24 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
         // Initialize views
         back = findViewById(R.id.back);
         avatar = findViewById(R.id.avatar);
+        sending = findViewById(R.id.sending);
         location = findViewById(R.id.location);
+        help_layout = findViewById(R.id.help_layout);
+        others = findViewById(R.id.others);
+        verify_account = findViewById(R.id.verify_account);
         imagePick = findViewById(R.id.imagePick);
         relativeLayout = findViewById(R.id.relativeLay);
         imageonline = findViewById(R.id.imgOnline2);
         frameLayout = findViewById(R.id.emojiContainer);
+
         mapFrame = findViewById(R.id.mapFrame);
         username = findViewById(R.id.username);
-        dotLoading1 = findViewById(R.id.dotLoading1);
         send = findViewById(R.id.send);
+        dotLoading1 = findViewById(R.id.dotLoading1);
         messageText = findViewById(R.id.chatText);
         chatRecycler = findViewById(R.id.chatRecycler);
         emoji = findViewById(R.id.emoji);
         mapView = findViewById(R.id.mapping);
-        Log.d(TAG,"ImchatActivity3");
         defaultHeight = relativeLayout.getLayoutParams().height;
         changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         providerEmail = getIntent().getStringExtra("providerEmail");
@@ -153,16 +164,17 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
         providerName = getIntent().getStringExtra("providerName");
         image = getIntent().getStringExtra("image");
         guessRef = FirebaseDatabase.getInstance().getReference("Client");
-        adminRef = FirebaseDatabase.getInstance().getReference("ADMIN");
+        adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
         lengthOfService = getIntent().getStringExtra("lengthOfService");
-        age = getIntent().getStringExtra("age");
-        isOnline = getIntent().getBooleanExtra("isOnline", false);
         cancelledmessage = getIntent().getStringExtra("cancelledmessage");
+        age = getIntent().getStringExtra("age");
+        Log.d("Imchat",TAG);
+        isOnline = getIntent().getBooleanExtra("isOnline", false);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        storageReference = FirebaseStorage.getInstance().getReference("chatImages"); // Reference to Firebase Storage
+        storageReference = FirebaseStorage.getInstance().getReference("chatImages");
         username.setText(providerName);
+        initTypingStatus();
         initAvatar();
-        inittypingstatus();
         initMap(savedInstanceState);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -178,8 +190,9 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference2 = firebaseDatabase.getReference();
         messageList = new ArrayList<>();
-
         emoji.setVisibility(View.VISIBLE);
+
+        checkAndSendWelcomeMessage(providerEmail, providerName, image,address,key);
 
         emoji.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,8 +207,8 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(chatActivity3.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(chatActivity3.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                if (ContextCompat.checkSelfPermission(chatActivity5.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(chatActivity5.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                 } else {
                     hideKeyboard();
                     frameLayout.setVisibility(View.GONE);
@@ -205,6 +218,33 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
                 }
             }
         });
+        new Handler().postDelayed(() -> {
+            sendCancelledmessage();
+        }, 1500);
+
+
+        verify_account.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                help_layout.setVisibility(View.GONE);
+                sending.setVisibility(View.VISIBLE);
+                String welcomeMessage="To Verify your account you need to passed PRC Or (List of Passers of Supreme court)";
+                sendInitialMessage(providerEmail, welcomeMessage, providerName, image, key);
+            }
+        });
+
+
+        others.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sending.setVisibility(View.VISIBLE);
+                help_layout.setVisibility(View.GONE);
+                String welcomeMessage = "Wait for several hours to answer your other question by admin please standby thank you!";
+                sendInitialMessage(providerEmail, welcomeMessage, providerName, image, key);
+            }
+        });
+
+
 
 
         messageText.addTextChangedListener(new TextWatcher() {
@@ -233,23 +273,91 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
             }
         });
 
-        new Handler().postDelayed(() -> {
-            sendCancelledmessage();
-        }, 1500);
-
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         messageList = new ArrayList<>();
-        messageAdapter = new MessageAdapter3(messageList, this);
+        messageAdapter = new chat_supportmsgadapter(messageList, this);
         chatRecycler.setLayoutManager(new LinearLayoutManager(this));
         chatRecycler.setAdapter(messageAdapter);
+        messageAdapter.setOnMessageActionListener(new chat_supportmsgadapter.OnMessageActionListener() {
+            @Override
+            public void onAskQuestion(boolean askAgain) {
+                if(askAgain){
+                    help_layout.setVisibility(View.VISIBLE);
+                    sending.setVisibility(View.GONE);
+                }
+            }
+        });
 
         loadMessages();
+
         back.setOnClickListener(v -> onBackPressed());
         send.setOnClickListener(v -> sendMessage());
         imagePick.setOnClickListener(v -> openImagePicker());
 
+
     }
+
+
+
+    private void checkAndSendWelcomeMessage(String providerEmail, String username, String image, String address, String key) {
+        DatabaseReference messageRef = databaseReference2.child("chatRooms").child(chatRoomId).child("messages");
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("ADMIN");
+        messageRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                                // Check if the provider email exists in the admin list
+                    eventRef.orderByChild("email").equalTo(providerEmail)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        String welcomeMessage = "Hi, my name is: " + username + "\n" +
+                                                "How may i help you?";
+                                        new Handler().postDelayed(() -> {
+                                            help_layout.setVisibility(View.VISIBLE);
+                                            sending.setVisibility(View.GONE);
+                                            boolean askAgain = false;
+                                            SPUtils.getInstance().put(AppConstans.AskAgain,askAgain);
+                                            sendInitialMessage(providerEmail, welcomeMessage, username, image, key);
+                                            }, 1000);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Toast.makeText(chatActivity5.this, "Error checking admin", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            }
+                        }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(chatActivity5.this, "Error retrieving service", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void sendInitialMessage(String providerEmail, String welcomeMessage, String username, String image,String key) {
+        String messageTextValue = welcomeMessage;
+        if (!messageTextValue.isEmpty()) {
+            DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
+            String messageId = messageRef.getKey();
+            Message message = new Message(providerEmail, messageTextValue, System.currentTimeMillis(), username, image, "", messageId,key);
+            messageRef.setValue(message)
+                    .addOnSuccessListener(aVoid -> {
+                        messageText.setText("");
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(chatActivity5.this, "Failed to send message", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+//            Toast.makeText(this, "Message is empty", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void sendCancelledmessage() {
         if (cancelledmessage == null) {
@@ -262,8 +370,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
-
-    private void inittypingstatus() {
+    private void initTypingStatus() {
         DatabaseReference typingRef = FirebaseDatabase.getInstance()
                 .getReference("typingResult")
                 .child(chatRoomId);
@@ -292,6 +399,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
                 Log.e("TypingResultError", "Failed to retrieve typing status: " + error.getMessage());
             }
         });
+
     }
 
     private void initSavedData() {
@@ -369,7 +477,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
 
     private void initKeyboard() {
         EmoticonGIFKeyboardFragment.GIFConfig giphyGifConfig = new EmoticonGIFKeyboardFragment.GIFConfig(
-                GiphyGifProvider.create(chatActivity3.this, "Zba48JWtC8FY5i6j9xgPzP6eTc5iNidS")
+                GiphyGifProvider.create(chatActivity5.this, "Zba48JWtC8FY5i6j9xgPzP6eTc5iNidS")
         );
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -422,7 +530,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
                         Toast.makeText(getApplicationContext(),"Sent gif Success!",Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(chatActivity3.this, "Failed to send GIF", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(chatActivity5.this, "Failed to send GIF", Toast.LENGTH_SHORT).show();
                     });
         });
     }
@@ -450,6 +558,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
                 Message message = messageSnapshot.getValue(Message.class);
                 if (message != null) {
                     messageList.add(message);
+                    SPUtils.getInstance().put(AppConstans.lastmessage,message.getMessage());
                     Collections.sort(messageList, new Comparator<Message>() {
                         @Override
                         public int compare(Message m1, Message m2) {
@@ -503,7 +612,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(chatActivity3.this, "Error loading messages", Toast.LENGTH_SHORT).show();
+                Toast.makeText(chatActivity5.this, "Error loading messages", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -522,7 +631,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
                             messageText.setText(""); // Clear text field after sending
                         })
                         .addOnFailureListener(e -> {
-                            Toast.makeText(chatActivity3.this, "Failed to send message", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(chatActivity5.this, "Failed to send message", Toast.LENGTH_SHORT).show();
                         });
             });
         } else {
@@ -557,7 +666,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
                             // Handle error
-                            Toast.makeText(chatActivity3.this, "Failed to fetch user details", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(chatActivity5.this, "Failed to fetch user details", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -566,7 +675,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Handle error
-                Toast.makeText(chatActivity3.this, "Failed to fetch user details", Toast.LENGTH_SHORT).show();
+                Toast.makeText(chatActivity5.this, "Failed to fetch user details", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -646,11 +755,11 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
                                 }))
                         .addOnFailureListener(e -> {
                             dialogPlus.dismiss();
-                            Toast.makeText(chatActivity3.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(chatActivity5.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
                         });
             } catch (IOException e) {
                 dialogPlus.dismiss(); // Dismiss on error
-                Toast.makeText(chatActivity3.this, "Failed to get image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(chatActivity5.this, "Failed to get image", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -666,7 +775,7 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
                         Toast.makeText(getApplicationContext(),"Sent gif Success!",Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(chatActivity3.this, "Failed to send image message", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(chatActivity5.this, "Failed to send image message", Toast.LENGTH_SHORT).show();
                     });
         });
     }
@@ -710,6 +819,14 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
         super.onPointerCaptureChanged(hasCapture);
     }
 
+    @Override
+    public void onHelpLayoutTriggered(boolean isVisible) {
+        if(isVisible){
+            help_layout.setVisibility(View.VISIBLE);
+            sending.setVisibility(View.GONE);
+        }
+    }
+
 
     interface UserDetailsCallback {
         void onUserDetailsFetched(String username, String imageUrl);
@@ -729,10 +846,14 @@ public class chatActivity3 extends AppCompatActivity implements OnMapReadyCallba
             mapFrame.setVisibility(View.GONE);
             return;
         }
-        Intent userChat = new Intent(getApplicationContext(), Event_userchat.class);
+
+
+        Intent userChat = new Intent(getApplicationContext(), ChatSupportlist.class);
         startActivity(userChat);
         overridePendingTransition(0, 0);
         finish();
+
+
         super.onBackPressed();
     }
     private void resetRelativeLayoutHeight() {

@@ -165,7 +165,7 @@ public class profileDiscount extends AppCompatActivity {
 
     private void inititle() {
         DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("Lawyer").child(key);
-        DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference("Events").child(key);
+        DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference("ADMIN").child(key);
         databaseReference3.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

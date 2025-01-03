@@ -284,7 +284,7 @@ public class login extends AppCompatActivity {
                 String userId = currentUser.getUid();
                 DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("Client").child(userId);
                 DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference().child("Lawyer").child(userId);
-                DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference().child("Events").child(userId);
+                DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference().child("ADMIN").child(userId);
                 dialogPlus = new Dialog().loadingDialog(this);
                 dialogPlus.show();
 
@@ -406,7 +406,7 @@ public class login extends AppCompatActivity {
     private void proceedWithLogin(String userId) {
         DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("Client").child(userId);
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference().child("Lawyer").child(userId);
-        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference().child("Events").child(userId);
+        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference().child("ADMIN").child(userId);
 
         ValueEventListener studentListener = new ValueEventListener() {
             @Override

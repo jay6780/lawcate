@@ -21,6 +21,7 @@ public class Usermodel {
     private boolean isFamily;
     private boolean isImmigration;
     private boolean isProperty;
+    private boolean isVerify;
     public Usermodel() {
     }
 
@@ -36,6 +37,10 @@ public class Usermodel {
         this.birthday = birthday;
     }
 
+
+    public boolean isVerify() {
+        return isVerify;
+    }
 
     public boolean isCorporate() {
         return isCorporate;

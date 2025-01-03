@@ -596,7 +596,7 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         if (currentUser != null) {
             String userId = currentUser.getUid();
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Client").child(userId);
-            DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Events").child(key);
+            DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("ADMIN").child(key);
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

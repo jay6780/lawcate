@@ -163,7 +163,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
 
     private void initAdminData() {
         admin = FirebaseDatabase.getInstance().getReference("Lawyer").child(key);
-        events = FirebaseDatabase.getInstance().getReference("Events").child(key);
+        events = FirebaseDatabase.getInstance().getReference("ADMIN").child(key);
         admin.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

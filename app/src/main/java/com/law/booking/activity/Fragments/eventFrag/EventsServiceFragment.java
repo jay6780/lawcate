@@ -185,7 +185,7 @@ public class EventsServiceFragment extends Fragment implements profileServiceAda
     }
 
     private void initAdminData() {
-        admin = FirebaseDatabase.getInstance().getReference("Events").child(key);
+        admin = FirebaseDatabase.getInstance().getReference("ADMIN").child(key);
         admin.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

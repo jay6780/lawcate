@@ -93,4 +93,9 @@ public class AppConstans {
     public static final String Notification = "Notification";
     public static final String favoriteId = "favoriteId";
     public static final String userType = "userType";
+    public static final String Administrator ="Administrator";
+    public static final String Verify ="Verify";
+    public static final String AskAgain ="AskAgain";
+    public static final String chatSupportList ="chatSupportList";
+    public static final String ChatAdminEmail = "ChatAdminEmail";
 }

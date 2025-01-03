@@ -59,6 +59,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import com.law.booking.activity.MainPageActivity.Admin.Event_userchat;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Message;
 import com.law.booking.activity.tools.Model.Service;
@@ -168,7 +169,7 @@ public class chatActivity extends AppCompatActivity implements OnMapReadyCallbac
         schedule = getIntent().getStringExtra("schedule");
         guessRef = FirebaseDatabase.getInstance().getReference("Client");
         adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
-        eventRef = FirebaseDatabase.getInstance().getReference("Events");
+        eventRef = FirebaseDatabase.getInstance().getReference("ADMIN");
         Log.d(TAG,"isOnline:"+isOnline);
         availedmessage = getIntent().getStringExtra("availedmessage");
         cancelledmessage = getIntent().getStringExtra("cancelledmessage");
@@ -1003,10 +1004,19 @@ public class chatActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapFrame.setVisibility(View.GONE);
             return;
         }
-        Intent userChat = new Intent(getApplicationContext(), User_list.class);
-        startActivity(userChat);
-        overridePendingTransition(0, 0);
-        finish();
+        if(SPUtils.getInstance().getBoolean(AppConstans.Administrator)){
+            Intent userChat = new Intent(getApplicationContext(), Event_userchat.class);
+            startActivity(userChat);
+            overridePendingTransition(0, 0);
+            finish();
+        }else{
+            Intent userChat = new Intent(getApplicationContext(), User_list.class);
+            startActivity(userChat);
+            overridePendingTransition(0, 0);
+            finish();
+        }
+
+
         super.onBackPressed();
     }
     private void resetRelativeLayoutHeight() {

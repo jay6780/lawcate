@@ -53,7 +53,7 @@ public class history_book_event extends AppCompatActivity {
         bookingAdapters = new BookingAdapters_event(getSupportFragmentManager());
         bookingpager.setAdapter(bookingAdapters);
         initTabs();
-        title.setText("Event History");
+        title.setText("Admin History");
 
     }
 

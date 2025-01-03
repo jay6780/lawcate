@@ -58,6 +58,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.law.booking.activity.MainPageActivity.Admin.ChatSupportlist;
 import com.law.booking.activity.MainPageActivity.Admin.UserChat;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Message;
@@ -155,7 +156,7 @@ public class chatActivity2 extends AppCompatActivity implements OnMapReadyCallba
         lengthOfService = getIntent().getStringExtra("lengthOfService");
         cancelledmessage = getIntent().getStringExtra("cancelledmessage");
         age = getIntent().getStringExtra("age");
-        Log.d(TAG,"ImchatActivity2");
+        Log.d("Imchat",TAG);
         isOnline = getIntent().getBooleanExtra("isOnline", false);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         storageReference = FirebaseStorage.getInstance().getReference("chatImages");
@@ -729,10 +730,21 @@ public class chatActivity2 extends AppCompatActivity implements OnMapReadyCallba
             mapFrame.setVisibility(View.GONE);
             return;
         }
-        Intent userChat = new Intent(getApplicationContext(), UserChat.class);
-        startActivity(userChat);
-        overridePendingTransition(0, 0);
-        finish();
+
+        if(SPUtils.getInstance().getBoolean(AppConstans.chatSupportList)){
+            Intent userChat = new Intent(getApplicationContext(), ChatSupportlist.class);
+            startActivity(userChat);
+            overridePendingTransition(0, 0);
+            finish();
+        }else{
+            Intent userChat = new Intent(getApplicationContext(), UserChat.class);
+            startActivity(userChat);
+            overridePendingTransition(0, 0);
+            finish();
+        }
+
+
+
         super.onBackPressed();
     }
     private void resetRelativeLayoutHeight() {

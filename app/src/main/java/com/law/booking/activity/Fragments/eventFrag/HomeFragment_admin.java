@@ -1,4 +1,4 @@
-package com.law.booking.activity.Fragments.UserFragment;
+package com.law.booking.activity.Fragments.eventFrag;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -28,16 +28,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.Provider.Event_provider;
 import com.law.booking.activity.MainPageActivity.Provider.hmua;
 import com.law.booking.activity.tools.Model.Discounts;
 import com.law.booking.activity.tools.Model.Usermodel;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.Utils.Utils;
 import com.law.booking.activity.tools.adapter.ArtistAdapter;
 import com.law.booking.activity.tools.adapter.ArtistAdapter2;
 import com.law.booking.activity.tools.adapter.ImageAdapter;
-
-import com.law.booking.R;
 import com.law.booking.activity.tools.adapter.emptyAdapter_package;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
@@ -48,7 +49,7 @@ import com.youth.banner.indicator.CircleIndicator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements OnRefreshListener {
+public class HomeFragment_admin extends Fragment implements OnRefreshListener {
     private Banner banner;
     private SearchView searchProvider;
     private RecyclerView artistRecycler, eventOrg;
@@ -63,6 +64,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
     private SmartRefreshLayout refreshLayout;
     private boolean isCorporate = true;
     private emptyAdapter_package empty;
+    private TextView title;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,13 +72,22 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
         initClick(view);
         initView(view);
         initFirebase();
-        initgender();
         initfirebase2();
         setupSearchView();
         initSkeleton();
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableRefresh(true);
+        title.setText("Search Lawyer");
+
+        if (!SPUtils.getInstance().getBoolean(AppConstans.userType)){
+            linearView.setVisibility(View.GONE);
+            TopArt.setVisibility(View.GONE);
+            ViewAll.setVisibility(View.GONE);
+            category.setVisibility(View.GONE);
+        }
         return view;
+
+
 
     }
 
@@ -137,7 +148,6 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
                 if (newText.isEmpty()) {
                     resetAllData();
                 } else {
-                    filterProviderList(newText);
                     filterEventOrgList(newText);
                 }
                 return true;
@@ -146,18 +156,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
     }
 
     private void resetAllData() {
-        // Reset visibility for all headers
-        bannercontent.setVisibility(View.VISIBLE);
-        category.setVisibility(View.VISIBLE);
-        linearView.setVisibility(View.VISIBLE);
-        TopArt.setVisibility(View.VISIBLE);
-        ViewAll.setVisibility(View.VISIBLE);
-//        TopOrganizer.setVisibility(View.VISIBLE);
-//        ViewAll_artist.setVisibility(View.VISIBLE);
-
-        // Reset both lists to show all data
-        providerAdapter.updateList(providerList);
-//        eventOrgAdapter.updateList(eventOrgList);
+        eventOrgAdapter.updateList(eventOrgList);
     }
 
     private void filterProviderList(String query) {
@@ -173,7 +172,6 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
             eventOrgAdapter.updateList(new ArrayList<>());
             bannercontent.setVisibility(View.GONE);
             category.setVisibility(View.GONE);
-            linearView.setVisibility(View.GONE);
             TopOrganizer.setVisibility(View.GONE);
             TopArt.setVisibility(View.GONE);
             ViewAll.setVisibility(View.GONE);
@@ -192,61 +190,16 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
         }
 
         eventOrgAdapter.updateList(filteredEventOrgList);
-        if (!filteredEventOrgList.isEmpty()) {
-            providerAdapter.updateList(new ArrayList<>());
-            bannercontent.setVisibility(View.GONE);
-            category.setVisibility(View.GONE);
-            linearView.setVisibility(View.GONE);
-            TopArt.setVisibility(View.GONE);
-            ViewAll.setVisibility(View.GONE);
-            ViewAll_artist.setVisibility(View.GONE);
-        } else {
-            eventOrgAdapter.updateList(new ArrayList<>());
-        }
     }
 
 
     private void initFirebase() {
-        databaseReference = FirebaseDatabase.getInstance().getReference("Lawyer");
-        databaseReference2 = FirebaseDatabase.getInstance().getReference("ADMIN");
-        artistRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        providerList = new ArrayList<>();
-        empty = new emptyAdapter_package(getActivity());
-        providerAdapter = new ArtistAdapter(providerList, getActivity());
+        databaseReference2 = FirebaseDatabase.getInstance().getReference("Lawyer");
 
         eventOrg.setLayoutManager(new LinearLayoutManager(getActivity()));
         eventOrgList = new ArrayList<>();
         eventOrgAdapter = new ArtistAdapter2(eventOrgList, getActivity());
         eventOrg.setAdapter(eventOrgAdapter);
-
-        // Load data for ADMIN
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                providerList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Usermodel usermodel = snapshot.getValue(Usermodel.class);
-                    usermodel.setKey(snapshot.getKey());
-                    Boolean isSuperAdmin = snapshot.child("isSuperAdmin").getValue(Boolean.class);
-                    Boolean isVerify = snapshot.child("isVerify").getValue(Boolean.class);
-                    if ((isSuperAdmin == null || !isSuperAdmin) && (isVerify == null || isVerify)) {
-                        providerList.add(usermodel);
-                    }
-
-                }
-                providerAdapter.notifyDataSetChanged();
-                if (providerList.isEmpty()) {
-                    artistRecycler.setAdapter(empty);
-                } else {
-                    artistRecycler.setAdapter(providerAdapter);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("User_list", "DatabaseError: " + databaseError.getMessage());
-            }
-        });
 
         // Load data for EventOrg
         databaseReference2.addValueEventListener(new ValueEventListener() {
@@ -330,6 +283,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
 
 
     private void initView(View view) {
+        title = view.findViewById(R.id.title);
         loading_layout = view.findViewById(R.id.loading_layout);
         refreshLayout = view.findViewById(R.id.refreshLayout);
         bannercontent = view.findViewById(R.id.bannercontent);
@@ -345,6 +299,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
         eventOrg = view.findViewById(R.id.eventOrg);
         searchProvider = view.findViewById(R.id.search);
         artistRecycler = view.findViewById(R.id.artist);
+        eventOrg.setVisibility(View.VISIBLE);
     }
 
     private void initClick(View view) {

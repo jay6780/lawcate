@@ -124,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:gravity="center_vertical"
-                android:text="Set Super Event Admin"
+                android:text="Set Super Admin"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -149,7 +149,31 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:gravity="center_vertical"
-                android:text="Create Lawyer"
+                android:text="Create Admin"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/admin_chatSupport"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="5dp"
+                android:src="@mipmap/chat_support" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:gravity="center_vertical"
+                android:text="Chat support"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>

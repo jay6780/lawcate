@@ -109,7 +109,7 @@ public class profile_updateEvents extends AppCompatActivity {
         setContentView(R.layout.activity_profile_update_admin);
 
         // Set the title of the action bar
-        getSupportActionBar().setTitle("Event profile");
+        getSupportActionBar().setTitle("Admin Profile");
         Drawable homeButton = getResources().getDrawable(R.drawable.ic_home);
         homeButton.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(homeButton);
@@ -133,7 +133,7 @@ public class profile_updateEvents extends AppCompatActivity {
         phone = findViewById(R.id.Phone);
         profileImageView = findViewById(R.id.upload_img);
         phoneNumberEditText = findViewById(R.id.Phone);
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Events");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("ADMIN");
         storageReference = FirebaseStorage.getInstance().getReference().child("images");
 
         detector = new FaceDetector.Builder(profile_updateEvents.this)

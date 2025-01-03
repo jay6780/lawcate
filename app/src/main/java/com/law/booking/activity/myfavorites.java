@@ -215,7 +215,8 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
                     if (usermodel != null) {
                         usermodel.setKey(dataSnapshot.getKey());
                         Boolean isSuperAdmin = dataSnapshot.child("isSuperAdmin").getValue(Boolean.class);
-                        if ((isSuperAdmin == null || !isSuperAdmin)) {
+                        Boolean isVerify = dataSnapshot.child("isVerify").getValue(Boolean.class);
+                        if ((isSuperAdmin == null || !isSuperAdmin) && (isVerify == null || isVerify)) {
                             providerList.add(usermodel);
                         }
                     }
@@ -245,7 +246,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
         eventOrgList = new ArrayList<>();
         eventOrgAdapter = new ArtistAdapter2(eventOrgList, this);
         eventOrg.setAdapter(eventOrgAdapter);
-        databaseReference2 = FirebaseDatabase.getInstance().getReference("Events").child(favoriteId);
+        databaseReference2 = FirebaseDatabase.getInstance().getReference("ADMIN").child(favoriteId);
         databaseReference2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -366,7 +367,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
                     resetAllData();
                 } else {
                     filterProviderList(newText);
-                    filterEventOrgList(newText);
+//                    filterEventOrgList(newText);
                 }
                 return true;
             }
@@ -408,7 +409,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
 
     private void resetAllData() {
         providerAdapter.updateList(providerList);
-        eventOrgAdapter.updateList(eventOrgList);
+//        eventOrgAdapter.updateList(eventOrgList);
         TopArt.setVisibility(View.VISIBLE);
 //        TopOrganizer.setVisibility(View.VISIBLE);
     }
@@ -423,8 +424,8 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
 
         providerAdapter.updateList(filteredProviderList);
         if (!filteredProviderList.isEmpty()) {
-            eventOrgAdapter.updateList(new ArrayList<>());
-            TopOrganizer.setVisibility(View.GONE);
+//            eventOrgAdapter.updateList(new ArrayList<>());
+//            TopOrganizer.setVisibility(View.GONE);
         } else {
             providerAdapter.updateList(new ArrayList<>());
         }
@@ -438,7 +439,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
             }
         }
 
-        eventOrgAdapter.updateList(filteredEventOrgList);
+//        eventOrgAdapter.updateList(filteredEventOrgList);
         if (!filteredEventOrgList.isEmpty()) {
             TopArt.setVisibility(View.GONE);
             providerAdapter.updateList(new ArrayList<>());

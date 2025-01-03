@@ -36,7 +36,7 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.Discou
         this.context = context;
         this.discountList = discountList;
         this.adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
-        this.eventRef = FirebaseDatabase.getInstance().getReference("Events");
+        this.eventRef = FirebaseDatabase.getInstance().getReference("ADMIN");
     }
 
     @NonNull
@@ -66,7 +66,7 @@ public class DiscountAdapter extends RecyclerView.Adapter<DiscountAdapter.Discou
 
     private void gotoProfile(String servicename, String discount, String userId, Context context) {
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(userId);
-        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("Events").child(userId);
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("ADMIN").child(userId);
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot adminSnapshot) {

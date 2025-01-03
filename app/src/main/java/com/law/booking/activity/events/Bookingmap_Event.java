@@ -397,7 +397,7 @@ public class Bookingmap_Event extends AppCompatActivity implements OnMapReadyCal
         if (currentUser != null) {
             String userId = currentUser.getUid();
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Client").child(key);
-            DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Events").child(userId);
+            DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("ADMIN").child(userId);
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

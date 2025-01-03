@@ -105,14 +105,14 @@ public class hmua extends AppCompatActivity {
                         Boolean isImmigration = snapshot.child("isImmigration").getValue(Boolean.class);
                         Boolean isProperty = snapshot.child("isProperty").getValue(Boolean.class);
                         Boolean isSuperAdmin = snapshot.child("isSuperAdmin").getValue(Boolean.class);
-
+                        Boolean isVerify = snapshot.child("isVerify").getValue(Boolean.class);
                         boolean matches = (corporate && isCorporate != null && isCorporate) ||
                                 (criminal && isCriminal != null && isCriminal) ||
                                 (family && isFamily != null && isFamily) ||
                                 (immigration && isImmigration != null && isImmigration) ||
                                 (property && isProperty != null && isProperty);
 
-                        if ((matches || isAll) && (isSuperAdmin == null || !isSuperAdmin)) {
+                        if ((matches || isAll) && (isSuperAdmin == null || !isSuperAdmin)&& (isVerify == null || isVerify)) {
                             providerList.add(usermodel);
                         }
                     }

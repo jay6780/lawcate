@@ -59,7 +59,7 @@ public class Event_provider extends AppCompatActivity {
         profiletxt = findViewById(R.id.profiletxt);
         messageImg = findViewById(R.id.messageImg);
         providerRecycler.setLayoutManager(new LinearLayoutManager(this));
-        databaseReference = FirebaseDatabase.getInstance().getReference("Events");
+        databaseReference = FirebaseDatabase.getInstance().getReference("ADMIN");
         ll_skeleton.setVisibility(View.VISIBLE);
         providerList = new ArrayList<>();
         providerAdapter = new ArtistAdapter2(providerList, this);

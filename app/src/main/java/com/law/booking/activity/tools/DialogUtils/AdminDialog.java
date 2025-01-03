@@ -30,7 +30,7 @@ public class AdminDialog {
     public void adminDialog(Activity activity, AdminDialogCallback callback) {
         List<Usermodel> adminList = new ArrayList<>();
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
-        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("Events");
+        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("ADMIN");
 
         // First, retrieve data from "ADMIN"
         adminRef.addValueEventListener(new ValueEventListener() {

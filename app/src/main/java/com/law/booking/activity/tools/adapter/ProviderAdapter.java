@@ -45,7 +45,7 @@ public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.Provid
         this.providerList = providerList;
         this.context = context;
         this.databaseReference = FirebaseDatabase.getInstance().getReference("Lawyer");
-        this.event = FirebaseDatabase.getInstance().getReference("Events");
+        this.event = FirebaseDatabase.getInstance().getReference("ADMIN");
         this.chatreference = FirebaseDatabase.getInstance().getReference("chatRooms");
         this.typingstatus = FirebaseDatabase.getInstance().getReference("typingResult");
         this.map = FirebaseDatabase.getInstance().getReference("transactionMap");

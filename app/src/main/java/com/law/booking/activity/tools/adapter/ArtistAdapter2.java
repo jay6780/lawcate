@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,8 +27,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.law.booking.activity.MainPageActivity.profile.providerProfile3;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.R;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import it.beppi.tristatetogglebutton_library.TriStateToggleButton;
 
 public class ArtistAdapter2 extends RecyclerView.Adapter<ArtistAdapter2.ProviderViewHolder> {
     private ArrayList<Usermodel> providerList;
@@ -51,10 +60,69 @@ public class ArtistAdapter2 extends RecyclerView.Adapter<ArtistAdapter2.Provider
     @Override
     public void onBindViewHolder(@NonNull ProviderViewHolder holder, int position) {
         Usermodel provider = providerList.get(position);
-        String name = context.getString(R.string.name);
         String address = context.getString(R.string.address);
         String years = context.getString(R.string.years);
-        holder.nameTextView.setText(name+": "+provider.getUsername());
+        holder.nameTextView.setText(provider.getUsername());
+
+
+        if(SPUtils.getInstance().getBoolean(AppConstans.Administrator)){
+            holder.appointment.setVisibility(View.GONE);
+            holder.star.setVisibility(View.GONE);
+            holder.ratevalue.setVisibility(View.GONE);
+            holder.heart.setVisibility(View.GONE);
+            holder.verify_view.setVisibility(View.VISIBLE);
+        }else{
+            holder.appointment.setVisibility(View.VISIBLE);
+            holder.star.setVisibility(View.VISIBLE);
+            holder.ratevalue.setVisibility(View.VISIBLE);
+            holder.heart.setVisibility(View.VISIBLE);
+            holder.verify_view.setVisibility(View.GONE);
+        }
+
+
+        Map<String, Object> updates = new HashMap<>();
+
+
+        FirebaseDatabase.getInstance().getReference("Lawyer").child(provider.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Boolean isVerify = dataSnapshot.child("isVerify").getValue(Boolean.class);
+
+                    if (isVerify != null && isVerify) {
+                            Log.d("VerifyLaw", "isVerify" + isVerify);
+                            holder.verifyToggle.setToggleStatus(isVerify);
+                            holder.verify_value.setText("Verified");
+                        }else{
+                        Log.d("VerifyLaw", "isVerify" + isVerify);
+                            holder.verify_value.setText("Not Verified");
+                            holder.verifyToggle.setToggleStatus(isVerify);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("FirebaseData", "Database error: " + databaseError.getMessage());
+            }
+        });
+
+
+        holder.verifyToggle.setOnToggleChanged(new TriStateToggleButton.OnToggleChanged() {
+            @Override
+            public void onToggle(TriStateToggleButton.ToggleStatus toggleStatus, boolean booleanToggleStatus, int toggleIntValue) {
+
+                switch (toggleStatus) {
+                    case off:
+                    case on:
+                        updates.put("isVerify", booleanToggleStatus);
+                        savedLawsettings(updates,provider.getKey());
+                        break;
+                }
+            }
+        });
+
 
         if(provider.getLengthOfService() == null){
             holder.experience.setText("N/A");
@@ -155,6 +223,23 @@ public class ArtistAdapter2 extends RecyclerView.Adapter<ArtistAdapter2.Provider
         });
     }
 
+    private void savedLawsettings(Map<String, Object> updates,String key) {
+        if (key != null) {
+            DatabaseReference adminRef = FirebaseDatabase.getInstance()
+                    .getReference("Lawyer")
+                    .child(key);
+
+            adminRef.updateChildren(updates)
+                    .addOnSuccessListener(unused -> {
+                        Toast.makeText(context, "Data update!", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Saveddatafromservice", "Failed to save data: " + e.getMessage());
+                    });
+        }
+        notifyDataSetChanged();
+    }
+
 
     public void updateList(ArrayList<Usermodel> newList) {
         providerList = newList;
@@ -181,14 +266,19 @@ public class ArtistAdapter2 extends RecyclerView.Adapter<ArtistAdapter2.Provider
     }
 
     public class ProviderViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,address,experience,ratevalue;
-        ImageView imageView,heart;
+        TextView nameTextView,address,experience,ratevalue,verify_value;
+        ImageView imageView,heart,star;
         AppCompatButton appointment;
-
+        LinearLayout verify_view;
+        TriStateToggleButton verifyToggle;
         public ProviderViewHolder(@NonNull View itemView) {
             super(itemView);
             ratevalue = itemView.findViewById(R.id.ratevalue);
+            verify_value = itemView.findViewById(R.id.verify_value);
+            verify_view = itemView.findViewById(R.id.verify_view);
+            verifyToggle = itemView.findViewById(R.id.verifyToggle);
             heart = itemView.findViewById(R.id.heart);
+            star = itemView.findViewById(R.id.star);
             experience = itemView.findViewById(R.id.experience);
             address = itemView.findViewById(R.id.address);
             appointment = itemView.findViewById(R.id.appointment);

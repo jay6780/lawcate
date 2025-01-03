@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.law.booking.activity.Fragments.eventFrag.CalendarEventFragment;
-import com.law.booking.activity.Fragments.eventFrag.MyEventPriceFragment;
+import com.law.booking.activity.Fragments.eventFrag.HomeFragment_admin;
 import com.law.booking.activity.Fragments.eventFrag.event_profileFragment;
 
 public class EventViewpagerAdapter extends FragmentPagerAdapter {
@@ -21,7 +21,7 @@ public class EventViewpagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new MyEventPriceFragment();
+                return new HomeFragment_admin();
             case 1:
                 return new CalendarEventFragment();
             case 2:

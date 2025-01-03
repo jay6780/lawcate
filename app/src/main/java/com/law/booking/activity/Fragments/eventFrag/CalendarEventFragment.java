@@ -114,7 +114,7 @@ public class CalendarEventFragment extends Fragment implements OnScheduleLongCli
         currentUser = auth.getCurrentUser();
         if (currentUser != null) {
             String userId = currentUser.getUid();
-            adminRef = FirebaseDatabase.getInstance().getReference("Events").child(userId);
+            adminRef = FirebaseDatabase.getInstance().getReference("ADMIN").child(userId);
             adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

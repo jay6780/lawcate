@@ -66,7 +66,7 @@ public class google_login extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         guess = FirebaseDatabase.getInstance().getReference("Client");
-        event = FirebaseDatabase.getInstance().getReference("Events");
+        event = FirebaseDatabase.getInstance().getReference("ADMIN");
         admin = FirebaseDatabase.getInstance().getReference("Lawyer");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))

@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.law.booking.activity.MainPageActivity.profile.providerProfile2;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.R;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 
 import java.util.ArrayList;
 
@@ -181,13 +183,14 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
 
     public class ProviderViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView,address,experience,ratevalue;
-        ImageView imageView,heart;
+        ImageView imageView,heart,star;
         AppCompatButton appointment;
 
         public ProviderViewHolder(@NonNull View itemView) {
             super(itemView);
             ratevalue = itemView.findViewById(R.id.ratevalue);
             heart = itemView.findViewById(R.id.heart);
+            star = itemView.findViewById(R.id.star);
             experience = itemView.findViewById(R.id.experience);
             address = itemView.findViewById(R.id.address);
             appointment = itemView.findViewById(R.id.appointment);

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -206,8 +207,13 @@ public class MyServicePriceFragment extends Fragment implements OnRefreshListene
 
 
     private void openAddServiceActivity() {
-        Intent intent = new Intent(getContext(), AddService.class);
-        startActivity(intent);
+        if(SPUtils.getInstance().getBoolean(AppConstans.Verify)){
+            Intent intent = new Intent(getContext(), AddService.class);
+            startActivity(intent);
+        }else{
+            Toast.makeText(getActivity(),"Please contact Administrator to unlock to verify your account status",Toast.LENGTH_SHORT).show();
+        }
+
     }
     private void fetchServices() {
         DatabaseReference serviceRef = FirebaseDatabase.getInstance().getReference("Service").child(FirebaseAuth.getInstance().getCurrentUser().getUid());

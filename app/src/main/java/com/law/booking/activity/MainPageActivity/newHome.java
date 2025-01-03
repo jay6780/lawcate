@@ -55,6 +55,7 @@ import com.law.booking.activity.MainPageActivity.Admin.Createadmin;
 import com.law.booking.activity.MainPageActivity.Admin.Event_userchat;
 import com.law.booking.activity.MainPageActivity.Admin.MyservicePrice;
 import com.law.booking.activity.MainPageActivity.Admin.UserChat;
+import com.law.booking.activity.MainPageActivity.Admin.admin_chatsupport;
 import com.law.booking.activity.MainPageActivity.Admin.history_book_admin;
 import com.law.booking.activity.MainPageActivity.Admin.set_superAdmin;
 import com.law.booking.activity.MainPageActivity.Admin.updateActivity;
@@ -122,6 +123,7 @@ public class newHome extends AppCompatActivity {
     private ImageView adminbell,event_bell;
     private TextView badge_count_admin,event_badge;
     private boolean isGuess = false;
+    private LinearLayout admin_chatSupport;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +144,7 @@ public class newHome extends AppCompatActivity {
         guessRef = FirebaseDatabase.getInstance().getReference("Client");
         adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
         serviceRef = FirebaseDatabase.getInstance().getReference("Service");
-        events = FirebaseDatabase.getInstance().getReference("Events");
+        events = FirebaseDatabase.getInstance().getReference("ADMIN");
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -612,9 +614,14 @@ public class newHome extends AppCompatActivity {
         adminbell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), history_book_admin.class);
-                intent.putExtra("bookprovideremail", bookprovideremail);
-                startActivity(intent);
+                if(SPUtils.getInstance().getBoolean(AppConstans.Verify)){
+                    Intent intent = new Intent(getApplicationContext(), history_book_admin.class);
+                    intent.putExtra("bookprovideremail", bookprovideremail);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(getApplicationContext(),"Please contact Administrator to unlock to verify your account status",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -662,6 +669,7 @@ public class newHome extends AppCompatActivity {
     private void initadminview() {
         //adminview
         adminbell = findViewById(R.id.adminbell);
+        admin_chatSupport = findViewById(R.id.admin_chatSupport);
         badge_count_admin = findViewById(R.id.badge_count_admin);
         setSuperAdmin = findViewById(R.id.setSuperAdmin);
         ageAdmin = findViewById(R.id.age);
@@ -751,6 +759,7 @@ public class newHome extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), UserChat.class);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
+
                 } else if (v.getId() == R.id.eventMessageimg) {
                     Intent intent = new Intent(getApplicationContext(), Event_userchat.class);
                     startActivity(intent);
@@ -800,6 +809,11 @@ public class newHome extends AppCompatActivity {
                 } else if (v.getId() == R.id.setSuperAdmin) {
                     Intent intent = new Intent(getApplicationContext(), set_superAdmin.class);
                     startActivity(intent);
+
+                } else if (v.getId() == R.id.admin_chatSupport) {
+                    Intent intent = new Intent(getApplicationContext(), admin_chatsupport.class);
+                    startActivity(intent);
+
                 } else if (v.getId() == R.id.setEventAdmin) {
                     Intent intent = new Intent(getApplicationContext(), setEvent_admin.class);
                     startActivity(intent);
@@ -818,6 +832,7 @@ public class newHome extends AppCompatActivity {
     private void idlisterners(View.OnClickListener clickListener) {
         findViewById(R.id.messageImg).setOnClickListener(clickListener);
         findViewById(R.id.messageImg2).setOnClickListener(clickListener);
+        findViewById(R.id.admin_chatSupport).setOnClickListener(clickListener);
         findViewById(R.id.home).setOnClickListener(clickListener);
         findViewById(R.id.addAdmin).setOnClickListener(clickListener);
         findViewById(R.id.adminprofile).setOnClickListener(clickListener);
@@ -843,7 +858,7 @@ public class newHome extends AppCompatActivity {
             adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(userId);
             guessRef = FirebaseDatabase.getInstance().getReference("Client").child(userId);
             serviceRef = FirebaseDatabase.getInstance().getReference("Service").child(userId);
-            events = FirebaseDatabase.getInstance().getReference("Events").child(userId);
+            events = FirebaseDatabase.getInstance().getReference("ADMIN").child(userId);
 
             new Handler().postDelayed(() -> {
                 adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -857,7 +872,16 @@ public class newHome extends AppCompatActivity {
                             requestPermissions2();
                             showNotiff();
                             boolean Lawyer = true;
+
                             SPUtils.getInstance().put(AppConstans.userType,Lawyer);
+
+                            boolean isAdmin = false;
+                            SPUtils.getInstance().put(AppConstans.Administrator,isAdmin);
+                            boolean isVerify = dataSnapshot.hasChild("isVerify") && Boolean.TRUE.equals(dataSnapshot.child("isVerify").getValue(Boolean.class));
+                            Log.d("isVerify","Value: "+isVerify);
+                            SPUtils.getInstance().put(AppConstans.Verify,isVerify);
+
+
                             boolean isCorporate = dataSnapshot.hasChild("isCorporate");
                             if(!isCorporate){
                                 UserProviderDialog userProviderDialog = new UserProviderDialog();
@@ -922,6 +946,10 @@ public class newHome extends AppCompatActivity {
                                         boolean hasEmail = dataSnapshot.hasChild("email");
                                         boolean Lawyer = false;
                                         SPUtils.getInstance().put(AppConstans.userType,Lawyer);
+
+                                        boolean isAdmin = false;
+                                        SPUtils.getInstance().put(AppConstans.Administrator,isAdmin);
+
                                         Usermodel user = dataSnapshot.getValue(Usermodel.class);
                                         if (user != null) {
                                             String name = user.getName();
@@ -957,19 +985,26 @@ public class newHome extends AppCompatActivity {
                                                     requestPermissions2();
                                                     showNotiff();
                                                     Usermodel user = dataSnapshot.getValue(Usermodel.class);
+                                                    boolean Lawyer = false;
+                                                    SPUtils.getInstance().put(AppConstans.userType,Lawyer);
+                                                    boolean isAdmin = true;
+
+                                                    SPUtils.getInstance().put(AppConstans.Administrator,isAdmin);
                                                     boolean isSuperAdmin = dataSnapshot.hasChild("isSuperAdmin") && Boolean.TRUE.equals(dataSnapshot.child("isSuperAdmin").getValue(Boolean.class));
                                                     if (isSuperAdmin) {
                                                         lenght = user.getLengthOfService();
                                                         update.setVisibility(View.VISIBLE);
+                                                        createadmin.setVisibility(View.VISIBLE);
                                                         addEventoraganizer.setVisibility(View.VISIBLE);
                                                         setEventAdmin.setVisibility(View.VISIBLE);
                                                     }else{
                                                         update.setVisibility(View.GONE);
                                                         addEventoraganizer.setVisibility(View.GONE);
+                                                        createadmin.setVisibility(View.GONE);
                                                         setEventAdmin.setVisibility(View.GONE);
                                                     }
                                                     updateUserUI(user, false,true,false);
-                                                    SavedUserType("Events");
+                                                    SavedUserType("ADMIN");
                                                     initEventbook();
                                                     initEventSaveData(user.getUsername(),user.getEmail(),user.getImage(),user.getPhone(),
                                                             user.getName(),user.getAddress(),user.getAge(),user.getLengthOfService());
@@ -1010,12 +1045,13 @@ public class newHome extends AppCompatActivity {
         startService(new Intent(this, MessageNotificationService.class));
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknumEvent);
         Log.d("booknumEvent","Mybooknum: "+badgenum);
-        if (badgenum == null) {
+        if (badgenum.equals("null") || badgenum.isEmpty()) {
             event_badge.setText("0");
-            return;
+        }else{
+            event_badge.setVisibility(View.VISIBLE);
+            event_badge.setText(badgenum);
         }
-        event_badge.setVisibility(View.VISIBLE);
-        event_badge.setText(badgenum);
+
     }
 
     private void initShowGuide() {
@@ -1262,6 +1298,7 @@ public class newHome extends AppCompatActivity {
         userEmailAdmin.setVisibility(View.VISIBLE);
         if (isAdmin) {
             isGuess = false;
+            admin_chatSupport.setVisibility(View.VISIBLE);
             default_menu.setVisibility(View.GONE);
             event_bell.setVisibility(View.GONE);
             event_badge.setVisibility(View.GONE);
@@ -1288,6 +1325,8 @@ public class newHome extends AppCompatActivity {
             privacy.setVisibility(View.GONE);
         }else if (isEvent){
             isGuess = false;
+            admin_chatSupport.setVisibility(View.GONE);
+            event_bell.setVisibility(View.GONE);
             default_menu.setVisibility(View.GONE);
             event_bell.setVisibility(View.VISIBLE);
             event_badge.setVisibility(View.VISIBLE);
@@ -1319,6 +1358,7 @@ public class newHome extends AppCompatActivity {
         }else if (Client){
             isGuess = true;
             initShowGuide();
+            admin_chatSupport.setVisibility(View.GONE);
             default_menu.setVisibility(View.GONE);
             event_bell.setVisibility(View.GONE);
             event_badge.setVisibility(View.GONE);

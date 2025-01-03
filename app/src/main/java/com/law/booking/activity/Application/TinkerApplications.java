@@ -44,7 +44,7 @@ public class TinkerApplications extends MultiDexApplication implements Applicati
         Lingver.init(this);
         guessRef = FirebaseDatabase.getInstance().getReference("Client");
         adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
-        eventsRef = FirebaseDatabase.getInstance().getReference("Events");
+        eventsRef = FirebaseDatabase.getInstance().getReference("ADMIN");
         addChildBasedOnUser();
         registerActivityLifecycleCallbacks(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

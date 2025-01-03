@@ -70,7 +70,7 @@ public class User_list extends AppCompatActivity {
         currentUserEmail = SPUtils.getInstance().getString(AppConstans.userEmail);
         chatRooms = FirebaseDatabase.getInstance().getReference("chatRooms");
         databaseReference = FirebaseDatabase.getInstance().getReference("Lawyer");
-        events = FirebaseDatabase.getInstance().getReference("Events");
+        events = FirebaseDatabase.getInstance().getReference("ADMIN");
         imageUrl = getIntent().getStringExtra("imageUrl");
         SPUtils.getInstance().put(AppConstans.ImageUrl, imageUrl);
         providerList = new ArrayList<>();
@@ -258,7 +258,7 @@ public class User_list extends AppCompatActivity {
     private void fetchProvidersForConnectedUsers(ArrayList<String> connectedUsers) {
         for (String email : connectedUsers) {
             fetchProviderForEmail(email, "Lawyer");
-            fetchProviderForEmail(email, "Events");
+            fetchProviderForEmail(email, "ADMIN");
         }
     }
     private void fetchProviderForEmail(String targetEmail, String node) {

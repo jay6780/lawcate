@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,8 +79,13 @@ public class admin_profileFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), admin_settings.class);
                     startActivity(intent);
                 } else if (v.getId() == R.id.bookingHistory) {
-                    Intent intent = new Intent(getActivity(), history_book_admin.class);
-                    startActivity(intent);
+                    if(SPUtils.getInstance().getBoolean(AppConstans.Verify)){
+                        Intent intent = new Intent(getActivity(), history_book_admin.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(getActivity(),"Please contact Administrator to unlock to verify your account status",Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
         };

@@ -52,7 +52,7 @@ public class CreateEventorganizer extends AppCompatActivity {
         confirmPasswordEditText = findViewById(R.id.confirm_password);
         registerButton = findViewById(R.id.registered);
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference("Events");
+        mDatabase = FirebaseDatabase.getInstance().getReference("ADMIN");
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override

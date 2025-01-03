@@ -33,6 +33,7 @@ import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity2;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity3;
+import com.law.booking.activity.MainPageActivity.chat.chatActivity5;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 
@@ -61,7 +62,7 @@ public class MessageNotificationService extends Service {
         super.onCreate();
         chatRooms = FirebaseDatabase.getInstance().getReference("chatRooms");
         admin = FirebaseDatabase.getInstance().getReference("Lawyer");
-        events = FirebaseDatabase.getInstance().getReference("Events");
+        events = FirebaseDatabase.getInstance().getReference("ADMIN");
         guess = FirebaseDatabase.getInstance().getReference("Client");
         mMediaPlayer = MediaPlayer.create(this, R.raw.soundnotification);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -119,7 +120,7 @@ public class MessageNotificationService extends Service {
     }
 
     private void initEventData(String userId) {
-        FirebaseDatabase.getInstance().getReference("Events").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("ADMIN").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -197,6 +198,9 @@ public class MessageNotificationService extends Service {
         if(chatRoomId == null){
             return;
         }
+
+        initEventData2(key,senderEmail);
+
         admin.orderByChild("email").equalTo(senderEmail).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -213,7 +217,7 @@ public class MessageNotificationService extends Service {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.exists()) {
-                                            sendNotification(key, image, chatRoomId, senderEmail, message, username, true, true, true, imageUrl, messageRef);
+                                            sendNotification(key, image, chatRoomId, senderEmail, message, username, false, false, true, imageUrl, messageRef);
                                         }
                                     }
 
@@ -240,6 +244,28 @@ public class MessageNotificationService extends Service {
         });
     }
 
+    private void initEventData2(String userId,String senderEmail) {
+        FirebaseDatabase.getInstance().getReference("ADMIN").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    eventEmail = dataSnapshot.child("email").getValue(String.class);
+                    if(senderEmail.equals(eventEmail)) {
+                        Log.d("EventEmail", "email: " + senderEmail);
+                        SPUtils.getInstance().put(AppConstans.ChatAdminEmail,senderEmail);
+                        SPUtils.getInstance().put(AppConstans.chatSupportList, true);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("FirebaseData", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
     private String createChatRoomId(String email1, String email2) {
         chatRoomId = email1.compareTo(email2) < 0
                 ? email1.replace(".", "_") + "_" + email2.replace(".", "_")
@@ -251,12 +277,22 @@ public class MessageNotificationService extends Service {
     }
 
     private void sendNotification(String key, String image, String chatRoomId, String senderEmail, String message, String username, boolean isAdmin, boolean isEvent, boolean isGuess, String imageUrl, DatabaseReference messageRef) {
-        if (isGuess) {
-            if (eventEmail != null && eventEmail.equals(currentUserEmail)) {
+        if(isGuess){
+            SPUtils.getInstance().put(AppConstans.chatSupportList, false);
+        }
+        if (isAdmin) {
+            String myEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            if(myEmail.equals(SPUtils.getInstance().getString(AppConstans.Eventemail))){
                 intent = new Intent(MessageNotificationService.this, chatActivity3.class);
-            } else if (adminEmail != null && adminEmail.equals(currentUserEmail)) {
-                intent = new Intent(MessageNotificationService.this, chatActivity2.class);
+            }else{
+                intent = new Intent(MessageNotificationService.this, chatActivity.class);
             }
+
+        }else if(isGuess ) {
+            intent = new Intent(MessageNotificationService.this, chatActivity2.class);
+        }else if(isEvent) {
+            intent = new Intent(MessageNotificationService.this, chatActivity5.class);
+        }
             intent.putExtra("chatRoomId", chatRoomId);
             intent.putExtra("providerName", username);
             intent.putExtra("image", image);
@@ -304,61 +340,7 @@ public class MessageNotificationService extends Service {
 
                 // Update the message as seen
                 messageRef.child("seen").setValue(true);
-            }
-        }else {
-            if (isAdmin || isEvent) {
-                if (userEmail != null && userEmail.equals(currentUserEmail)) {
-                    intent = new Intent(MessageNotificationService.this, chatActivity.class);
-                }
-                intent.putExtra("chatRoomId", chatRoomId);
-                intent.putExtra("providerName", username);
-                intent.putExtra("image", image);
-                intent.putExtra("providerEmail", senderEmail);
-                intent.putExtra("key", key);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setSmallIcon(R.mipmap.applogo)
-                        .setContentTitle("New message from " + username)
-                        .setContentText(message)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setAutoCancel(true)
-                        .setContentIntent(pendingIntent);
-                if (mMediaPlayer != null) {
-                    mMediaPlayer.start();
-                }
-                if (imageUrl != null && !imageUrl.isEmpty()) {
-                    Glide.with(this)
-                            .asBitmap()
-                            .load(imageUrl)
-                            .into(new CustomTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                    NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle()
-                                            .bigPicture(resource)
-                                            .setSummaryText(message);
 
-                                    builder.setStyle(style);
-                                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                    notificationManager.notify(NOTIFICATION_ID, builder.build());
-
-                                    // Update the message as seen
-                                    messageRef.child("seen").setValue(true);
-                                }
-
-                                @Override
-                                public void onLoadCleared(@Nullable Drawable placeholder) {
-                                    // Clean up any resources if needed
-                                }
-                            });
-                } else {
-                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    notificationManager.notify(NOTIFICATION_ID, builder.build());
-
-                    // Update the message as seen
-                    messageRef.child("seen").setValue(true);
-                }
-            }
         }
 
     }

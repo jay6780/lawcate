@@ -132,7 +132,7 @@ public class addReviewActivity2 extends AppCompatActivity {
     }
 
     private void initAdmin() {
-        adminRef = FirebaseDatabase.getInstance().getReference("Events").child(key);
+        adminRef = FirebaseDatabase.getInstance().getReference("ADMIN").child(key);
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

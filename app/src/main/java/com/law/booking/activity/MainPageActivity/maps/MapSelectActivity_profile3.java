@@ -250,9 +250,7 @@ public class MapSelectActivity_profile3 extends AppCompatActivity implements OnM
                 placesClient.findAutocompletePredictions(request).addOnSuccessListener(response -> {
                     searchResults.clear();
                     for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                        if (prediction.getFullText(null).toString().toLowerCase().contains("zamboanga")) {
                             searchResults.add(prediction.getFullText(null).toString());
-                        }
 
                     }
                     adapter.notifyDataSetChanged();

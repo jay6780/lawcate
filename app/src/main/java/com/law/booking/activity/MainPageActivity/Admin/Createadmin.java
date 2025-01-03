@@ -26,6 +26,9 @@ import com.law.booking.activity.Application.TinkerApplications;
 import com.law.booking.activity.MainPageActivity.login;
 import com.law.booking.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Createadmin extends AppCompatActivity {
     AppCompatButton back;
     private EditText nameEditText, emailEditText, usernameEditText, passwordEditText, confirmPasswordEditText;
@@ -161,6 +164,26 @@ public class Createadmin extends AppCompatActivity {
         userRef.child("email").setValue(email);
         userRef.child("username").setValue(username);
         userRef.child("phone").setValue(phone); // Save phone number
+
+        Map<String, Object> updates = new HashMap<>();
+        boolean isVerify = false;
+        updates.put("isVerify", isVerify);
+        savedLawsettings(updates,uid);
+
+    }
+    private void savedLawsettings(Map<String, Object> updates,String key) {
+        if (key != null) {
+            DatabaseReference adminRef = FirebaseDatabase.getInstance()
+                    .getReference("Lawyer")
+                    .child(key);
+            adminRef.updateChildren(updates)
+                    .addOnSuccessListener(unused -> {
+                        Log.e("Saveddatafromservice", "Success: ");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Saveddatafromservice", "Failed to save data: " + e.getMessage());
+                    });
+        }
     }
 
     private void sendEmailVerification(final FirebaseUser user) {

@@ -28,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.MainPageActivity.newHome;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.UserchatAdapter;
 import com.law.booking.activity.tools.adapter.emptyAdapter;
 import com.law.booking.R;
@@ -57,6 +59,7 @@ public class UserChat extends AppCompatActivity {
         ll_skeleton = findViewById(R.id.ll_skeleton);
         backBtn = findViewById(R.id.back);
         userSearch = findViewById(R.id.search);
+        SPUtils.getInstance().put(AppConstans.chatSupportList, false);
         providerRecycler.setLayoutManager(new LinearLayoutManager(this));
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         chatRooms = FirebaseDatabase.getInstance().getReference("chatRooms");

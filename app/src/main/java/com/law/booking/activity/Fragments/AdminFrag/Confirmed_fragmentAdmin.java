@@ -23,20 +23,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
 import com.law.booking.activity.tools.Model.Booking2;
 import com.law.booking.activity.tools.Model.BookingId;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.BookemptyAdapter;
 import com.law.booking.activity.tools.adapter.BookingAdapter_admin;
-import com.law.booking.R;
+import com.law.booking.activity.tools.adapter.Completebook_adapter_admin;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-public class HistoryBookFragment_admin extends Fragment {
+public class Confirmed_fragmentAdmin extends Fragment {
     private RecyclerView bookrecycler;
     private BookingAdapter_admin bookingAdapter;
     private List<Booking2> bookingList = new ArrayList<>();
@@ -60,7 +61,6 @@ public class HistoryBookFragment_admin extends Fragment {
         ll_skeleton.setVisibility(View.VISIBLE);
         initShowbook();
         initSkeleton();
-
         return view;
     }
     private void initShowbook() {
@@ -109,8 +109,8 @@ public class HistoryBookFragment_admin extends Fragment {
 
     private void fetchBookIds(List<String> chatIds) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mybookRef = database.getReference("Mybook");
-        DatabaseReference mybookUserRef = database.getReference("MybookUser");
+        DatabaseReference mybookRef = database.getReference("Confirm_lawyer");
+        DatabaseReference mybookUserRef = database.getReference("Confirm_client");
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             bookingList.clear();
@@ -190,7 +190,6 @@ public class HistoryBookFragment_admin extends Fragment {
                         timestamp
                 );
                 bookingList.add(booking);
-                bookingAdapter.updateview(true);
                 booknumber++;
                 String booknum = String.valueOf(booknumber);
                 SPUtils.getInstance().put(AppConstans.booknum, booknum);
@@ -207,7 +206,6 @@ public class HistoryBookFragment_admin extends Fragment {
                 bookingAdapter.notifyDataSetChanged();
                 bookrecycler.setAdapter(nodata);
             } else {
-                bookingAdapter.updateview(true);
                 bookingAdapter.notifyDataSetChanged();
                 bookrecycler.setAdapter(bookingAdapter);
             }

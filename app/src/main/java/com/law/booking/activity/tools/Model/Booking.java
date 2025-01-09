@@ -18,6 +18,7 @@ public class Booking {
     private String snapshotkey;
     private String timestamp;
 
+
     // Default constructor
     public Booking() {
     }
@@ -25,7 +26,7 @@ public class Booking {
     // Parameterized constructor
     public Booking(String providerName, String serviceName, String price, String heads,
                    String phonenumber, String date, String time, String image,
-                   String address, String email, String age, String lengthOfservice,String paymentMethod, String key,String timestamp) {
+                   String address, String email, String age, String lengthOfservice,String paymentMethod, String key,String timestamp,String snapshotkey) {
         this.providerName = providerName;
         this.serviceName = serviceName;
         this.price = price;
@@ -41,6 +42,7 @@ public class Booking {
         this.paymentMethod = paymentMethod;
         this.key = key;
         this.timestamp = timestamp;
+        this.snapshotkey = snapshotkey;
     }
 
     // Setters

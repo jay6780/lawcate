@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.law.booking.activity.Fragments.UserFragment.CompleteFragment_user;
+import com.law.booking.activity.Fragments.UserFragment.Confirmedfragment_user;
 import com.law.booking.activity.Fragments.history.CancelFragment;
 import com.law.booking.activity.Fragments.history.HistoryBookFragment;
 
@@ -23,9 +24,12 @@ public class BookingAdapters extends FragmentPagerAdapter {
                 fragment = new HistoryBookFragment();
                 break;
             case 1:
-                fragment = new CancelFragment();
+                fragment = new Confirmedfragment_user();
                 break;
             case 2:
+                fragment = new CancelFragment();
+                break;
+            case 3:
                 fragment = new CompleteFragment_user();
                 break;
 
@@ -35,7 +39,7 @@ public class BookingAdapters extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3; // Number of fragments
+        return 4; // Number of fragments
     }
 
     @Override

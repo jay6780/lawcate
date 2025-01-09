@@ -114,16 +114,31 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@id/cancel"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/card"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
+            android:visibility="gone"
             android:layout_marginBottom="10dp"
             android:layout_toRightOf="@+id/ll1"
             android:background="@drawable/cancel_bg"
             android:text="Complete"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@id/confirmed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/card"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@+id/cancel"
+            android:background="@drawable/cancel_bg"
+            android:text="Confirmed"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>

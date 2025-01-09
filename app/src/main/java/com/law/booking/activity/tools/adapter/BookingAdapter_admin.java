@@ -52,8 +52,10 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     private Context context;
     private String TAG ="BookAdapter";
     private String chatRoomId;
-    private DatabaseReference databaseReference,chatroomIds,complete,book,CompletebookArtist,
-            Mybook,transactionMap;
+    private boolean isConfirmed;
+    private boolean isCompleted;
+    private DatabaseReference databaseReference,chatroomIds,book,
+            Mybook,transactionMap,confirmed_client,confirmed_lawyer;
     private List<String> serviceNamesList;
     private  String adminUsername = SPUtils.getInstance().getString(AppConstans.AdminUsername);
     private  String adminImage = SPUtils.getInstance().getString(AppConstans.AdminImage);
@@ -66,8 +68,8 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
         this.context = context;
         this.databaseReference = FirebaseDatabase.getInstance().getReference();
         this.chatroomIds = FirebaseDatabase.getInstance().getReference();
-        this.complete = FirebaseDatabase.getInstance().getReference("Completebook");
-        this.CompletebookArtist = FirebaseDatabase.getInstance().getReference("CompletebookArtist");
+        this.confirmed_client = FirebaseDatabase.getInstance().getReference("Confirm_client");
+        this.confirmed_lawyer = FirebaseDatabase.getInstance().getReference("Confirm_lawyer");
         this.book = FirebaseDatabase.getInstance().getReference("MybookUser");
         this.Mybook = FirebaseDatabase.getInstance().getReference("Mybook");
         this.transactionMap = FirebaseDatabase.getInstance().getReference("transactionMap");
@@ -105,6 +107,16 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
             }
         });
 
+
+        Log.d("COnfirmedkey","COnfirmedkey: "+booking.getKey());
+
+        if(isCompleted){
+            holder.confirmed.setVisibility(View.VISIBLE);
+        }else{
+            holder.cancel.setVisibility(View.VISIBLE);
+        }
+
+
         holder.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,6 +126,62 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                         .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                isConfirmed = false;
+                                ProgressDialog progressDialog = new ProgressDialog(context);
+                                progressDialog.setMessage("Complete booking....");
+                                progressDialog.setCancelable(false);
+                                progressDialog.show();
+
+                                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                                if (currentUser != null) {
+                                    String currentUserId = currentUser.getUid();
+                                    String currentUserEmail = currentUser.getEmail();
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // Then, call checkIfUserIsGuess
+                                            checkIfUserIsGuess(
+                                                    currentUserId,
+                                                    booking.getTime(),
+                                                    booking.getHeads(),
+                                                    booking.getPaymentMethod(),
+                                                    booking.getServiceName(),
+                                                    booking.getPrice(),
+                                                    booking.getDate(),
+                                                    booking.getAddress(),
+                                                    booking.getEmail(),
+                                                    currentUserEmail,
+                                                    booking.getProviderName(),
+                                                    booking.getImage(),
+                                                    context,
+                                                    booking.getKey(),
+                                                    booking.getAge(),
+                                                    booking.getLengthOfservice(),
+                                                    booking.getPhonenumber(),
+                                                    booking.getSnapshotkey()
+                                            );
+                                            progressDialog.dismiss();
+                                        }
+                                    }, 500); // Delay of 500 milliseconds to simulate processing time and allow UI to update
+                                }
+                            }
+                        })
+                        .setNegativeButton(context.getString(R.string.no), null)
+                        .show();
+            }
+        });
+
+
+        holder.confirmed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(context)
+                        .setTitle("Cofirmed book?")
+                        .setMessage("Are you sure want to complete this book?")
+                        .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                isConfirmed = true;
                                 ProgressDialog progressDialog = new ProgressDialog(context);
                                 progressDialog.setMessage("Complete booking....");
                                 progressDialog.setCancelable(false);
@@ -281,42 +349,75 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                             Log.e(TAG, "Geocoding failed", e);
                         }
                     }
-                    String availedMessage = "Hi, I'm " + username + "\n" +
-                            "The book has been complete with:\n" +
-                            "Law name: " + serviceName + "\n" +
-                            "Selected schedule: " + "time: " + time + "\n" +
-                            "date: " + date + "\n" +
-                            "Number of Heads: " + heads + "\n" +
-                            "Payment Method: " + cash + "\n" +
-                            "Price: " + price + " php" + "\n" +
-                            "Thank you!";
+                    String availedMessage = null;
+                    if(isConfirmed){
+                         availedMessage = "Hi, I'm " + username + "\n" +
+                                "The book has been confirmed with:\n" +
+                                "Law name: " + serviceName + "\n" +
+                                "Selected schedule: " + "time: " + time + "\n" +
+                                "date: " + date + "\n" +
+                                "Number of Heads: " + heads + "\n" +
+                                "Payment Method: " + cash + "\n" +
+                                "Price: " + price + " php" + "\n" +
+                                "Thank you!";
+                    }else{
+                        availedMessage = "Hi, I'm " + username + "\n" +
+                                "The book has been complete with:\n" +
+                                "Law name: " + serviceName + "\n" +
+                                "Selected schedule: " + "time: " + time + "\n" +
+                                "date: " + date + "\n" +
+                                "Number of Heads: " + heads + "\n" +
+                                "Payment Method: " + cash + "\n" +
+                                "Price: " + price + " php" + "\n" +
+                                "Thank you!";
+                    }
+
 
                     Log.d(TAG, availedMessage);
                     SPUtils.getInstance().put(AppConstans.availedMessage, availedMessage);
                     checkAndCreateChatRoom(provideremail, providerName, image, curruntUserEmail, context, address, key, availedMessage);
                     String timestamp = String.valueOf(System.currentTimeMillis());
-                    Booking booking = new Booking(providerName, serviceName, price, heads, phonenumber, date, time, image, address, provideremail, age, lengthOfservice, cash, key,timestamp);
+                    Booking booking = new Booking(providerName, serviceName, price, heads, phonenumber, date, time, image, address, provideremail, age, lengthOfservice, cash, key,timestamp,snapshotkey);
                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    Booking booking2 = new Booking(adminUsername, serviceName, price, heads, adminPhone, date, time, adminImage, adminAddress, adminEmail, adminAge, lengthOfservice, cash, uid,timestamp);
+                    Booking booking2 = new Booking(adminUsername, serviceName, price, heads, adminPhone, date, time, adminImage, adminAddress, adminEmail, adminAge, lengthOfservice, cash, uid,timestamp,snapshotkey);
                     String chatRoomId = createChatRoomId(curruntUserEmail, provideremail);
-                    CompletebookArtist.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking2)
-                            .addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Log.d(TAG, "Cancel data saved successfully.");
-                                }
-                            });
-                    complete.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking)
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "Cancel data saved successfully.");
-                                    book.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
-                                    Mybook.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
-                                    transactionMap.child(chatRoomId).removeValue();
-                                    decreasebookCount();
-                                }
-                            });
 
-                }
+                    if(isConfirmed) {
+                        confirmed_lawyer.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking2)
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        Log.d(TAG, "Cancel data saved successfully.");
+                                    }
+                                });
+                        confirmed_client.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Cancel data saved successfully.");
+                                        book.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
+                                        Mybook.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
+                                        transactionMap.child(chatRoomId).removeValue();
+                                    }
+                                });
+                    }else{
+                        DatabaseReference CompletebookArtist = FirebaseDatabase.getInstance().getReference("CompletebookLawyer");
+                        CompletebookArtist.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking2)
+                                .addOnCompleteListener(task3 -> {
+                                    if (task3.isSuccessful()) {
+                                        Log.d(TAG, "Cancel data saved successfully.");
+                                    }
+                                });
+                        DatabaseReference complete =  FirebaseDatabase.getInstance().getReference("Completebook");
+                        complete.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking)
+                                .addOnCompleteListener(task4 -> {
+                                    if (task4.isSuccessful()) {
+                                        Log.d(TAG, "Cancel data saved successfully.");
+                                        confirmed_client.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
+                                        confirmed_lawyer.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
+                                        transactionMap.child(chatRoomId).removeValue();
+                                    }
+                                });
+                    }
+                    }
             }
 
             @Override
@@ -410,8 +511,12 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                     intent.putExtra("address", address);
                     intent.putExtra("key", key);
                     if (!availedmessage.equals(previousMessage)) {
-                        Toast.makeText(context, "Complete Success", Toast.LENGTH_SHORT).show();
                         intent.putExtra("cancelledmessage", availedmessage);
+                        if(isConfirmed){
+                            Toast.makeText(context, "Confirmed Success", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(context, "Complete Success", Toast.LENGTH_SHORT).show();
+                        }
                     }else{
                         Toast.makeText(context,"Already cancelled",Toast.LENGTH_SHORT).show();
                     }
@@ -444,12 +549,18 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
         return bookingList.size();
     }
 
+    public void updateview(boolean view) {
+        isCompleted = view;
+        Log.d("isCompleted", "isCompleted= "+isCompleted);
+    }
+
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView,time,date,servicename,price;
         ImageView avatar;
-        AppCompatButton cancel;
+        AppCompatButton cancel,confirmed;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
+            confirmed = itemView.findViewById(R.id.confirmed);
             cancel = itemView.findViewById(R.id.cancel);
             servicename = itemView.findViewById(R.id.servicename);
             nameTextView = itemView.findViewById(R.id.username);

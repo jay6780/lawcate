@@ -25,7 +25,7 @@ public class history_book_admin extends AppCompatActivity {
     private ImageView messageImg,logout;
     private String TAG = "history_book";
     private ViewPager bookingpager;
-    private TextView schedule,completed,cancel;
+    private TextView schedule,completed,cancel,confirmed;
     private BookingAdapters_admin bookingAdapters;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,7 @@ public class history_book_admin extends AppCompatActivity {
         completed = findViewById(R.id.completed);
         cancel = findViewById(R.id.cancel);
         schedule = findViewById(R.id.schedule);
+        confirmed = findViewById(R.id.confirmed);
         bookprovideremail = getIntent().getStringExtra("bookprovideremail");
         logout.setVisibility(View.VISIBLE);
         logout.setOnClickListener(view -> onBackPressed());
@@ -57,11 +58,14 @@ public class history_book_admin extends AppCompatActivity {
         selectTab(schedule);
         initialtab(completed);
         initialgray(completed);
+        initialtab(confirmed);
+        initialgray(confirmed);
         initialtab(cancel);
         initialgray(cancel);
         schedule.setOnClickListener(v -> bookingpager.setCurrentItem(0));
-        cancel.setOnClickListener(v -> bookingpager.setCurrentItem(1));
-        completed.setOnClickListener(v -> bookingpager.setCurrentItem(2));
+        confirmed.setOnClickListener(v -> bookingpager.setCurrentItem(1));
+        cancel.setOnClickListener(v -> bookingpager.setCurrentItem(2));
+        completed.setOnClickListener(v -> bookingpager.setCurrentItem(3));
         bookingpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
@@ -73,9 +77,12 @@ public class history_book_admin extends AppCompatActivity {
                         selectTab(schedule);
                         break;
                     case 1:
-                        selectTab(cancel);
+                        selectTab(confirmed);
                         break;
                     case 2:
+                        selectTab(cancel);
+                        break;
+                    case 3:
                         selectTab(completed);
                         break;
                 }
@@ -114,6 +121,7 @@ public class history_book_admin extends AppCompatActivity {
         resetTabStyle(schedule);
         resetTabStyle(cancel);
         resetTabStyle(completed);
+        resetTabStyle(confirmed);
         SpannableString spannable = new SpannableString(selectedTab.getText());
         spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.black)), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new UnderlineSpan(), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

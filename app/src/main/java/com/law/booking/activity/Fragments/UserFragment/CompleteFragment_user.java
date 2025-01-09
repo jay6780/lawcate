@@ -108,7 +108,7 @@ public class CompleteFragment_user extends Fragment {
 
     private void fetchBookIds(List<String> chatIds) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mybookRef = database.getReference("CompletebookArtist");
+        DatabaseReference mybookRef = database.getReference("CompletebookLawyer");
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser != null) {

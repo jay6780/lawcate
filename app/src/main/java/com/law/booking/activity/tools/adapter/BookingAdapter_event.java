@@ -70,7 +70,7 @@ public class BookingAdapter_event extends RecyclerView.Adapter<BookingAdapter_ev
         this.databaseReference = FirebaseDatabase.getInstance().getReference();
         this.chatroomIds = FirebaseDatabase.getInstance().getReference();
         this.complete = FirebaseDatabase.getInstance().getReference("Completebook");
-        this.CompletebookArtist = FirebaseDatabase.getInstance().getReference("CompletebookArtist");
+        this.CompletebookArtist = FirebaseDatabase.getInstance().getReference("CompletebookLawyer");
         this.book = FirebaseDatabase.getInstance().getReference("MybookUser");
         this.Mybook = FirebaseDatabase.getInstance().getReference("Mybook");
         this.transactionMap = FirebaseDatabase.getInstance().getReference("transactionMap");

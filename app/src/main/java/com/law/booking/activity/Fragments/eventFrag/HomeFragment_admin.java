@@ -6,11 +6,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +47,8 @@ import com.law.booking.activity.tools.adapter.ArtistAdapter;
 import com.law.booking.activity.tools.adapter.ArtistAdapter2;
 import com.law.booking.activity.tools.adapter.ImageAdapter;
 import com.law.booking.activity.tools.adapter.emptyAdapter_package;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
@@ -65,13 +74,14 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
     private boolean isCorporate = true;
     private emptyAdapter_package empty;
     private TextView title;
+    private ImageView settings;
+    private boolean verify = true;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_bookings, container, false);
+        View view = inflater.inflate(R.layout.fragment_admin, container, false);
         initClick(view);
         initView(view);
-        initFirebase();
         initfirebase2();
         setupSearchView();
         initSkeleton();
@@ -103,7 +113,7 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
         new Handler().postDelayed(() -> {
             skeletonScreen.hide();
             root_view.setVisibility(View.GONE);
-            initFirebase();
+            initFirebase(verify);
         }, 1500);
     }
 
@@ -193,7 +203,7 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
     }
 
 
-    private void initFirebase() {
+    private void initFirebase(@Nullable Boolean verifyStatus) {
         databaseReference2 = FirebaseDatabase.getInstance().getReference("Lawyer");
 
         eventOrg.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -201,15 +211,18 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
         eventOrgAdapter = new ArtistAdapter2(eventOrgList, getActivity());
         eventOrg.setAdapter(eventOrgAdapter);
 
-        // Load data for EventOrg
         databaseReference2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 eventOrgList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Usermodel eventOrgModel = snapshot.getValue(Usermodel.class);
-                    eventOrgModel.setKey(snapshot.getKey());
-                    eventOrgList.add(eventOrgModel);
+                    Boolean isVerify = snapshot.child("isVerify").getValue(Boolean.class);
+
+                    if (eventOrgModel != null && (verifyStatus == null || (isVerify != null && isVerify == verifyStatus))) {
+                        eventOrgModel.setKey(snapshot.getKey());
+                        eventOrgList.add(eventOrgModel);
+                    }
                 }
                 eventOrgAdapter.notifyDataSetChanged();
             }
@@ -220,6 +233,8 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
             }
         });
     }
+
+
 
     private void intiBanner(String gender) {
         final List<Discounts> discounts = new ArrayList<>();
@@ -283,6 +298,7 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
 
 
     private void initView(View view) {
+        settings = view.findViewById(R.id.settings);
         title = view.findViewById(R.id.title);
         loading_layout = view.findViewById(R.id.loading_layout);
         refreshLayout = view.findViewById(R.id.refreshLayout);
@@ -359,13 +375,62 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
                     case R.id.ViewAll_artist:
                         startActivity(new Intent(getActivity(), Event_provider.class));
                         break;
+                    case R.id.settings:
+                        showdialog();
+                        break;
                 }
             }
         };
         idListeners(view, clickListener);
     }
 
+    private void showdialog() {
+        DialogPlus dialog = DialogPlus.newDialog(getContext())
+                .setContentHolder(new ViewHolder(R.layout.choose_dialog))
+                .setContentWidth(ViewGroup.LayoutParams.MATCH_PARENT)
+                .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setGravity(Gravity.CENTER)
+                .setCancelable(true)
+                .create();
+        View dialogView = dialog.getHolderView();
+        Spinner type = dialogView.findViewById(R.id.type_spinner);
+        CharSequence[] options = {"Choose type","View all","Verified", "Not verified"};
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                options
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        type.setAdapter(adapter);
+        type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        initFirebase(null);
+                        break;
+                    case 2:
+                        verify = true;
+                        initFirebase(verify);
+                        break;
+                    case 3:
+                        verify = false;
+                        initFirebase(verify);
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        dialog.show();
+    }
+
     private void idListeners(View view, View.OnClickListener clickListener) {
+        view.findViewById(R.id.settings).setOnClickListener(clickListener);
         view.findViewById(R.id.linear1).setOnClickListener(clickListener);
         view.findViewById(R.id.linear2).setOnClickListener(clickListener);
         view.findViewById(R.id.linear3).setOnClickListener(clickListener);
@@ -379,7 +444,7 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        initFirebase();
+        initFirebase(verify);
     }
 
     @Override

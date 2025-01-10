@@ -1326,10 +1326,9 @@ public class newHome extends AppCompatActivity {
         }else if (isEvent){
             isGuess = false;
             admin_chatSupport.setVisibility(View.GONE);
-            event_bell.setVisibility(View.GONE);
             default_menu.setVisibility(View.GONE);
-            event_bell.setVisibility(View.VISIBLE);
-            event_badge.setVisibility(View.VISIBLE);
+            event_bell.setVisibility(View.GONE);
+            event_badge.setVisibility(View.GONE);
             adminbell.setVisibility(View.GONE);
             badge_count_admin.setVisibility(View.GONE);
             setSuperAdmin.setVisibility(View.GONE);

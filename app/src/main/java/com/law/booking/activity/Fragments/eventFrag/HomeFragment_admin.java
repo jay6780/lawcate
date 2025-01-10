@@ -71,11 +71,7 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
     private SkeletonScreen skeletonScreen;
     private LinearLayout bannercontent, linearView;
     private SmartRefreshLayout refreshLayout;
-    private boolean isCorporate = true;
-    private emptyAdapter_package empty;
     private TextView title;
-    private ImageView settings;
-    private boolean verify = true;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -113,7 +109,7 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
         new Handler().postDelayed(() -> {
             skeletonScreen.hide();
             root_view.setVisibility(View.GONE);
-            initFirebase(verify);
+            initFirebase(null);
         }, 1500);
     }
 
@@ -298,7 +294,6 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
 
 
     private void initView(View view) {
-        settings = view.findViewById(R.id.settings);
         title = view.findViewById(R.id.title);
         loading_layout = view.findViewById(R.id.loading_layout);
         refreshLayout = view.findViewById(R.id.refreshLayout);
@@ -410,14 +405,15 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
                         break;
                     case 1:
                         initFirebase(null);
+                        dialog.dismiss();
                         break;
                     case 2:
-                        verify = true;
-                        initFirebase(verify);
+                        initFirebase(true);
+                        dialog.dismiss();
                         break;
                     case 3:
-                        verify = false;
-                        initFirebase(verify);
+                        initFirebase(false);
+                        dialog.dismiss();
                         break;
                 }
             }
@@ -444,7 +440,7 @@ public class HomeFragment_admin extends Fragment implements OnRefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        initFirebase(verify);
+        initFirebase(null);
     }
 
     @Override

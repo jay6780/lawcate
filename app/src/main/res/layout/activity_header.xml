@@ -127,4 +127,18 @@
         android:textSize="12sp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_below="@+id/email2"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toRightOf="@+id/avatar2"
+        android:fontFamily="@font/inter"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
 </RelativeLayout>

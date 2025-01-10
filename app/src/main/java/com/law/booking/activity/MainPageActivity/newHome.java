@@ -121,7 +121,7 @@ public class newHome extends AppCompatActivity {
     private RelativeLayout user_viewsmenu,admin_menus,default_menu;
     private LinearLayout setSuperAdmin,setEventAdmin;
     private ImageView adminbell,event_bell;
-    private TextView badge_count_admin,event_badge;
+    private TextView badge_count_admin,event_badge,status;
     private boolean isGuess = false;
     private LinearLayout admin_chatSupport;
     @Override
@@ -917,7 +917,7 @@ public class newHome extends AppCompatActivity {
                                         updateUserUI(user, true,false,false);
 
                                         initAdminBook();
-                                        initUserInfo_admin(user.getImage(),user.getUsername(),user.getAddress(),user.getEmail());
+                                        initUserInfo_admin(user.getImage(),user.getUsername(),user.getAddress(),user.getEmail(),isVerify);
                                     } else {
                                         if (!hasAge) {
                                             Intent startAgeService = new Intent(getApplicationContext(), Ageandservice.class);
@@ -1117,7 +1117,10 @@ public class newHome extends AppCompatActivity {
 
     }
 
-    private void initUserInfo_admin(String image, String usernamedata, String address, String email) {
+    private void initUserInfo_admin(String image, String usernamedata, String address, String email ,boolean verify) {
+        status = findViewById(R.id.status);
+        status.setVisibility(View.VISIBLE);
+        status.setTextSize(12);
         username_event = findViewById(R.id.username_event);
         location_address_event = findViewById(R.id.location_address_admin);
         avatar = findViewById(R.id.avatar_event);
@@ -1126,6 +1129,13 @@ public class newHome extends AppCompatActivity {
         email_event = findViewById(R.id.email2);
         email3 = findViewById(R.id.email);
         email3.setVisibility(View.GONE);
+
+        if(verify){
+            status.setText("Status: Verified");
+        }else{
+            status.setText("Status: Not verified");
+        }
+
         if (!newHome.this.isFinishing() && !newHome.this.isDestroyed()) {
             if (image != null && !image.isEmpty()) {
                 RequestOptions requestOptions = new RequestOptions().circleCrop();

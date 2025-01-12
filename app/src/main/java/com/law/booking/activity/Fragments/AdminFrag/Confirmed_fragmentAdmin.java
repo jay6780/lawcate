@@ -109,7 +109,6 @@ public class Confirmed_fragmentAdmin extends Fragment {
 
     private void fetchBookIds(List<String> chatIds) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mybookRef = database.getReference("Confirm_lawyer");
         DatabaseReference mybookUserRef = database.getReference("Confirm_client");
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -127,23 +126,6 @@ public class Confirmed_fragmentAdmin extends Fragment {
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         Log.e("HistoryBook", "Error fetching data from Mybook for chat ID " + chatId + ": " + databaseError.getMessage());
-                    }
-                });
-                mybookRef.child(chatId).child("bookInfo").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot bookInfoSnapshot : dataSnapshot.getChildren()) {
-                                String snapshotkey = bookInfoSnapshot.child("snapshotkey").getValue(String.class);
-                                Log.d("MybookUser Snapshot", "snapshotkey: " + snapshotkey);
-                                SPUtils.getInstance().put(AppConstans.snapshotkey,snapshotkey);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("HistoryBook", "Error fetching snapshotkey from MybookUser: " + databaseError.getMessage());
                     }
                 });
             }

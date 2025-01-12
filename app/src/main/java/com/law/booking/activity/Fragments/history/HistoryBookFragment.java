@@ -195,6 +195,7 @@ public class HistoryBookFragment extends Fragment {
                 bookingList.add(booking);
 
                 booknumber++;
+                bookingAdapter.isConfirmed(false);
                 String booknum = String.valueOf(booknumber);
                 Log.d("HistoryBook","booknum: "+booknum);
                 SPUtils.getInstance().put(AppConstans.booknum, booknum);

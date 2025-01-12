@@ -512,7 +512,7 @@ public class chatActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (!messageTextValue.isEmpty()) {
             DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
             String messageId = messageRef.getKey();
-            Message message = new Message(providerEmail, messageTextValue, System.currentTimeMillis(), username, image, "", messageId,key);
+            Message message = new Message(providerEmail, messageTextValue, System.currentTimeMillis(), username, image, "", messageId,key,"","");
             messageRef.setValue(message)
                     .addOnSuccessListener(aVoid -> {
                         messageText.setText("");
@@ -647,7 +647,7 @@ public class chatActivity extends AppCompatActivity implements OnMapReadyCallbac
         fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
             DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
             String messageId = messageRef.getKey();
-            Message message = new Message(currentUserEmail, "", System.currentTimeMillis(), username, userImageUrl, gifUrl, messageId,key);
+            Message message = new Message(currentUserEmail, "", System.currentTimeMillis(), username, userImageUrl, gifUrl, messageId,key,"","");
             messageRef.setValue(message)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(),"Sent gif Success!",Toast.LENGTH_SHORT).show();
@@ -748,7 +748,7 @@ public class chatActivity extends AppCompatActivity implements OnMapReadyCallbac
             fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
                 DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
                 String messageId = messageRef.getKey();
-                Message message = new Message(currentUserEmail, messageTextValue, System.currentTimeMillis(), username, SPUtils.getInstance().getString(AppConstans.guessImage), "", messageId,key);
+                Message message = new Message(currentUserEmail, messageTextValue, System.currentTimeMillis(), username, SPUtils.getInstance().getString(AppConstans.guessImage), "", messageId,key,"","");
                 messageRef.setValue(message)
                         .addOnSuccessListener(aVoid -> {
                             imageUrl = null;
@@ -935,7 +935,7 @@ public class chatActivity extends AppCompatActivity implements OnMapReadyCallbac
         fetchUserDetails(currentUseremail, (username, userImageUrl) -> {
             DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
             String messageId = messageRef.getKey(); // Get the message ID
-            Message message = new Message(currentUseremail, null, System.currentTimeMillis(), username, userImageUrl, imageUrl, messageId,key);
+            Message message = new Message(currentUseremail, null, System.currentTimeMillis(), username, userImageUrl, imageUrl, messageId,key,"","");
             messageRef.setValue(message)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(),"Sent gif Success!",Toast.LENGTH_SHORT).show();

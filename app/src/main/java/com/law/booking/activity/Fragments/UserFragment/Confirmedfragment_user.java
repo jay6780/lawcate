@@ -29,6 +29,7 @@ import com.law.booking.activity.tools.Model.BookingId;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.BookemptyAdapter;
+import com.law.booking.activity.tools.adapter.BookingAdapter;
 import com.law.booking.activity.tools.adapter.BookingAdapter_admin;
 import com.law.booking.activity.tools.adapter.Completebook_adapter_user;
 
@@ -39,7 +40,7 @@ import java.util.List;
 
 public class Confirmedfragment_user extends Fragment {
     private RecyclerView bookrecycler;
-    private BookingAdapter_admin bookingAdapter;
+    private BookingAdapter bookingAdapter;
     private List<Booking2> bookingList = new ArrayList<>();
     private BookemptyAdapter nodata;
     private String TAG = "history_book";
@@ -53,7 +54,7 @@ public class Confirmedfragment_user extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.history_fragment, container, false);
         bookrecycler = view.findViewById(R.id.historyRecycler);
-        bookingAdapter = new BookingAdapter_admin(bookingList, getContext());
+        bookingAdapter = new BookingAdapter(bookingList, getContext());
         bookrecycler.setAdapter(bookingAdapter);
         bookrecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         nodata = new BookemptyAdapter(getContext());
@@ -109,8 +110,7 @@ public class Confirmedfragment_user extends Fragment {
 
     private void fetchBookIds(List<String> chatIds) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mybookRef = database.getReference("Confirm_lawyer");
-        DatabaseReference mybookUserRef = database.getReference("Confirm_client");
+        DatabaseReference mybookUserRef = database.getReference("Confirm_lawyer");
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             bookingList.clear();
@@ -127,23 +127,6 @@ public class Confirmedfragment_user extends Fragment {
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         Log.e("HistoryBook", "Error fetching data from Mybook for chat ID " + chatId + ": " + databaseError.getMessage());
-                    }
-                });
-                mybookRef.child(chatId).child("bookInfo").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot bookInfoSnapshot : dataSnapshot.getChildren()) {
-                                String snapshotkey = bookInfoSnapshot.child("snapshotkey").getValue(String.class);
-                                Log.d("MybookUser Snapshot", "snapshotkey: " + snapshotkey);
-                                SPUtils.getInstance().put(AppConstans.snapshotkey,snapshotkey);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e("HistoryBook", "Error fetching snapshotkey from MybookUser: " + databaseError.getMessage());
                     }
                 });
             }
@@ -191,6 +174,7 @@ public class Confirmedfragment_user extends Fragment {
                 );
                 bookingList.add(booking);
                 booknumber++;
+                bookingAdapter.isConfirmed(true);
                 String booknum = String.valueOf(booknumber);
                 SPUtils.getInstance().put(AppConstans.booknum, booknum);
                 Log.d(TAG, "bookNum: " + booknum);

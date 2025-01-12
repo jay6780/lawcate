@@ -4,13 +4,17 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -48,6 +52,8 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -56,6 +62,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.kevalpatel2106.emoticongifkeyboard.EmoticonGIFKeyboardFragment;
@@ -115,6 +122,9 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
     private static final int EXPANDED_WIDTH = 250;
     private static final int COLLAPSED_WIDTH = 190;
     private String locationUrl = "";
+    private static final int FILE_SELECT_CODE = 0;
+    private Uri fileUri;
+
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
     }
@@ -345,7 +355,7 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
         if (!messageTextValue.isEmpty()) {
             DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
             String messageId = messageRef.getKey();
-            Message message = new Message(providerEmail, messageTextValue, System.currentTimeMillis(), username, image, "", messageId,key);
+            Message message = new Message(providerEmail, messageTextValue, System.currentTimeMillis(), username, image, "", messageId,key,"","");
             messageRef.setValue(message)
                     .addOnSuccessListener(aVoid -> {
                         messageText.setText("");
@@ -524,7 +534,7 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
         fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
             DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
             String messageId = messageRef.getKey();
-            Message message = new Message(currentUserEmail, "", System.currentTimeMillis(), username, userImageUrl, gifUrl, messageId,key);
+            Message message = new Message(currentUserEmail, "", System.currentTimeMillis(), username, userImageUrl, gifUrl, messageId,key,"","");
             messageRef.setValue(message)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(),"Sent gif Success!",Toast.LENGTH_SHORT).show();
@@ -625,7 +635,7 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
             fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
                 DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
                 String messageId = messageRef.getKey();
-                Message message = new Message(currentUserEmail, messageTextValue, System.currentTimeMillis(), username, userImageUrl, "", messageId,key);
+                Message message = new Message(currentUserEmail, messageTextValue, System.currentTimeMillis(), username, userImageUrl, "", messageId,key,"","");
                 messageRef.setValue(message)
                         .addOnSuccessListener(aVoid -> {
                             messageText.setText(""); // Clear text field after sending
@@ -681,12 +691,36 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
     }
 
     private void openImagePicker() {
-        PhotoPicker.startPhotoPickerForResult(this, REQUEST_CODE_PHOTO_PICKER);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(chatActivity5.this);
+        builder.setTitle("Choose from?");
+        CharSequence[] options = {"Gallery", "File", "Cancel"};
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (options[which].equals("Gallery")) {
+                    PhotoPicker.startPhotoPickerForResult(chatActivity5.this, REQUEST_CODE_PHOTO_PICKER);
+                } else if (options[which].equals("File")) {
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("*/*");
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    String[] mimeTypes = {"application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
+                    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                    startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_SELECT_CODE);
+                } else if (options[which].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQUEST_CODE_PHOTO_PICKER) {
             if (resultCode == Activity.RESULT_OK) {
                 Photo[] photos = PhotoPicker.getResultPhotos(data);
@@ -698,7 +732,7 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.i("chatActivity", "Photo Picking Cancelled: " + resultCode);
             } else {
-                Log.i("dbotha", "Unknown result code: " + resultCode);
+                Log.i("chatActivity", "Unknown result code: " + resultCode);
             }
         } else if (requestCode == UCrop.REQUEST_CROP) {
             if (resultCode == RESULT_OK) {
@@ -708,9 +742,98 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
                 final Throwable cropError = UCrop.getError(data);
                 Toast.makeText(this, "Crop failed: " + cropError.getMessage(), Toast.LENGTH_SHORT).show();
             }
+        } else if (requestCode == FILE_SELECT_CODE) {
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                fileUri = data.getData();
+                String fileName = getFileName(fileUri);
+                uploadFileToFirebaseStorage(fileUri, fileName);
+            }
         }
     }
 
+
+    private void uploadFileToFirebaseStorage(Uri fileUri, String fileName) {
+        if (fileUri != null) {
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference fileRef = storageRef.child("files/" + fileName);
+
+            ProgressDialog progressDialog = new ProgressDialog(chatActivity5.this);
+            progressDialog.setMessage("Uploading file...");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setMax(100);
+            progressDialog.setProgress(0);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+            UploadTask uploadTask = fileRef.putFile(fileUri);
+            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    progressDialog.setProgress((int) progress);
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.dismiss();
+
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri downloadUrl) {
+                            sendFile(downloadUrl.toString(),fileName);
+                            chatActivity5.this.fileUri = null;
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Failed to retrieve file URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Failed to upload file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void sendFile(String fileUrl,String filename) {
+        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
+            DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
+            String messageId = messageRef.getKey(); // Get the message ID
+            Message message = new Message(currentUserEmail, null, System.currentTimeMillis(), username, userImageUrl, "", messageId, key,fileUrl,filename);
+            messageRef.setValue(message)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(getApplicationContext(), "Sent file Success!", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(chatActivity5.this, "Failed to send file message", Toast.LENGTH_SHORT).show();
+                    });
+        });
+    }
+
+    @SuppressLint("Range")
+    private String getFileName(Uri fileUri) {
+        String fileName = null;
+        String scheme = fileUri.getScheme();
+        if (scheme != null && scheme.equals("content")) {
+            Cursor cursor = getContentResolver().query(fileUri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                cursor.close();
+            }
+        } else if (scheme != null && scheme.equals("file")) {
+            fileName = new File(fileUri.getPath()).getName();
+        }
+        return fileName != null ? fileName : "unknown_file";
+    }
+
+    
     private void openCropActivity(Uri imageUri) {
         Uri destinationUri = Uri.fromFile(new File(getCacheDir(), "cropped_image.jpg"));
         UCrop uCrop = UCrop.of(imageUri, destinationUri);
@@ -763,13 +886,15 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
             }
         }
     }
+
+
     private void sendImageMessage(String imageUrl) {
         String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
             DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
             String messageId = messageRef.getKey(); // Get the message ID
-            Message message = new Message(currentUserEmail, null, System.currentTimeMillis(), username, userImageUrl, imageUrl, messageId,key);
+            Message message = new Message(currentUserEmail, null, System.currentTimeMillis(), username, userImageUrl, imageUrl, messageId,key,"","");
             messageRef.setValue(message)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(),"Sent gif Success!",Toast.LENGTH_SHORT).show();

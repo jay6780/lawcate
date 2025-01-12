@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.law.booking.activity.MainPageActivity.Guess.Guess_summary;
 import com.law.booking.activity.MainPageActivity.bookingUi.Bookingmap;
 import com.law.booking.activity.MainPageActivity.bookingUi.Bookingmap2;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
@@ -65,6 +66,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     private  String guessEmail = SPUtils.getInstance().getString(AppConstans.userEmail);
     private  String guessAge = SPUtils.getInstance().getString(AppConstans.age);
     private  String guessAddress = SPUtils.getInstance().getString(AppConstans.addressUser);
+    private boolean isConfirmed;
     public BookingAdapter(List<Booking2> bookingList ,Context context) {
         this.bookingList = bookingList;
         this.context = context;
@@ -82,7 +84,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     @NonNull
     @Override
     public BookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_adapterlayout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.booking_adapter_layout, parent, false);
         return new BookingViewHolder(view);
     }
 
@@ -101,6 +103,34 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                 .apply(RequestOptions.circleCropTransform())
                 .placeholder(R.drawable.baseline_person_24)
                 .into(holder.avatar);
+
+
+        if(isConfirmed){
+            holder.viewsummary.setVisibility(View.VISIBLE);
+        }else{
+            holder.cancel.setVisibility(View.VISIBLE);
+        }
+
+
+        holder.viewsummary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, Guess_summary.class);
+                intent.putExtra("email",booking.getEmail());
+                intent.putExtra("username", booking.getProviderName());
+                intent.putExtra("image", booking.getImage());
+                intent.putExtra("key", booking.getKey());
+                intent.putExtra("serviceName", booking.getServiceName());
+                intent.putExtra("price",booking.getPrice());
+                intent.putExtra("heads",booking.getHeads());
+                intent.putExtra("phonenumber",booking.getPhonenumber());
+                intent.putExtra("date",booking.getDate());
+                intent.putExtra("time",booking.getTime());
+                intent.putExtra("paymentMethod",booking.getPaymentMethod());
+                intent.putExtra("snapshotkey",booking.getSnapshotkey());
+                context.startActivity(intent);
+            }
+        });
 
         holder.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -436,12 +466,18 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         return bookingList.size();
     }
 
+    public void isConfirmed(boolean view) {
+        isConfirmed = view;
+        Log.d("isConfirmed", "isConfirmed= "+isConfirmed);
+    }
+
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView,time,date,servicename,price;
         ImageView avatar;
-        AppCompatButton cancel;
+        AppCompatButton cancel,viewsummary;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
+            viewsummary = itemView.findViewById(R.id.viewsummary);
             cancel = itemView.findViewById(R.id.cancel);
             servicename = itemView.findViewById(R.id.servicename);
             nameTextView = itemView.findViewById(R.id.username);

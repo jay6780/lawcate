@@ -138,12 +138,15 @@ public class EventUserAdapter extends RecyclerView.Adapter<EventUserAdapter.Prov
                     boolean isSentByCurrentUser = false;
                     String imageUrl = null;
                     String message = null;
+                    String fileUrl = null;
+                    String filename = null;
                     for (DataSnapshot messageSnapshot : messagesSnapshot.getChildren()) {
                         message = messageSnapshot.child("message").getValue(String.class);
                         String senderEmail = messageSnapshot.child("senderEmail").getValue(String.class);
                         String username = messageSnapshot.child("username").getValue(String.class);
                         imageUrl = messageSnapshot.child("imageUrl").getValue(String.class);
-
+                        fileUrl = messageSnapshot.child("fileUrl").getValue(String.class);
+                        filename = messageSnapshot.child("filename").getValue(String.class);
                         if (!senderEmail.equals(currentUserEmail)) {
                             hasMessages = true;
                             if (imageUrl != null && !imageUrl.isEmpty() && imageUrl.startsWith("http")) {
@@ -152,6 +155,10 @@ public class EventUserAdapter extends RecyclerView.Adapter<EventUserAdapter.Prov
                             } else if (message != null && !message.isEmpty()) {
                                 holder.messageContents.setText(username + ": " + message);
                                 holder.nameTextView.setVisibility(View.GONE);
+                            } else if (fileUrl != null && !fileUrl.isEmpty() && filename != null && !filename.isEmpty() ) {
+                                holder.messageContents.setText(username + ": "+"Send a file");
+                                holder.nameTextView.setVisibility(View.GONE);
+
                             } else {
                                 holder.messageContents.setVisibility(View.GONE);
                             }

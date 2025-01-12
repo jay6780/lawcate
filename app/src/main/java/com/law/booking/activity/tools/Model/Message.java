@@ -10,13 +10,15 @@ public class Message {
     private String key;
     private String chatRoomId;
     private String messageId; // Added messageId field
-
+    private String fileUrl;
+    private String filename;
     // Default constructor
     public Message() {
     }
 
     // Parameterized constructor
-    public Message(String senderEmail, String message, long timestamp, String username, String userImageUrl, String imageUrl, String messageId,String key) {
+    public Message(String senderEmail, String message, long timestamp, String username, String userImageUrl, String imageUrl, String messageId,String key,
+                   String fileUrl,String filename) {
         this.senderEmail = senderEmail;
         this.message = message;
         this.timestamp = timestamp;
@@ -24,10 +26,23 @@ public class Message {
         this.userImageUrl = userImageUrl;
         this.imageUrl = imageUrl;
         this.messageId = messageId;
+        this.fileUrl = fileUrl;
+        this.filename = filename;
         this.key = key;// Initialize messageId
     }
 
+
+
     // Getters and Setters
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
     public String getSenderEmail() {
         return senderEmail;
     }

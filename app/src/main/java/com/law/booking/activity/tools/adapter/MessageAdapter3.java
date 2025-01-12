@@ -34,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.law.booking.activity.MainPageActivity.FullScreenImageActivity;
 import com.law.booking.activity.events.Bookingmap_Event;
+import com.law.booking.activity.pdf.pdf_activity;
 import com.law.booking.activity.tools.Model.LinkMovementMethods;
 import com.law.booking.activity.tools.Model.Message;
 import com.law.booking.activity.tools.Utils.AppConstans;
@@ -106,6 +107,9 @@ public class MessageAdapter3 extends RecyclerView.Adapter<MessageAdapter3.Messag
                     .load(message.getMessage())
                     .placeholder(R.drawable.baseline_person_24)
                     .into(holder.message_content);
+        }else if(message.getFileUrl() != null && !message.getFileUrl().isEmpty()) {
+            holder.messageBubble.setVisibility(View.VISIBLE);
+            holder.messageTextView.setText(message.getFilename());
         } else {
             holder.messageBubble.setVisibility(View.VISIBLE);
             holder.imagebubble.setVisibility(View.GONE);
@@ -137,7 +141,7 @@ public class MessageAdapter3 extends RecyclerView.Adapter<MessageAdapter3.Messag
             String msgContent = message.getMessage();
             new AlertDialog.Builder(context)
                     .setTitle("Choose an action")
-                    .setItems(new String[]{"Delete Message", "View Map","Copy link"}, (dialog, which) -> {
+                    .setItems(new String[]{"Delete Message", "View Map","Copy link","View file"}, (dialog, which) -> {
                         if (which == 0) { // Delete Message
                             if (isCurrentUser) {
                                 new AlertDialog.Builder(context)
@@ -168,6 +172,11 @@ public class MessageAdapter3 extends RecyclerView.Adapter<MessageAdapter3.Messag
                             } else {
                                 Toast.makeText(context, "No valid URL to copy", Toast.LENGTH_SHORT).show();
                             }
+                        } else if (which == 3) {
+                            Intent intent = new Intent(context, pdf_activity.class);
+                            intent.putExtra("fileUrl", message.getFileUrl());
+                            intent.putExtra("title", message.getFilename());
+                            context.startActivity(intent);
                         }
                     })
                     .show();

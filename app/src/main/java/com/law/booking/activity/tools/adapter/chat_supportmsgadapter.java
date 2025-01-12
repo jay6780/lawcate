@@ -38,6 +38,7 @@ import com.law.booking.activity.MainPageActivity.Admin.Bookingmap_Admin;
 import com.law.booking.activity.MainPageActivity.Admin.ChatSupportlist;
 import com.law.booking.activity.MainPageActivity.FullScreenImageActivity;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
+import com.law.booking.activity.pdf.pdf_activity;
 import com.law.booking.activity.tools.Model.LinkMovementMethods;
 import com.law.booking.activity.tools.Model.Message;
 import com.law.booking.activity.tools.Utils.AppConstans;
@@ -123,6 +124,9 @@ public class chat_supportmsgadapter extends RecyclerView.Adapter<chat_supportmsg
                     .load(message.getMessage())
                     .placeholder(R.drawable.baseline_person_24)
                     .into(holder.message_content);
+        }else if(message.getFileUrl() != null && !message.getFileUrl().isEmpty()) {
+            holder.messageBubble.setVisibility(View.VISIBLE);
+            holder.messageTextView.setText(message.getFilename());
         } else {
             holder.messageBubble.setVisibility(View.VISIBLE);
             holder.imagebubble.setVisibility(View.GONE);
@@ -154,7 +158,7 @@ public class chat_supportmsgadapter extends RecyclerView.Adapter<chat_supportmsg
             String msgContent = message.getMessage();
             new AlertDialog.Builder(context)
                     .setTitle("Choose an action")
-                    .setItems(new String[]{"Delete Message", "View Map","Copy link","Ask Question","Delete all chat"}, (dialog, which) -> {
+                    .setItems(new String[]{"Delete Message", "View Map","Copy link","Ask Question","Delete all chat","View file"}, (dialog, which) -> {
                         if (which == 0) { // Delete Message
                             if (isCurrentUser) {
                                 new AlertDialog.Builder(context)
@@ -207,6 +211,12 @@ public class chat_supportmsgadapter extends RecyclerView.Adapter<chat_supportmsg
                                         })
                                         .setNegativeButton("No", null)
                                         .show();
+
+                        } else if (which == 5) { //viewfile
+                            Intent intent = new Intent(context, pdf_activity.class);
+                            intent.putExtra("fileUrl", message.getFileUrl());
+                            intent.putExtra("title", message.getFilename());
+                            context.startActivity(intent);
                         }
                     })
                     .show();

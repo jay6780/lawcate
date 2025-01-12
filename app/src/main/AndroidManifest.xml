@@ -59,6 +59,12 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="face" />
+
+        <activity
+            android:name=".activity.pdf.pdf_activity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.MainPageActivity.Admin.ChatSupportlist"
             android:exported="false"

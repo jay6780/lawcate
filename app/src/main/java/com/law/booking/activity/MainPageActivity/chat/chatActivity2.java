@@ -416,7 +416,7 @@ public class chatActivity2 extends AppCompatActivity implements OnMapReadyCallba
         fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
             DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
             String messageId = messageRef.getKey();
-            Message message = new Message(currentUserEmail, "", System.currentTimeMillis(), username, userImageUrl, gifUrl, messageId,key);
+            Message message = new Message(currentUserEmail, "", System.currentTimeMillis(), username, userImageUrl, gifUrl, messageId,key,"","");
             messageRef.setValue(message)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(),"Sent gif Success!",Toast.LENGTH_SHORT).show();
@@ -517,7 +517,7 @@ public class chatActivity2 extends AppCompatActivity implements OnMapReadyCallba
             fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
                 DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
                 String messageId = messageRef.getKey();
-                Message message = new Message(currentUserEmail, messageTextValue, System.currentTimeMillis(), username, userImageUrl, "", messageId,key);
+                Message message = new Message(currentUserEmail, messageTextValue, System.currentTimeMillis(), username, userImageUrl, "", messageId,key,"","");
                 messageRef.setValue(message)
                         .addOnSuccessListener(aVoid -> {
                             messageText.setText(""); // Clear text field after sending
@@ -661,7 +661,7 @@ public class chatActivity2 extends AppCompatActivity implements OnMapReadyCallba
         fetchUserDetails(currentUserEmail, (username, userImageUrl) -> {
             DatabaseReference messageRef = databaseReference.child("chatRooms").child(chatRoomId).child("messages").push();
             String messageId = messageRef.getKey(); // Get the message ID
-            Message message = new Message(currentUserEmail, null, System.currentTimeMillis(), username, userImageUrl, imageUrl, messageId,key);
+            Message message = new Message(currentUserEmail, null, System.currentTimeMillis(), username, userImageUrl, imageUrl, messageId,key,"","");
             messageRef.setValue(message)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getApplicationContext(),"Sent gif Success!",Toast.LENGTH_SHORT).show();

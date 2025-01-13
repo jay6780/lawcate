@@ -304,7 +304,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                                     "Selected schedule: " + "time: " + time + "\n" +
                                     "date: " + date + "\n" +
                                     "Number of Heads: " + heads + "\n" +
-                                    "Payment Method: " + cash + "\n" +
                                     "Price: " + price + " php" + "\n" +
                                     "My location: " + finalLocationLink + "\n" +
                                     "Thank you!";
@@ -316,7 +315,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                                     "Selected schedule: " + "time: " + time + "\n" +
                                     "date: " + date + "\n" +
                                     "Number of Heads: " + heads + "\n" +
-                                    "Payment Method: " + cash + "\n" +
                                     "Price: " + price + " php" + "\n" +
                                     "My location: " + finalLocationLink + "\n" +
                                     "Thank you!";

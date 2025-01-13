@@ -173,7 +173,7 @@ public class Admin_summary extends AppCompatActivity {
         title.setText("Book Summary");
         phonumbervalue.setText(phonenumber);
         back.setOnClickListener(view -> onBackPressed());
-        payment_spinner.setText(paymentMethod);
+//        payment_spinner.setText(paymentMethod);
         service.setText("Law book by this client");
 
     }

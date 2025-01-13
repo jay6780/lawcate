@@ -3,6 +3,7 @@ package com.law.booking.activity.MainPageActivity.addreview;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.fuzzproductions.ratingbar.RatingBar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,13 +28,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
+import com.law.booking.R;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.idlestar.ratingstar.RatingStarView;
-import com.law.booking.R;
 import com.orhanobut.dialogplus.DialogPlus;
 
 import java.util.HashMap;
@@ -47,9 +47,9 @@ public class addReviewActivity extends AppCompatActivity {
     private DatabaseReference reviewRef, guessRef, adminRef;
     private FirebaseStorage storage;
     private StorageReference storageRef;
-    private TextView nametext,titleText;
-    private ImageView avatarimage, addimmage;
-    private RatingStarView ratingBar;
+    private TextView nametext,titleText,smile_value;
+    private ImageView avatarimage, addimmage,emoji;
+    private RatingBar ratingBar;
     private EditText content;
     private String email, username, image, address, age, lengthOfservice,userimage;
     private boolean isOnline;
@@ -57,6 +57,7 @@ public class addReviewActivity extends AppCompatActivity {
     private Uri imageUri = null;
     private String currentUserName;
     private DialogPlus dialogPlus;
+    private int rateValue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,21 +69,62 @@ public class addReviewActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
         addimmage = findViewById(R.id.addtask);
+        smile_value = findViewById(R.id.smile_value);
+        emoji = findViewById(R.id.emoji);
         initGuess();
         initAdmin();
         initSavedata();
         initView();
         initClickers();
         changeStatusBarColor(getResources().getColor(R.color.purple_theme));
+
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                emoji.setVisibility(View.VISIBLE);
+                smile_value.setVisibility(View.VISIBLE);
+                rateValue = (int) rating;
+                switch (rateValue) {
+                    case 1:
+                        emoji.setImageResource(R.mipmap.nosmile);
+                        smile_value.setText("Very Dissatisfied");
+                        break;
+                    case 2:
+                        emoji.setImageResource(R.mipmap.sad);
+                        smile_value.setText("Dissatisfied");
+                        break;
+                    case 3:
+                        emoji.setImageResource(R.mipmap.unsatisfysmile);
+                        smile_value.setText("Neutral");
+                        break;
+                    case 4:
+                        emoji.setImageResource(R.mipmap.satisfy);
+                        smile_value.setText("Satisfied");
+                        break;
+                    case 5:
+                        emoji.setImageResource(R.mipmap.very_statisfy);
+                        smile_value.setText("Very Satisfied");
+                        break;
+                    default:
+                        emoji.setVisibility(View.GONE);
+                        smile_value.setVisibility(View.GONE);
+                        break;
+                }
+
+            }
+        });
+
+
     }
 
-    private void initSavedata() {
+        private void initSavedata() {
         addimmage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PhotoPicker.startPhotoPickerForResult(addReviewActivity.this, REQUEST_CODE_PHOTO_PICKER);
             }
         });
+
         findViewById(R.id.saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,12 +137,12 @@ public class addReviewActivity extends AppCompatActivity {
 
     private void saveReviewData() {
         final String reviewContent = content.getText().toString();
-        final float rating = ratingBar.getRating();
+        int rating =  rateValue;
 
-        if (reviewContent.isEmpty()) {
-            Toast.makeText(this, getString(R.string.reviewcontent_error), Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (reviewContent.isEmpty()) {
+//            Toast.makeText(this, getString(R.string.reviewcontent_error), Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
         if (rating == 0) {
             Toast.makeText(this, getString(R.string.addratingError), Toast.LENGTH_SHORT).show();

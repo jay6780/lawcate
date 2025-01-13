@@ -357,7 +357,6 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                 "Selected schedule: " + "time: " + time + "\n" +
                                 "date: " + date + "\n" +
                                 "Number of Heads: " + heads + "\n" +
-                                "Payment Method: " + cash + "\n" +
                                 "Price: " + price + " php" + "\n" +
                                 "Thank you!";
                     }else{
@@ -367,7 +366,6 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                 "Selected schedule: " + "time: " + time + "\n" +
                                 "date: " + date + "\n" +
                                 "Number of Heads: " + heads + "\n" +
-                                "Payment Method: " + cash + "\n" +
                                 "Price: " + price + " php" + "\n" +
                                 "Thank you!";
                     }

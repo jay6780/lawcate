@@ -191,7 +191,7 @@ public class Paymentreceipt extends AppCompatActivity {
     }
 
     private void confirmation() {
-        String selectedPayment = payment_spinner.getSelectedItem().toString();
+        String selectedPayment = "Cash";
         if (selectedPayment.equals("Select Payment")) {
             Toast.makeText(getApplicationContext(), "Please choose a payment method first", Toast.LENGTH_SHORT).show();
             return;

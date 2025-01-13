@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
@@ -45,6 +46,7 @@
                     android:id="@+id/tex1"
                     android:layout_below="@+id/profileImageView"
                     app:fontFamily="@font/inter"
+                    android:visibility="gone"
                     android:layout_centerHorizontal="true"
                     android:textColor="@color/black"
                     android:layout_marginTop="20dp"
@@ -60,34 +62,41 @@
                         android:textStyle="bold" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.idlestar.ratingstar.RatingStarView
+                <com.fuzzproductions.ratingbar.RatingBar
                     android:id="@+id/star"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_below="@+id/tex1"
-                    android:layout_marginStart="65dp"
-                    android:layout_marginTop="8dp"
-                    android:background="#fff"
-                    android:paddingLeft="0dp"
-                    android:paddingTop="2dp"
-                    android:paddingRight="0dp"
-                    app:rsv_cornerRadius="4dp"
-                    app:rsv_drawStrokeForEmptyStar="false"
-                    app:rsv_drawStrokeForHalfStar="true"
-                    app:rsv_enableSelectRating="true"
-                    app:rsv_onlyHalfStar="true"
-                    app:rsv_rating="0"
-                    app:rsv_starBackgroundColor="#E8E8E8"
-                    app:rsv_starForegroundColor="#FFF100"
-                    app:rsv_starMargin="12dp"
-                    app:rsv_starNum="8"
-                    app:rsv_starThickness="0.7"
-                    app:rsv_strokeColor="#457DD7"
-                    app:rsv_strokeWidth="2px" />
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/profileImageView"
+                    android:layout_centerHorizontal="true"
+                    app:isIndicator="false"
+                    app:numStars="5"
+                    app:starMargin="10dp"
+                    app:starSize="40dp" />
+
+                <ImageView
+                    android:id="@+id/emoji"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_below="@+id/star"
+                    android:layout_marginTop="5dp"
+                    android:visibility="gone"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
+                    android:id="@+id/smile_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/emoji"
+                    android:layout_marginTop="5dp"
+                    android:visibility="gone"
+                    android:layout_centerHorizontal="true"
+                    android:text=""
+                    android:textSize="15sp" />
 
                 <LinearLayout
                     android:id="@+id/folder"
                     android:layout_width="80dp"
+                    android:visibility="gone"
                     android:layout_height="80dp"
                     android:layout_below="@+id/star"
                     android:layout_gravity="center"
@@ -122,9 +131,9 @@
                     android:id="@+id/saveButton"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/folder"
+                    android:layout_below="@+id/smile_value"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="35dp"
                     android:background="@drawable/borderbackground"
                     android:text="@string/rate_now"

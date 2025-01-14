@@ -332,23 +332,23 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     String username = dataSnapshot.child("username").getValue(String.class);
-                    String locationLink = "";
-                    if (address != null && !address.isEmpty()) {
-                        try {
-                            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-                            List<Address> addressList = geocoder.getFromLocationName(address, 1);
-                            if (addressList != null && !addressList.isEmpty()) {
-                                Address addr = addressList.get(0);
-                                double latitude = addr.getLatitude();
-                                double longitude = addr.getLongitude();
-                                locationLink = "https://www.google.com/maps/?q=" + latitude + "," + longitude;
-                            } else {
-                                Log.e(TAG, "No coordinates found for the address");
-                            }
-                        } catch (IOException e) {
-                            Log.e(TAG, "Geocoding failed", e);
-                        }
-                    }
+//                    String locationLink = "";
+//                    if (address != null && !address.isEmpty()) {
+//                        try {
+//                            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+//                            List<Address> addressList = geocoder.getFromLocationName(address, 1);
+//                            if (addressList != null && !addressList.isEmpty()) {
+//                                Address addr = addressList.get(0);
+//                                double latitude = addr.getLatitude();
+//                                double longitude = addr.getLongitude();
+//                                locationLink = "https://www.google.com/maps/?q=" + latitude + "," + longitude;
+//                            } else {
+//                                Log.e(TAG, "No coordinates found for the address");
+//                            }
+//                        } catch (IOException e) {
+//                            Log.e(TAG, "Geocoding failed", e);
+//                        }
+//                    }
                     String availedMessage = null;
                     if(isConfirmed){
                          availedMessage = "Hi, I'm " + username + "\n" +
@@ -371,7 +371,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                     String timestamp = String.valueOf(System.currentTimeMillis());
                     Booking booking = new Booking(providerName, serviceName, price, heads, phonenumber, date, time, image, address, provideremail, age, lengthOfservice, cash, key,timestamp,snapshotkey);
                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    Booking booking2 = new Booking(adminUsername, serviceName, price, heads, adminPhone, date, time, adminImage, adminAddress, adminEmail, adminAge, lengthOfservice, cash, uid,timestamp,snapshotkey);
+                    Booking booking2 = new Booking(adminUsername, serviceName, price, heads, adminPhone, date, time, adminImage, adminAddress, adminEmail, adminAge, SPUtils.getInstance().getString(AppConstans.AdminLenght), cash, uid,timestamp,snapshotkey);
                     String chatRoomId = createChatRoomId(curruntUserEmail, provideremail);
 
                     if(isConfirmed) {

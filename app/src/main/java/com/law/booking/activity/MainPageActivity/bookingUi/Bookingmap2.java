@@ -101,7 +101,7 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
     private String providerName;
     private String address, key, time, cash, serviceName, heads, price, date;
     private String age, lengthOfservice;
-    private String TAG = "Bookingmap";
+    private String TAG = "Bookingmap2";
     private boolean isOnline;
     private boolean isMapReady = false;
     private DatabaseReference databaseReference, chatroomIds;
@@ -167,6 +167,7 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
         email = getIntent().getStringExtra("email");
         age = getIntent().getStringExtra("age");
         lengthOfservice = getIntent().getStringExtra("lengthOfService");
+        Log.d("lengthOfservices","lengthOfservices+ "+lengthOfservice);
         key = getIntent().getStringExtra("key");
         ages.setText(getString(R.string.age) + ": " + (age != null ? age : "N/A"));
         userLenghtexp.setText(getString(R.string.years) + ": " + (lengthOfservice != null ? lengthOfservice : "N/A"));

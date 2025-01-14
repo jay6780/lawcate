@@ -353,20 +353,14 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                     if(isConfirmed){
                          availedMessage = "Hi, I'm " + username + "\n" +
                                 "The book has been confirmed with:\n" +
-                                "Law name: " + serviceName + "\n" +
                                 "Selected schedule: " + "time: " + time + "\n" +
                                 "date: " + date + "\n" +
-                                "Number of Heads: " + heads + "\n" +
-                                "Price: " + price + " php" + "\n" +
                                 "Thank you!";
                     }else{
                         availedMessage = "Hi, I'm " + username + "\n" +
                                 "The book has been complete with:\n" +
-                                "Law name: " + serviceName + "\n" +
                                 "Selected schedule: " + "time: " + time + "\n" +
                                 "date: " + date + "\n" +
-                                "Number of Heads: " + heads + "\n" +
-                                "Price: " + price + " php" + "\n" +
                                 "Thank you!";
                     }
 
@@ -393,7 +387,6 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                         Log.d(TAG, "Cancel data saved successfully.");
                                         book.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
                                         Mybook.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
-                                        transactionMap.child(chatRoomId).removeValue();
                                     }
                                 });
                     }else{
@@ -412,6 +405,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                         confirmed_client.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
                                         confirmed_lawyer.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
                                         transactionMap.child(chatRoomId).removeValue();
+                                        decreasebookCount();
                                     }
                                 });
                     }
@@ -442,35 +436,6 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                     .addOnFailureListener(e -> Log.e("FirebaseDB", "Error updating count", e));
         }).addOnFailureListener(e -> Log.e("FirebaseDB", "Error fetching count", e));
     }
-
-
-    private void savedCompletebookUser(String chatRoomId, String key) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        String time = String.valueOf(System.currentTimeMillis());
-        BookingId mychatId = new BookingId(time, chatRoomId);
-        databaseReference.child("CompleteBookId_user").child(key).push().setValue(mychatId)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("FirebaseDB", "Data saved successfully");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("FirebaseDB", "Error saving data", e);
-                });
-    }
-
-    private void savedBookId(String childKey) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String time = String.valueOf(System.currentTimeMillis());
-        BookingId mychatId = new BookingId(time, childKey);
-        databaseReference.child("CompleteBookId").child(userId).push().setValue(mychatId)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("FirebaseDB", "Data saved successfully");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("FirebaseDB", "Error saving data", e);
-                });
-    }
-
 
     private void checkAndCreateChatRoom(String provideremail, String providerName, String image, String curruntUserEmail,Context context,String address,String key,String availedmessage) {
         String chatRoomId = createChatRoomId(curruntUserEmail, provideremail);

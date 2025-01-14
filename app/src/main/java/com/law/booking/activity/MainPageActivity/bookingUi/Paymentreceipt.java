@@ -170,7 +170,7 @@ public class Paymentreceipt extends AppCompatActivity {
                 .error(R.drawable.baseline_person_24)
                 .into(avatar);
 
-        name.setText("Name: " + providerName);
+        name.setText("Lawyer Name: " + providerName);
         servicename.setText(serviceName);
         headss.setText(heads + " Heads");
         prices.setText(price +" php");

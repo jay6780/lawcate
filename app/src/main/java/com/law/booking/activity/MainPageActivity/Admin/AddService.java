@@ -146,10 +146,9 @@ public class AddService extends AppCompatActivity {
     private void saveServiceData(Uri imageUri) {
         try {
         String serviceName = servicename.getText().toString().trim();
-        int servicePrice = Integer.parseInt(price.getText().toString().trim());
 
-        if (!serviceName.isEmpty() && servicePrice > 0 && imageUri != null) {
-            uploadImageToFirebase(imageUri, serviceName, servicePrice, "");
+        if (!serviceName.isEmpty() && imageUri != null) {
+            uploadImageToFirebase(imageUri, serviceName, 0, "");
         } else {
             Toast.makeText(this, "Please provide valid law data", Toast.LENGTH_SHORT).show();
         }

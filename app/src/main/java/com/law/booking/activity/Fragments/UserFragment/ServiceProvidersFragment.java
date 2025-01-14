@@ -99,6 +99,52 @@ public class ServiceProvidersFragment extends Fragment implements profileService
         setupAddSubtractListeners();
         fetchSchedules();
         initClear();
+        proceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String price = SPUtils.getInstance().getString(AppConstans.pricetag);
+                String heads = SPUtils.getInstance().getString(AppConstans.heads);
+
+//                    if (heads == null || heads.isEmpty() || heads.equals("0")) {
+//                        Toast.makeText(getContext(), "Please add heads to continue.", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+                    serviceRef = FirebaseDatabase.getInstance().getReference("Service").child(key);
+                    eventOrg = FirebaseDatabase.getInstance().getReference("EventOrg").child(key);
+
+                    serviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                navigateToBookNow(price, heads);
+                            } else {
+                                eventOrg.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            navigateToPackageEvent(price, heads);
+                                        } else {
+                                            navigateToBookNow(price, heads);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Log.e(TAG, "Error fetching EventOrg data: " + databaseError.getMessage());
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e(TAG, "Error fetching Service data: " + databaseError.getMessage());
+                        }
+                    });
+                }
+
+        });
         return view;
     }
 
@@ -361,10 +407,12 @@ public class ServiceProvidersFragment extends Fragment implements profileService
         new Handler().postDelayed(() -> {
             skeletonScreen.hide();
             portfolioRecycler.setVisibility(View.VISIBLE);
-            myserviceRecycler.setVisibility(View.VISIBLE);
+            myserviceRecycler.setVisibility(View.GONE);
             sched.setVisibility(View.VISIBLE);
             services.setVisibility(View.VISIBLE);
             scroller.setVisibility(View.VISIBLE);
+            services.setVisibility(View.GONE);
+            proceed.setVisibility(View.VISIBLE);
             schedulerecycler.setVisibility(View.VISIBLE);
             ll_skeleton.setVisibility(View.GONE);
         }, 1000);
@@ -383,60 +431,15 @@ public class ServiceProvidersFragment extends Fragment implements profileService
             numnber.setText("0");
         }
 
-        isAnyServiceChecked = checkIfAnyServiceIsChecked();
-        if (isAnyServiceChecked) {
+//        isAnyServiceChecked = checkIfAnyServiceIsChecked();
+//        if (isAnyServiceChecked) {
             proceed.setVisibility(View.VISIBLE);
             rl.setVisibility(View.VISIBLE);
-
-            proceed.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String price = SPUtils.getInstance().getString(AppConstans.pricetag);
-                    String heads = SPUtils.getInstance().getString(AppConstans.heads);
-
-                    if (heads == null || heads.isEmpty() || heads.equals("0")) {
-                        Toast.makeText(getContext(), "Please add heads to continue.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    serviceRef = FirebaseDatabase.getInstance().getReference("Service").child(key);
-                    eventOrg = FirebaseDatabase.getInstance().getReference("EventOrg").child(key);
-
-                    serviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                navigateToBookNow(price, heads);
-                            } else {
-                                eventOrg.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            navigateToPackageEvent(price, heads);
-                                        } else {
-                                            navigateToBookNow(price, heads);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        Log.e(TAG, "Error fetching EventOrg data: " + databaseError.getMessage());
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.e(TAG, "Error fetching Service data: " + databaseError.getMessage());
-                        }
-                    });
-                }
-            });
-        } else {
-            proceed.setVisibility(View.GONE);
-            rl.setVisibility(View.GONE);
-            total.setVisibility(View.GONE);
-        }
+//        } else {
+//            proceed.setVisibility(View.GONE);
+//            rl.setVisibility(View.GONE);
+//            total.setVisibility(View.GONE);
+//        }
     }
 
     private void navigateToPackageEvent(String price, String heads) {

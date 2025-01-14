@@ -49,6 +49,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         Service service = serviceList.get(position);
         holder.serviceName.setText(service.getName());
         holder.price.setText("Price: " + service.getPrice());
+        holder.price.setVisibility(View.GONE);
 
         String imageUrl = service.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -66,7 +67,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle("Select an option")
-                        .setItems(new String[]{"Delete","Update service","Discount"}, (dialog, which) -> {
+                        .setItems(new String[]{"Delete","Update Law"}, (dialog, which) -> {
                             if (which == 0) {
                                 // Delete option
                                 new AlertDialog.Builder(view.getContext())

@@ -124,6 +124,7 @@
                             android:id="@+id/clear"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
+                            android:visibility="gone"
                             android:layout_below="@+id/bannercontent"
                             android:layout_marginStart="10dp"
                             android:src="@mipmap/clear" />

@@ -311,11 +311,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                             // Event is not saved in "Events", don't include the packages
                             availedMessage = "Hi, I'm " + username + "\n" +
                                     "I'm sorry I cancel:\n" +
-                                    "Law Name: " + serviceName + "\n" +
-                                    "Selected schedule: " + "time: " + time + "\n" +
+                                    "Selected schedule:" + " time: " + time + "\n" +
                                     "date: " + date + "\n" +
-                                    "Number of Heads: " + heads + "\n" +
-                                    "Price: " + price + " php" + "\n" +
                                     "My location: " + finalLocationLink + "\n" +
                                     "Thank you!";
                         }

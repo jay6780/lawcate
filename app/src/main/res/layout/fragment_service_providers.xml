@@ -50,6 +50,24 @@
                 android:layout_marginTop="10dp"
                 android:visibility="gone" />
 
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/proceed"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:layout_below="@+id/schedulerecycler"
+                android:background="@drawable/bg_pink"
+                android:fontFamily="@font/inter"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="Book Now"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/services"
                 android:layout_width="wrap_content"
@@ -147,7 +165,7 @@
     </RelativeLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/proceed"
+        android:id="@+id/proceed2"
         android:layout_width="120dp"
         android:layout_height="40dp"
         android:layout_alignParentEnd="true"
@@ -160,7 +178,7 @@
         android:layout_marginBottom="5dp"
         android:background="@drawable/transparentbg"
         android:fontFamily="@font/inter"
-        android:text="Proceed"
+        android:text="Book Now"
         android:textColor="@color/black"
         android:textSize="12sp"
         android:textStyle="bold"

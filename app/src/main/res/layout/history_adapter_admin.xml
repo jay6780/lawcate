@@ -138,7 +138,7 @@
             android:layout_marginBottom="10dp"
             android:layout_toRightOf="@+id/cancel"
             android:background="@drawable/cancel_bg"
-            android:text="Confirmed"
+            android:text="Confirm"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>

@@ -776,12 +776,8 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
                     String locationLink = SPUtils.getInstance().getString(AppConstans.locationlink);
                     savedlocationLink(userId, locationLink);
                     availedmess = "Hi, I'm " + username + "\n" +
-                            "I availed:\n" +
-                            "Law Name: " + serviceName + "\n" +
-                            "Selected schedule: " + "time: " + time + "\n" +
+                            "I Choose Schedule" +" time: " + time + "\n" +
                             "date: " + date + "\n" +
-                            "Number of Heads: " + heads + "\n" +
-                            "Price: " + price + " php" + "\n" +
                             "My location: " + locationLink + "\n" +
                             "Thank you!";
                     Log.d(TAG, "availedmess: " + availedmess);

@@ -88,10 +88,10 @@ public class AddService_view extends AppCompatActivity {
         imageUrl = getIntent().getStringExtra("imageUrl");
         key = getIntent().getStringExtra("key");
         serviceName = getIntent().getStringExtra("serviceName");
-        Price = getIntent().getStringExtra("price");
+//        Price = getIntent().getStringExtra("price");
         Log.d(TAG,"Price: "+Price);
         servicename.setText(serviceName);
-        price.setText(Price);
+//        price.setText(Price);
         Glide.with(AddService_view.this)
                 .load(imageUrl)
                 .apply(RequestOptions.circleCropTransform())
@@ -167,29 +167,26 @@ public class AddService_view extends AppCompatActivity {
 
     private void saveServiceData(Uri imageUri) {
         String serviceName = servicename.getText().toString().trim();
-        String priceText = price.getText().toString().trim();
-        if (serviceName.isEmpty() || priceText.isEmpty()) {
+//        String priceText = price.getText().toString().trim();
+        if (serviceName.isEmpty()) {
             Toast.makeText(this, "Please set data", Toast.LENGTH_SHORT).show();
             return;
         }
-
-
-
-        int servicePrice;
-        try {
-            servicePrice = Integer.parseInt(priceText);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Invalid price format", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        int servicePrice;
+//        try {
+//            servicePrice = Integer.parseInt(priceText);
+//        } catch (NumberFormatException e) {
+//            Toast.makeText(this, "Invalid price format", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         if (imageUri == null && (imageUrl == null || imageUrl.isEmpty())) {
             Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
             return;
         }
         if (imageUri != null) {
-            uploadImageToFirebase(imageUri, serviceName, servicePrice, "");
+            uploadImageToFirebase(imageUri, serviceName, 0, "");
         } else {
-            saveServiceToDatabase(serviceName, servicePrice, imageUrl, "");
+            saveServiceToDatabase(serviceName, 0, imageUrl, "");
         }
     }
 

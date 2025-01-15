@@ -30,53 +30,52 @@ public class AdminDialog {
     public void adminDialog(Activity activity, AdminDialogCallback callback) {
         List<Usermodel> adminList = new ArrayList<>();
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
-        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("ADMIN");
-
-        // First, retrieve data from "ADMIN"
+//        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("ADMIN");"
         adminRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot adminSnapshot) {
-                Map<String, Usermodel> adminMap = new HashMap<>();
+//                Map<String, Usermodel> adminMap = new HashMap<>();
                 for (DataSnapshot userSnapshot : adminSnapshot.getChildren()) {
                     Usermodel adminUser = userSnapshot.getValue(Usermodel.class);
                     if (adminUser != null) {
                         adminUser.setKey(userSnapshot.getKey());
-                        adminMap.put(adminUser.getEmail(), adminUser); // Use email as key for easy lookup
+//                        adminMap.put(adminUser.getEmail(), adminUser);
+                        adminList.add(adminUser);
                     }
                 }
-
-                // Next, retrieve data from "Events" and merge with "ADMIN"
-                eventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot eventsSnapshot) {
-                        for (DataSnapshot eventSnapshot : eventsSnapshot.getChildren()) {
-                            Usermodel eventUser = eventSnapshot.getValue(Usermodel.class);
-                            if (eventUser != null) {
-                                eventUser.setKey(eventSnapshot.getKey());
-                                // Merge data if email exists in "ADMIN"
-                                if (adminMap.containsKey(eventUser.getEmail())) {
-                                    Usermodel existingAdmin = adminMap.get(eventUser.getEmail());
-                                    existingAdmin.setPhone(eventUser.getPhone());
-                                    existingAdmin.setUsername(eventUser.getUsername());
-                                    existingAdmin.setOnline(eventUser.isOnline());
-                                    // Add other fields as needed
-                                } else {
-                                    // If not in "ADMIN", add as a new entry
-                                    adminList.add(eventUser);
-                                }
-                            }
-                        }
-                        adminList.addAll(adminMap.values()); // Combine updated "ADMIN" data with merged results
-
-                        // Display the dialog with the merged list
-                        showAdminDialog(activity, adminList, callback);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        Log.e("AdminDialog", "Error fetching data from Events: " + error.getMessage());
-                    }
-                });
+                showAdminDialog(activity, adminList, callback);
+//                // Next, retrieve data from "Events" and merge with "ADMIN"
+//                eventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot eventsSnapshot) {
+//                        for (DataSnapshot eventSnapshot : eventsSnapshot.getChildren()) {
+//                            Usermodel eventUser = eventSnapshot.getValue(Usermodel.class);
+//                            if (eventUser != null) {
+//                                eventUser.setKey(eventSnapshot.getKey());
+//                                // Merge data if email exists in "ADMIN"
+//                                if (adminMap.containsKey(eventUser.getEmail())) {
+//                                    Usermodel existingAdmin = adminMap.get(eventUser.getEmail());
+//                                    existingAdmin.setPhone(eventUser.getPhone());
+//                                    existingAdmin.setUsername(eventUser.getUsername());
+//                                    existingAdmin.setOnline(eventUser.isOnline());
+//                                    // Add other fields as needed
+//                                } else {
+//                                    // If not in "ADMIN", add as a new entry
+//                                    adminList.add(eventUser);
+//                                }
+//                            }
+//                        }
+//                        adminList.addAll(adminMap.values()); // Combine updated "ADMIN" data with merged results
+//
+//                        // Display the dialog with the merged list
+//                        showAdminDialog(activity, adminList, callback);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError error) {
+//                        Log.e("AdminDialog", "Error fetching data from Events: " + error.getMessage());
+//                    }
+//                });
             }
 
             @Override

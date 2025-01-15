@@ -125,6 +125,7 @@ public class ReviewFragment extends Fragment {
                 switch (v.getId()) {
                     case R.id.ViewAll:
                         Intent intent = new Intent(getActivity(), Rating_userview.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);
                         break;
                 }

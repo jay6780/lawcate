@@ -117,9 +117,9 @@ public class providerProfile2 extends AppCompatActivity {
         Glide.with(this)
                 .load(image)
                 .transform(new CircleCrop())
-                .placeholder(R.drawable.baseline_person_24)
-                .error(R.drawable.baseline_person_24)
+                .error(R.mipmap.man)
                 .into(profileimage);
+
         databaseReference = FirebaseDatabase.getInstance().getReference();
         userAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +132,7 @@ public class providerProfile2 extends AppCompatActivity {
                 intent.putExtra("image",image);
                 intent.putExtra("email",email);
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 finish();
             }
         });

@@ -457,6 +457,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
         intent.putExtra("heads", heads);
         intent.putExtra("phonenumber", phonenumber);
         getActivity().startActivity(intent);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         getActivity().finish();
     }
     private void navigateToBookNow(String price, String heads) {
@@ -474,6 +475,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
         intent.putExtra("heads", heads);
         intent.putExtra("phonenumber", phonenumber);
         getActivity().startActivity(intent);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         getActivity().finish();
     }
 

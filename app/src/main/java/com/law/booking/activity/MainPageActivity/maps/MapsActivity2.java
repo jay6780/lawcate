@@ -44,7 +44,7 @@ public class MapsActivity2 extends AppCompatActivity implements OnMapReadyCallba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        changeStatusBarColor(getResources().getColor(R.color.bgColor));
+        changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -130,6 +130,7 @@ public class MapsActivity2 extends AppCompatActivity implements OnMapReadyCallba
         back.putExtra("email",email);
         back.putExtra("key",key);
         startActivity(back);
+        overridePendingTransition(0,0);
         finish();
         super.onBackPressed();
     }

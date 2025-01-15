@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,8 @@ public class event_profileFragment extends Fragment {
 
     private ImageView myAvatar;
     private TextView usernametv, useremailtv;
+    private RelativeLayout bookingHistory;
+    private View view5;
     private String username = SPUtils.getInstance().getString(AppConstans.EventUsername);
     private String email = SPUtils.getInstance().getString(AppConstans.Eventemail);
     private String image = SPUtils.getInstance().getString(AppConstans.EventImage);
@@ -94,8 +97,16 @@ public class event_profileFragment extends Fragment {
     }
 
     private void initViews(View view) {
+        bookingHistory = view.findViewById(R.id.bookingHistory);
         myAvatar = view.findViewById(R.id.myAvatar);
         usernametv = view.findViewById(R.id.usernametv);
         useremailtv = view.findViewById(R.id.useremailtv);
+        view5 = view.findViewById(R.id.view5);
+
+        if (SPUtils.getInstance().getBoolean(AppConstans.Administrator)){
+            bookingHistory.setVisibility(View.GONE);
+            view5.setVisibility(View.GONE);
+        }
     }
+
 }

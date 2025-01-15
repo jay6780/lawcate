@@ -41,7 +41,9 @@ public class AdminAdapter extends RecyclerView.Adapter<AdminAdapter.AdminViewHol
         Glide.with(context)
                 .load(admin.getImage())
                 .transform(new CircleCrop())
+                .error(R.mipmap.man)
                 .into(holder.image);
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onAdminClick(admin);

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -342,7 +343,6 @@ public class newHome extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference apkDetailsRef = database.getReference("ApkDetails");
         String currentVersion = getCurrentAppVersion();
-
         apkDetailsRef.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -350,7 +350,7 @@ public class newHome extends AppCompatActivity {
                     String latestVersion = snapshot.child("versionName").getValue(String.class);
                     String apkUrl = snapshot.child("apkUrl").getValue(String.class);
                     if (latestVersion != null && apkUrl != null) {
-                        if (!latestVersion.equals(currentVersion)) {
+                        if (isVersionHigher(latestVersion, currentVersion)) {
                             startAppUpdate(apkUrl, latestVersion);
                         }
                     }
@@ -362,11 +362,29 @@ public class newHome extends AppCompatActivity {
             }
         });
     }
+
+    private boolean isVersionHigher(String latestVersion, String currentVersion) {
+        String[] latestParts = latestVersion.split("\\.");
+        String[] currentParts = currentVersion.split("\\.");
+
+        for (int i = 0; i < Math.max(latestParts.length, currentParts.length); i++) {
+            int latest = i < latestParts.length ? Integer.parseInt(latestParts[i]) : 0;
+            int current = i < currentParts.length ? Integer.parseInt(currentParts[i]) : 0;
+
+            if (latest > current) {
+                return true;
+            } else if (latest < current) {
+                return false;
+            }
+        }
+        return false;
+    }
+
     private void startAppUpdate(String apkUrl, String versionName) {
         Dialog updatedialog = new Dialog();
-        updatedialog.updateDialog(newHome.this,apkUrl,versionName);
-
+        updatedialog.updateDialog(newHome.this, apkUrl, versionName);
     }
+
 
     private String getCurrentAppVersion() {
         try {

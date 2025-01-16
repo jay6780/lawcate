@@ -8,11 +8,10 @@
 
     <ImageView
         android:id="@+id/back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_centerVertical="true"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
+        android:padding="7dp"
         android:src="@mipmap/back_white" />
 
 

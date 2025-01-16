@@ -1,5 +1,6 @@
 package com.law.booking.activity.MainPageActivity.Admin;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
@@ -19,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.newHome;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.adapter.Chat_supportadapter;
 import com.law.booking.activity.tools.adapter.SetAdminadapter;
@@ -118,6 +120,10 @@ public class admin_chatsupport extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent back = new Intent(getApplicationContext(), newHome.class);
+        startActivity(back);
+        overridePendingTransition(0,0);
+        finish();
         super.onBackPressed();
     }
 }

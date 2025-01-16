@@ -1018,6 +1018,7 @@ public class Dialog {
             intent.putExtra("address", address.getText().toString());
             intent.putExtra("age", age.getText().toString());
             intent.putExtra("lengthOfService", lengthOfService);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             activity.startActivity(intent);
             activity.overridePendingTransition(0, 0);
         });
@@ -1055,6 +1056,7 @@ public class Dialog {
             intent.putExtra("address", address.getText().toString());
             intent.putExtra("age", age.getText().toString());
             intent.putExtra("lengthOfService", lengthOfService);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             activity.startActivity(intent);
             activity.overridePendingTransition(0, 0);
         });

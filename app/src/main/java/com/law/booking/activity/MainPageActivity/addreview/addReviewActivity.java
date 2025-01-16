@@ -211,6 +211,7 @@ public class addReviewActivity extends AppCompatActivity {
         avatarimage = findViewById(R.id.profileImageView);
         ratingBar = findViewById(R.id.star);
         titleText.setText(R.string.Add_comment);
+        titleText.setTextSize(18);
     }
 
     private void initGuess() {

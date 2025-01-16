@@ -13,7 +13,7 @@
     <string name="appSign">8c57646a3cd1ccb96fc02304a8836dbec028ac2c9ed44eaaa62ed18ec0980411</string>
     <string name="faceswapapikey">cm52ad4gq0001mn03u6zx4vhm</string>
     <string name="faceswapapikey2">cm253vcsi0002mj03imjaqtkn</string>
-    <string name="welcomemsg">Welcome to Lawcate – Your Ultimate Destination for Lawyers! Discover lawyers , book appointments with ease</string>
+    <string name="welcomemsg">Welcome to Lawcate – Your Ultimate Destination for Lawyers! Discover lawyers, book appointments with ease</string>
     <string-array name="gender_array">
         <item>Gender</item>
         <item>Male</item>

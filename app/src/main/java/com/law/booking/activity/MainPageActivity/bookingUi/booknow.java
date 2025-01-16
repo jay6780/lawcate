@@ -134,8 +134,7 @@ public class booknow extends AppCompatActivity {
         Glide.with(this)
                 .load(image)
                 .transform(new CircleCrop())
-                .placeholder(R.drawable.baseline_person_24)
-                .error(R.drawable.baseline_person_24)
+                .error(R.mipmap.man)
                 .into(profileimage);
         String location = getString(R.string.address);
         String names = getString(R.string.name);

@@ -68,6 +68,7 @@
         <activity
             android:name=".activity.MainPageActivity.Admin.ChatSupportlist"
             android:exported="false"
+            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainPageActivity.chat.chatActivity5"
@@ -77,6 +78,7 @@
         <activity
             android:name=".activity.MainPageActivity.Admin.admin_chatsupport"
             android:exported="false"
+            android:noHistory="true"
             android:screenOrientation="portrait" />
 
         <activity
@@ -326,6 +328,7 @@
         <activity
             android:name=".activity.MainPageActivity.profile.providerProfile2"
             android:exported="false"
+            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainPageActivity.Provider.hmua"

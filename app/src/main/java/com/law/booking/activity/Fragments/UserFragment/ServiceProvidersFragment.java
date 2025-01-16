@@ -177,9 +177,17 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                         Log.d(TAG, "Date: " + schedule3.getDate());
                     }
                 }
-                scheduleAdapter = new ScheduleAdapter4(schedule3s, getContext());
-                schedulerecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                schedulerecycler.setAdapter(scheduleAdapter);
+
+                if (schedule3s.isEmpty()) {
+                    sched.setVisibility(View.GONE);
+                    layout_position();
+                    Log.d(TAG, "No schedules available.");
+                } else {
+                    sched.setVisibility(View.VISIBLE);
+                    scheduleAdapter = new ScheduleAdapter4(schedule3s, getContext());
+                    schedulerecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                    schedulerecycler.setAdapter(scheduleAdapter);
+                }
             }
 
             @SuppressLint("LongLogTag")
@@ -190,6 +198,17 @@ public class ServiceProvidersFragment extends Fragment implements profileService
         });
     }
 
+    private void layout_position() {
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        params.setMargins(0, 300, 0, 0);
+
+        proceed.setLayoutParams(params);
+
+    }
 
 
     private void updateprice(int currentNumber){
@@ -408,7 +427,6 @@ public class ServiceProvidersFragment extends Fragment implements profileService
             skeletonScreen.hide();
             portfolioRecycler.setVisibility(View.VISIBLE);
             myserviceRecycler.setVisibility(View.GONE);
-            sched.setVisibility(View.VISIBLE);
             services.setVisibility(View.VISIBLE);
             scroller.setVisibility(View.VISIBLE);
             services.setVisibility(View.GONE);

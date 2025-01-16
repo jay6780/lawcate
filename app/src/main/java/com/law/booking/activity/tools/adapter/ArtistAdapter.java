@@ -1,5 +1,6 @@
 package com.law.booking.activity.tools.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -174,6 +175,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
         intent.putExtra("key", key);
         intent.putExtra("isOnline", isOnline);
         context.startActivity(intent);
+//        if(context instanceof Activity){
+//            ((Activity) context).finish();
+//            ((Activity) context).overridePendingTransition(0,0);
+//        }
     }
 
     @Override

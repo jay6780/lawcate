@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.law.booking.activity.MainPageActivity.login;
 import com.law.booking.activity.MainPageActivity.newHome;
 import com.law.booking.R;
+import com.law.booking.activity.welcome;
 import com.yariksoffice.lingver.Lingver;
 
 import java.util.Calendar;
@@ -51,7 +52,6 @@ public class TinkerApplications extends MultiDexApplication implements Applicati
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 

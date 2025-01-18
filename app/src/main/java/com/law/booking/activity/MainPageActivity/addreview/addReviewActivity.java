@@ -1,6 +1,7 @@
 package com.law.booking.activity.MainPageActivity.addreview;
 
 import android.content.Intent;
+import android.media.Rating;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.Guess.Rating_userview;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Utils.AppConstans;
@@ -328,7 +330,7 @@ public class addReviewActivity extends AppCompatActivity {
         reviewRef.setValue(reviewData)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(addReviewActivity.this, getString(R.string.review_success), Toast.LENGTH_SHORT).show();
-                    finish();
+                     onBackPressed();
                     dialogPlus.dismiss();
                 })
                 .addOnFailureListener(e -> {
@@ -338,6 +340,9 @@ public class addReviewActivity extends AppCompatActivity {
     }
 
     public void onBackPressed(){
+        Intent back = new Intent(getApplicationContext(), Rating_userview.class);
+        startActivity(back);
+        overridePendingTransition(0,0);
         finish();
         super.onBackPressed();
     }

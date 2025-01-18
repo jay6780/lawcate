@@ -1030,6 +1030,24 @@ public class Dialog {
         dialog.show();
     }
 
+    public void showMbLimit(Activity activity,String msg) {
+        DialogPlus dialog = DialogPlus.newDialog(activity)
+                .setContentHolder(new ViewHolder(R.layout.mb_layout))
+                .setContentWidth(ViewGroup.LayoutParams.MATCH_PARENT)
+                .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setGravity(Gravity.CENTER)
+                .setCancelable(true)
+                .create();
+        View dialogView = dialog.getHolderView();
+        Button ok = dialogView.findViewById(R.id.ok);
+        TextView title = dialogView.findViewById(R.id.title);
+        title.setText(msg);
+        ok.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        dialog.show();
+    }
+
 
 
     public void updateEventProfile(Activity activity, ImageView guessImage, TextView userEmail, TextView usernameText,TextView phone,TextView fullname,TextView address,TextView age,String lengthOfService){

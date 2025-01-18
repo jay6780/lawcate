@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -73,14 +74,10 @@ import com.kevalpatel2106.emoticonpack.android8.Android8EmoticonProvider;
 import com.kevalpatel2106.gifpack.giphy.GiphyGifProvider;
 import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.Admin.ChatSupportlist;
-import com.law.booking.activity.MainPageActivity.Admin.Event_userchat;
-import com.law.booking.activity.MainPageActivity.Admin.UserChat;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Message;
-import com.law.booking.activity.tools.Model.Service;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.activity.tools.adapter.MessageAdapter2;
 import com.law.booking.activity.tools.adapter.chat_supportmsgadapter;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.yalantis.ucrop.UCrop;
@@ -91,14 +88,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import app.m4ntis.blinkingloader.BlinkingLoader;
+import droidninja.filepicker.FilePickerBuilder;
+import droidninja.filepicker.FilePickerConst;
+import droidninja.filepicker.models.sort.SortingTypes;
 import ly.kite.photopicker.Photo;
 import ly.kite.photopicker.PhotoPicker;
 
 public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallback, chat_supportmsgadapter.HelpLayoutHandler {
     private static final int REQUEST_CODE_PHOTO_PICKER = 1;
+    private final static int FILE_REQUEST_CODE = 1;
     private ImageView back, avatar, send, imagePick, emoji, location,
             imageonline;
     private TextView username;
@@ -123,8 +123,9 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
     private static final int EXPANDED_WIDTH = 250;
     private static final int COLLAPSED_WIDTH = 190;
     private String locationUrl = "";
-    private static final int FILE_SELECT_CODE = 0;
     private Uri fileUri;
+    private ArrayList<Uri> docPaths = new ArrayList<>();
+    private int MAX_ATTACHMENT_COUNT = 1;
 
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
@@ -703,12 +704,16 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
                 if (options[which].equals("Gallery")) {
                     PhotoPicker.startPhotoPickerForResult(chatActivity5.this, REQUEST_CODE_PHOTO_PICKER);
                 } else if (options[which].equals("File")) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("*/*");
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    String[] mimeTypes = {"application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
-                    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                    startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_SELECT_CODE);
+                        FilePickerBuilder.getInstance()
+                                .setMaxCount(1)
+                                .setSelectedFiles(docPaths)
+                                .setActivityTitle("Please select pdf")
+                                .enableDocSupport(true)
+                                .enableSelectAll(true)
+                                .sortDocumentsBy(SortingTypes.NAME)
+                                .withOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                                .pickFile(chatActivity5.this);
+
                 } else if (options[which].equals("Cancel")) {
                     dialog.dismiss();
                 }
@@ -743,13 +748,41 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
                 final Throwable cropError = UCrop.getError(data);
                 Toast.makeText(this, "Crop failed: " + cropError.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == FILE_SELECT_CODE) {
-            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
-                fileUri = data.getData();
-                String fileName = getFileName(fileUri);
-                uploadFileToFirebaseStorage(fileUri, fileName);
+
+        } else if (requestCode == FilePickerConst.REQUEST_CODE_DOC) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                ArrayList<Uri> dataList = data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS);
+                if (dataList != null && !dataList.isEmpty()) {
+                    for (Uri fileUri : dataList) {
+                        String fileName = getFileName(fileUri);
+                        long fileSize = getFileSize(fileUri);
+                        //edit the first value of mb eg: 2
+//                        if (fileSize <= 1 * 1024 * 1024) {
+                        if (fileName.endsWith(".pdf")) {
+                            uploadFileToFirebaseStorage(fileUri, fileName);
+                        } else {
+                            String msg = "This: " + fileName + " is not a pdf format";
+                            Dialog mbdialog = new Dialog();
+                            mbdialog.showMbLimit(chatActivity5.this, msg);
+                        }
+                    }
+                    docPaths = new ArrayList<>(dataList);
+                    Log.i("chatActivity", "Processed " + dataList.size() + " documents");
+                }
             }
         }
+    }
+
+    private long getFileSize(Uri fileUri) {
+        Cursor cursor = getContentResolver().query(fileUri, null, null, null, null);
+        if (cursor != null) {
+            int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+            cursor.moveToFirst();
+            long size = cursor.getLong(sizeIndex);
+            cursor.close();
+            return size;
+        }
+        return 0;
     }
 
 
@@ -759,7 +792,7 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
             StorageReference fileRef = storageRef.child("files/" + fileName);
 
             ProgressDialog progressDialog = new ProgressDialog(chatActivity5.this);
-            progressDialog.setMessage("Uploading file...");
+            progressDialog.setMessage("Uploading: "+fileName);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             progressDialog.setMax(100);
             progressDialog.setProgress(0);

@@ -7,10 +7,23 @@
     android:background="@color/white2"
     android:orientation="vertical">
     <include layout="@layout/calendarfragment_header"/>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
     <com.ak.KalendarView
         android:id="@+id/kalendar"
-        android:layout_width="wrap_content"
-        android:layout_height="250dp"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
         android:layout_marginTop="10dp"
         android:layout_marginHorizontal="10dp"
         app:calendarBackground="#FFFFFF"
@@ -28,4 +41,6 @@
         android:id="@+id/myschedule"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

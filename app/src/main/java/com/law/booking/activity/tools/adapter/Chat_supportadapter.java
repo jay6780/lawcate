@@ -92,7 +92,6 @@ public class Chat_supportadapter extends RecyclerView.Adapter<Chat_supportadapte
                                 intent.putExtra("image",image);
                                 intent.putExtra("isOnline",isOnline);
                                 intent.putExtra("key",key);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 context.startActivity(intent);
                                 if (context instanceof Activity) {
                                     ((Activity) context).finish();
@@ -112,7 +111,6 @@ public class Chat_supportadapter extends RecyclerView.Adapter<Chat_supportadapte
                     intent.putExtra("image",image);
                     intent.putExtra("isOnline",isOnline);
                     intent.putExtra("key",key);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     context.startActivity(intent);
                     if (context instanceof Activity) {
                         ((Activity) context).finish();

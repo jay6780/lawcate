@@ -140,12 +140,13 @@ public class chatsupport_adapter extends RecyclerView.Adapter<chatsupport_adapte
                     boolean isSentByCurrentUser = false;
                     String imageUrl = null;
                     String message = null;
+                    String filename = null;
                     for (DataSnapshot messageSnapshot : messagesSnapshot.getChildren()) {
                         message = messageSnapshot.child("message").getValue(String.class);
                         String senderEmail = messageSnapshot.child("senderEmail").getValue(String.class);
                         String username = messageSnapshot.child("username").getValue(String.class);
+                        filename = messageSnapshot.child("filename").getValue(String.class);
                         imageUrl = messageSnapshot.child("imageUrl").getValue(String.class);
-
                         if (!senderEmail.equals(currentUserEmail)) {
                             hasMessages = true;
                             if (imageUrl != null && !imageUrl.isEmpty() && imageUrl.startsWith("http")) {
@@ -154,6 +155,8 @@ public class chatsupport_adapter extends RecyclerView.Adapter<chatsupport_adapte
                             } else if (message != null && !message.isEmpty()) {
                                 holder.messageContents.setText(username + ": " + message);
                                 holder.nameTextView.setVisibility(View.GONE);
+                            } else if (filename != null && !filename.isEmpty()) {
+                                holder.messageContents.setText(username+": "+"Send a file");
                             } else {
                                 holder.messageContents.setVisibility(View.GONE);
                             }
@@ -169,6 +172,8 @@ public class chatsupport_adapter extends RecyclerView.Adapter<chatsupport_adapte
                             holder.messageContents.setText("You: Sent a link");
                         } else if (message != null && !message.isEmpty()) {
                             holder.messageContents.setText("You: " + message);
+                        } else if (filename != null && !filename.isEmpty()) {
+                            holder.messageContents.setText("You sent a file: " + filename);
                         }
                         holder.messageContents.setVisibility(View.VISIBLE);
                     } else if (!hasMessages) {

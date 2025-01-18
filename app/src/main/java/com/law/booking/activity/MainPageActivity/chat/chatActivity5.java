@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -839,8 +840,9 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
         UCrop uCrop = UCrop.of(imageUri, destinationUri);
         UCrop.Options options = new UCrop.Options();
         options.setCompressionQuality(80);
-        options.setToolbarColor(ContextCompat.getColor(this, R.color.bgColor));
-        options.setStatusBarColor(ContextCompat.getColor(this, R.color.bgColor));
+        options.setToolbarWidgetColor(Color.parseColor("#ffffff"));
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.purple_theme));
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.purple_theme));
         options.setShowCropFrame(true);
         options.setShowCropGrid(true);
         options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.purple_700));
@@ -971,14 +973,10 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
             mapFrame.setVisibility(View.GONE);
             return;
         }
-
-
         Intent userChat = new Intent(getApplicationContext(), ChatSupportlist.class);
         startActivity(userChat);
         overridePendingTransition(0, 0);
         finish();
-
-
         super.onBackPressed();
     }
     private void resetRelativeLayoutHeight() {

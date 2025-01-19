@@ -434,28 +434,33 @@ public class Rating_userview extends AppCompatActivity {
     private void initViewRate() {
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(key);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("reviews").child(key);
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+                if (snapshot.exists() && snapshot.hasChildren()) {
                     int totalRating = 0;
                     int reviewCount = 0;
                     int[] ratingCounts = new int[5]; // For ratings 5, 4, 3, 2, 1
+
                     for (DataSnapshot reviewSnapshot : snapshot.getChildren()) {
                         Integer rating = reviewSnapshot.child("rating").getValue(Integer.class);
-
                         if (rating != null && rating >= 1 && rating <= 5) {
                             totalRating += rating;
                             reviewCount++;
                             ratingCounts[5 - rating]++; // Map 5 -> 0, 4 -> 1, ..., 1 -> 4
                         }
                     }
+
                     if (reviewCount > 0) {
                         float averageRating = (float) totalRating / reviewCount;
                         rateTextView.setText(String.format("%.1f", averageRating));
                         adminRef.child("ratings").setValue(averageRating);
+                    } else {
+                        setDefaultRating(adminRef);
                     }
-                    int colors[] = new int[]{
+
+                    int[] colors = new int[]{
                             Color.parseColor("#0e9d58"),
                             Color.parseColor("#bfd047"),
                             Color.parseColor("#ffc105"),
@@ -463,6 +468,8 @@ public class Rating_userview extends AppCompatActivity {
                             Color.parseColor("#d36259")
                     };
                     ratingReviews.createRatingBars(100, BarLabels.STYPE2, colors, ratingCounts);
+                } else {
+                    setDefaultRating(adminRef);
                 }
             }
 
@@ -472,6 +479,12 @@ public class Rating_userview extends AppCompatActivity {
             }
         });
     }
+    private void setDefaultRating(DatabaseReference adminRef) {
+        float defaultRating = 0.0f;
+        rateTextView.setText(String.format("%.1f", defaultRating));
+        adminRef.child("ratings").setValue(defaultRating);
+    }
+
 
     private void changeStatusBarColor(int color) {
         Window window = getWindow();

@@ -42,7 +42,7 @@ public class Event_userchat extends AppCompatActivity {
     ArrayList<Usermodel> providerList;
     EventUserAdapter providerAdapter;
     private emptyAdapter emptyAdapter;
-    private ImageView backBtn;
+    private ImageView backBtn,settings;
     private String currentUserEmail;
     private SearchView userSearch;
     private SkeletonScreen skeletonScreen;
@@ -57,6 +57,8 @@ public class Event_userchat extends AppCompatActivity {
         ll_skeleton = findViewById(R.id.ll_skeleton);
         backBtn = findViewById(R.id.back);
         userSearch = findViewById(R.id.search);
+        settings = findViewById(R.id.settings);
+        settings.setVisibility(View.GONE);
         providerRecycler.setLayoutManager(new LinearLayoutManager(this));
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         chatRooms = FirebaseDatabase.getInstance().getReference("chatRooms");

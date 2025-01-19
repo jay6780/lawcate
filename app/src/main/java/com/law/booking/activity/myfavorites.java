@@ -49,6 +49,8 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class myfavorites extends AppCompatActivity implements OnRefreshListener {
     private SearchView searchProvider;
@@ -69,6 +71,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
     private SkeletonScreen skeletonScreen;
     private String favoriteId;
     private emptyAdapter_package empty;
+    private ImageView settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +80,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
         eventOrg = findViewById(R.id.eventOrg);
         searchProvider = findViewById(R.id.search);
         bell = findViewById(R.id.bell);
+        settings = findViewById(R.id.settings);
         drawerToggle = findViewById(R.id.toggle_favorite);
         artistRecycler = findViewById(R.id.artist);
         root_view = findViewById(R.id.root_view);
@@ -88,6 +92,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
         TopArt = findViewById(R.id.TopArt);
         rl = findViewById(R.id.user_viewsmenu);
         rl.setVisibility(View.VISIBLE);
+        settings.setVisibility(View.GONE);
         empty = new emptyAdapter_package(this);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -220,6 +225,15 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
                             providerList.add(usermodel);
                         }
                     }
+                    Collections.sort(providerList, new Comparator<Usermodel>() {
+                        @Override
+                        public int compare(Usermodel o1, Usermodel o2) {
+                            float rating1 = o1.getRatings();
+                            float rating2 = o2.getRatings();
+                            return Float.compare(rating2, rating1);
+                        }
+                    });
+
                     providerAdapter.notifyDataSetChanged();
                     if(providerList.isEmpty()){
                         artistRecycler.setAdapter(empty);

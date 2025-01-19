@@ -22,6 +22,7 @@ public class Usermodel {
     private boolean isImmigration;
     private boolean isProperty;
     private boolean isVerify;
+    private float ratings;
     public Usermodel() {
     }
 
@@ -177,5 +178,13 @@ public class Usermodel {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public float getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(float ratings) {
+        this.ratings = ratings;
     }
 }

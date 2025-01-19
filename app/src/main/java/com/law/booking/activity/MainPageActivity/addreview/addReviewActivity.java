@@ -326,7 +326,6 @@ public class addReviewActivity extends AppCompatActivity {
         reviewData.put("userId", userId);
         reviewData.put("reviewId", reviewRef.getKey());
         reviewData.put("timemilli", timemilli);
-
         reviewRef.setValue(reviewData)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(addReviewActivity.this, getString(R.string.review_success), Toast.LENGTH_SHORT).show();

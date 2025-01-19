@@ -277,7 +277,7 @@
                                     android:layout_marginStart="10dp"
                                     android:layout_marginTop="10dp"
                                     android:fontFamily="@font/inter"
-                                    android:text="Top Lawyers"
+                                    android:text="All Lawyers"
                                     android:textColor="@color/black" />
 
                                 <TextView
@@ -289,6 +289,7 @@
                                     android:layout_marginEnd="10dp"
                                     android:fontFamily="@font/inter"
                                     android:text="@string/viewAll"
+                                    android:visibility="gone"
                                     android:textColor="#A6AEBF" />
 
 

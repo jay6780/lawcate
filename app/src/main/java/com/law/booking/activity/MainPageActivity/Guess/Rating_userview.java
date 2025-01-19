@@ -432,6 +432,7 @@ public class Rating_userview extends AppCompatActivity {
     }
 
     private void initViewRate() {
+        DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(key);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("reviews").child(key);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -442,6 +443,7 @@ public class Rating_userview extends AppCompatActivity {
                     int[] ratingCounts = new int[5]; // For ratings 5, 4, 3, 2, 1
                     for (DataSnapshot reviewSnapshot : snapshot.getChildren()) {
                         Integer rating = reviewSnapshot.child("rating").getValue(Integer.class);
+
                         if (rating != null && rating >= 1 && rating <= 5) {
                             totalRating += rating;
                             reviewCount++;
@@ -451,6 +453,7 @@ public class Rating_userview extends AppCompatActivity {
                     if (reviewCount > 0) {
                         float averageRating = (float) totalRating / reviewCount;
                         rateTextView.setText(String.format("%.1f", averageRating));
+                        adminRef.child("ratings").setValue(averageRating);
                     }
                     int colors[] = new int[]{
                             Color.parseColor("#0e9d58"),

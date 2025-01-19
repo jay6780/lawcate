@@ -3,6 +3,7 @@ package com.law.booking.activity.MainPageActivity.Admin;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -33,7 +34,7 @@ public class admin_chatsupport extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private Chat_supportadapter setAdminadapter;
     private SearchView searchProvider;
-    private ImageView back;
+    private ImageView back,settings;
     private TextView artist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +47,15 @@ public class admin_chatsupport extends AppCompatActivity {
         }
         admin_recycler = findViewById(R.id.admin_recycler);
         searchProvider = findViewById(R.id.search);
+        settings = findViewById(R.id.settings);
+        settings.setVisibility(View.GONE);
         back = findViewById(R.id.back);
         initFirebase();
         setupSearchView();
         back.setOnClickListener(view -> onBackPressed());
         artist = findViewById(R.id.artist);
         artist.setText("Admin List");
+
 
     }
 

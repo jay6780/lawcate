@@ -573,6 +573,14 @@ public class newHome extends AppCompatActivity {
                 if (address.getLocality() != null) {
                     locationText.append(address.getLocality());
                 }
+
+                if (address.getSubAdminArea() != null) {
+                    if (locationText.length() > 0) {
+                        locationText.append(", ");
+                    }
+                    locationText.append(address.getSubAdminArea()); // Province (e.g., Laguna)
+                }
+
                 if (address.getCountryName() != null) {
                     if (locationText.length() > 0) {
                         locationText.append(", ");

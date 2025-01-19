@@ -58,6 +58,7 @@ public class CompleteFragment_user extends Fragment {
         nodata = new BookemptyAdapter(getContext());
         ll_skeleton = view.findViewById(R.id.ll_skeleton);
         ll_skeleton.setVisibility(View.VISIBLE);
+        SPUtils.getInstance().put(AppConstans.tabnum,3);
         initShowbook();
         initSkeleton();
         return view;

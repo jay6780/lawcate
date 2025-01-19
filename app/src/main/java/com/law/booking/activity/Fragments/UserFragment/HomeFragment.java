@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -46,6 +47,8 @@ import com.youth.banner.Banner;
 import com.youth.banner.indicator.CircleIndicator;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements OnRefreshListener {
@@ -63,6 +66,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
     private SmartRefreshLayout refreshLayout;
     private boolean isCorporate = true;
     private emptyAdapter_package empty;
+    private ImageView settings;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -151,7 +155,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
         category.setVisibility(View.VISIBLE);
         linearView.setVisibility(View.VISIBLE);
         TopArt.setVisibility(View.VISIBLE);
-        ViewAll.setVisibility(View.VISIBLE);
+//        ViewAll.setVisibility(View.VISIBLE);
 //        TopOrganizer.setVisibility(View.VISIBLE);
 //        ViewAll_artist.setVisibility(View.VISIBLE);
 
@@ -176,7 +180,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
             linearView.setVisibility(View.GONE);
             TopOrganizer.setVisibility(View.GONE);
             TopArt.setVisibility(View.GONE);
-            ViewAll.setVisibility(View.GONE);
+//            ViewAll.setVisibility(View.GONE);
             ViewAll_artist.setVisibility(View.GONE);
         } else {
             providerAdapter.updateList(new ArrayList<>());
@@ -208,7 +212,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
 
     private void initFirebase() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Lawyer");
-        databaseReference2 = FirebaseDatabase.getInstance().getReference("ADMIN");
+//        databaseReference2 = FirebaseDatabase.getInstance().getReference("ADMIN");
         artistRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         providerList = new ArrayList<>();
         empty = new emptyAdapter_package(getActivity());
@@ -234,6 +238,16 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
                     }
 
                 }
+
+                Collections.sort(providerList, new Comparator<Usermodel>() {
+                    @Override
+                    public int compare(Usermodel o1, Usermodel o2) {
+                        float rating1 = o1.getRatings();
+                        float rating2 = o2.getRatings();
+                        return Float.compare(rating2, rating1);
+                    }
+                });
+
                 providerAdapter.notifyDataSetChanged();
                 if (providerList.isEmpty()) {
                     artistRecycler.setAdapter(empty);
@@ -248,24 +262,24 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
             }
         });
 
-        // Load data for EventOrg
-        databaseReference2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                eventOrgList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Usermodel eventOrgModel = snapshot.getValue(Usermodel.class);
-                    eventOrgModel.setKey(snapshot.getKey());
-                    eventOrgList.add(eventOrgModel);
-                }
-                eventOrgAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("EventOrg_list", "DatabaseError: " + databaseError.getMessage());
-            }
-        });
+//        // Load data for EventOrg
+//        databaseReference2.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                eventOrgList.clear();
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    Usermodel eventOrgModel = snapshot.getValue(Usermodel.class);
+//                    eventOrgModel.setKey(snapshot.getKey());
+//                    eventOrgList.add(eventOrgModel);
+//                }
+//                eventOrgAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.e("EventOrg_list", "DatabaseError: " + databaseError.getMessage());
+//            }
+//        });
     }
 
     private void intiBanner(String gender) {
@@ -330,6 +344,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
 
 
     private void initView(View view) {
+        settings = view.findViewById(R.id.settings);
         loading_layout = view.findViewById(R.id.loading_layout);
         refreshLayout = view.findViewById(R.id.refreshLayout);
         bannercontent = view.findViewById(R.id.bannercontent);
@@ -345,6 +360,7 @@ public class HomeFragment extends Fragment implements OnRefreshListener {
         eventOrg = view.findViewById(R.id.eventOrg);
         searchProvider = view.findViewById(R.id.search);
         artistRecycler = view.findViewById(R.id.artist);
+        settings.setVisibility(View.GONE);
     }
 
     private void initClick(View view) {

@@ -1,5 +1,6 @@
 package com.law.booking.activity.tools.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -17,6 +18,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.law.booking.activity.MainPageActivity.Guess.Guess_summary;
 import com.law.booking.activity.tools.Model.Booking2;
 import com.law.booking.R;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 
 import java.util.List;
 
@@ -61,6 +64,10 @@ public class Completebook_adapter_user extends RecyclerView.Adapter<Completebook
                 intent.putExtra("paymentMethod",booking.getPaymentMethod());
                 intent.putExtra("snapshotkey",booking.getSnapshotkey());
                 context.startActivity(intent);
+                if(context instanceof Activity){
+                    ((Activity) context).finish();
+                    ((Activity) context).overridePendingTransition(0,0);
+                }
             }
         });
         holder.servicename.setText("Law name: "+booking.getServiceName());

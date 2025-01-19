@@ -44,7 +44,7 @@ public class UserChat extends AppCompatActivity {
     ArrayList<Usermodel> providerList;
     UserchatAdapter providerAdapter;
     private emptyAdapter emptyAdapter;
-    private ImageView backBtn;
+    private ImageView backBtn,settings;
     private String currentUserEmail;
     private SearchView userSearch;
     private SkeletonScreen skeletonScreen;
@@ -59,6 +59,7 @@ public class UserChat extends AppCompatActivity {
         ll_skeleton = findViewById(R.id.ll_skeleton);
         backBtn = findViewById(R.id.back);
         userSearch = findViewById(R.id.search);
+        settings = findViewById(R.id.settings);
         SPUtils.getInstance().put(AppConstans.chatSupportList, false);
         providerRecycler.setLayoutManager(new LinearLayoutManager(this));
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
@@ -77,6 +78,7 @@ public class UserChat extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
+        settings.setVisibility(View.GONE);
         backBtn.setOnClickListener(view -> onBackPressed());
         checkIfUserInChatRoom();
         setupSearchView();

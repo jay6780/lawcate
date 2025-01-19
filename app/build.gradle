@@ -9,8 +9,8 @@ android {
         applicationId "com.law.booking"
         minSdk 21
         targetSdk 28
-        versionCode 24
-        versionName "2.4"
+        versionCode 25
+        versionName "2.5"
 
         dexOptions {
             jumboMode = true
@@ -18,6 +18,7 @@ android {
         multiDexEnabled true
         //zego key
         buildConfigField "long", "APP_ID", "186663580"
+        buildConfigField "String", "mapApikey", "\"AIzaSyBwO1iFrOLDaS5PLKigcMi9dJg7e7-5M10\""
         buildConfigField "String", "APP_SIGN", "\"8c57646a3cd1ccb96fc02304a8836dbec028ac2c9ed44eaaa62ed18ec0980411\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

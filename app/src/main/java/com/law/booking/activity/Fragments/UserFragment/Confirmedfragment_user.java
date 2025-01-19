@@ -60,6 +60,7 @@ public class Confirmedfragment_user extends Fragment {
         nodata = new BookemptyAdapter(getContext());
         ll_skeleton = view.findViewById(R.id.ll_skeleton);
         ll_skeleton.setVisibility(View.VISIBLE);
+        SPUtils.getInstance().put(AppConstans.tabnum,1);
         initShowbook();
         initSkeleton();
         return view;

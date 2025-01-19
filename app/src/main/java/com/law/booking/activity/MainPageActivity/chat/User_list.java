@@ -55,6 +55,7 @@ public class User_list extends AppCompatActivity {
     private String imageUrl;
     private ImageView deleteBtn,bell;
     private TextView delete_num;
+    private ImageView settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +67,7 @@ public class User_list extends AppCompatActivity {
         backBtn = findViewById(R.id.back);
         userSearch = findViewById(R.id.search);
         delete_num = findViewById(R.id.delete_num);
+        settings = findViewById(R.id.settings);
         providerRecycler.setLayoutManager(new LinearLayoutManager(this));
         currentUserEmail = SPUtils.getInstance().getString(AppConstans.userEmail);
         chatRooms = FirebaseDatabase.getInstance().getReference("chatRooms");
@@ -77,6 +79,7 @@ public class User_list extends AppCompatActivity {
         providerAdapter = new ProviderAdapter(providerList, this);
         emptyAdapter = new emptyAdapter(this);
         providerRecycler.setAdapter(providerAdapter);
+        settings.setVisibility(View.GONE);
         Intent intent = new Intent(this, MessageNotificationService.class);
         startService(intent);
         initSkeleton();

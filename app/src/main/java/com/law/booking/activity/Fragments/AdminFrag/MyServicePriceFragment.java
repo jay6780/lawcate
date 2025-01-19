@@ -51,7 +51,7 @@ public class MyServicePriceFragment extends Fragment implements OnRefreshListene
     private RecyclerView myserviceRecycler;
     private ServiceAdapter serviceAdapter;
     private DatabaseReference serviceRef;
-    private ImageView add,clear;
+    private ImageView add,clear,settings;
     private Banner banner;
     private DatabaseReference adminRef,countRef;
     private int bookcount,review;
@@ -73,6 +73,8 @@ public class MyServicePriceFragment extends Fragment implements OnRefreshListene
         home_layout = view.findViewById(R.id.home_layout);
         loading_layout = view.findViewById(R.id.loading_layout);
         refreshLayout = view.findViewById(R.id.refreshLayout);
+        settings = view.findViewById(R.id.settings);
+        settings.setVisibility(View.GONE);
         services = new ArrayList<>();
         myserviceRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

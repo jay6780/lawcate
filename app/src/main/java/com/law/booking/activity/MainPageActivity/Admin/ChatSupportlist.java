@@ -51,6 +51,7 @@ public class ChatSupportlist extends AppCompatActivity {
     private LinearLayout ll_skeleton;
     private boolean isSkeletonShown = false;
     private TextView profiletxt;
+    private ImageView settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +60,7 @@ public class ChatSupportlist extends AppCompatActivity {
         ll_skeleton = findViewById(R.id.ll_skeleton);
         backBtn = findViewById(R.id.back);
         userSearch = findViewById(R.id.search);
+        settings = findViewById(R.id.settings);
         profiletxt = findViewById(R.id.profiletxt);
         profiletxt.setText("Chat support");
         providerRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -78,6 +80,7 @@ public class ChatSupportlist extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
+        settings.setVisibility(View.GONE);
         backBtn.setOnClickListener(view -> onBackPressed());
         checkIfUserInChatRoom();
         setupSearchView();

@@ -204,6 +204,9 @@ public class Guess_summary extends AppCompatActivity {
     }
 
     public void onBackPressed(){
+        Intent back = new Intent(getApplicationContext(),history_book.class);
+        startActivity(back);
+        overridePendingTransition(0,0);
         finish();
         super.onBackPressed();
     }

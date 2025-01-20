@@ -96,6 +96,7 @@
                     android:drawablePadding="5dp"
                     android:paddingStart="10dp"
                     android:paddingRight="10dp"
+                    android:visibility="gone"
                     android:text="date"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
@@ -106,6 +107,7 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
                     android:paddingStart="10dp"
+                    android:visibility="gone"
                     android:paddingRight="10dp"
                     android:text="date"
                     android:textColor="@android:color/white"

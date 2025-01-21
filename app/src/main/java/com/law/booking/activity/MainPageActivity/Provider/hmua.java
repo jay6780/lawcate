@@ -26,6 +26,11 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.app.hubert.guide.NewbieGuide;
+import com.app.hubert.guide.core.Controller;
+import com.app.hubert.guide.listener.OnGuideChangedListener;
+import com.app.hubert.guide.model.GuidePage;
+import com.app.hubert.guide.model.HighLight;
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.SkeletonScreen;
 import com.google.firebase.database.DataSnapshot;
@@ -126,6 +131,7 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableRefresh(true);
         startfirebase();
+        initShowGuide();
     }
 
     private void startfirebase() {
@@ -276,6 +282,26 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
             }
         });
     }
+    private void initShowGuide() {
+        NewbieGuide.with(this)
+                .setLabel("filter settings")
+                .setOnGuideChangedListener(new OnGuideChangedListener() {
+                    @Override
+                    public void onShowed(Controller controller) {
+
+                    }
+
+                    @Override
+                    public void onRemoved(Controller controller) {
+                    }
+                })
+                .addGuidePage(GuidePage.newInstance()
+                        .addHighLight(settings, HighLight.Shape.ROUND_RECTANGLE, 1)
+                        .setLayoutRes(R.layout.filter_guide)
+                )
+                .show();
+    }
+
 
     private List<String> parseRegions(String jsonResponse) {
         List<String> regions = new ArrayList<>();

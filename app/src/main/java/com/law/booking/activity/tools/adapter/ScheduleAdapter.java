@@ -1,5 +1,10 @@
 package com.law.booking.activity.tools.adapter;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.firebase.auth.FirebaseAuth;
+import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.Admin.Timeframeactivity;
+import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.OnScheduleLongClickListener;
 import com.law.booking.activity.tools.Model.Schedule2;
-import com.law.booking.R;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -21,10 +29,11 @@ import java.util.Locale;
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder> {
     private final List<Schedule2> schedules;
     private final OnScheduleLongClickListener longClickListener;
-
-    public ScheduleAdapter(List<Schedule2> schedules, OnScheduleLongClickListener longClickListener) {
+    private Context context;
+    public ScheduleAdapter(List<Schedule2> schedules, OnScheduleLongClickListener longClickListener,Context context) {
         this.schedules = schedules;
         this.longClickListener = longClickListener;
+        this.context = context;
     }
 
     @NonNull
@@ -39,14 +48,53 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         Schedule2 schedule = schedules.get(position);
         holder.bind(schedule);
 
-        // Set the long click listener
-        holder.itemView.setOnLongClickListener(v -> {
-            if (longClickListener != null) {
-                longClickListener.onScheduleLongClick(schedule);
-                return true;
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showdialog(context,schedule);
             }
-            return false;
         });
+
+        // Set the long click listener
+//        holder.itemView.setOnLongClickListener(v -> {
+//            if (longClickListener != null) {
+//                longClickListener.onScheduleLongClick(schedule);
+//                return true;
+//            }
+//            return false;
+//        });
+    }
+
+    private void showdialog(Context context,Schedule2 schedule2) {
+        new AlertDialog.Builder(context)
+                .setTitle("Choose an action")
+                .setItems(new String[]{"Delete", "Set time frame"}, (dialog, which) -> {
+                    if (which == 0) {
+                        deleteschedule(schedule2,context);
+                    } else if (which == 1) {
+                        String key = schedule2.getKey();
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        Intent gototime = new Intent(context, Timeframeactivity.class);
+                        gototime.putExtra("key",key);
+                        gototime.putExtra("date",String.valueOf(schedule2.getDate()));
+                        gototime.putExtra("userId",userId);
+                        context.startActivity(gototime);
+                       if (context instanceof Activity){
+                           ((Activity) context).overridePendingTransition(0,0);
+                       }
+
+                    }
+
+                })
+                .show();
+    }
+
+    private void deleteschedule(Schedule2 schedule2,Context context) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String key = schedule2.getKey();
+        Log.d("deletekey","Deletekey: "+key);
+        Dialog deletetime = new Dialog();
+        deletetime.deletetime(context,userId,key);
     }
 
     @Override

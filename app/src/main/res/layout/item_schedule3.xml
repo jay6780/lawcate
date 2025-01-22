@@ -39,7 +39,7 @@
                 android:paddingRight="10dp"
                 android:textColor="@android:color/white"
                 android:drawableStart="@drawable/clock_pink"
-                android:text="time"
+                android:text="Book now"
                 android:textSize="12sp"
                 android:drawablePadding="5dp" />
 

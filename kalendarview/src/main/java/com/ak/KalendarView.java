@@ -324,6 +324,25 @@ public class KalendarView extends LinearLayout{
         }
     }
 
+    /**
+     * Moves the calendar to the specified date.
+     *
+     * @param date The date to move to.
+     */
+    public void moveToDate(Date date) {
+        if (date == null) {
+            Log.e(TAG, "moveToDate: Date is null");
+            return;
+        }
+        cal.setTime(date);
+        cal = getZeroTime(cal);
+        setUpCalendarAdapter();
+        if (mMonthChanger != null) {
+            mMonthChanger.onMonthChanged(cal.getTime());
+        }
+        Log.d(TAG, "Moved to date: " + formatter.format(cal.getTime()));
+    }
+
 
     public interface DateSelector {
         void onDateClicked(Date selectedDate);

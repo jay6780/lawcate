@@ -73,7 +73,7 @@ public class CalendarEventFragment extends Fragment implements OnScheduleLongCli
         myschedule = view.findViewById(R.id.myschedule);
         clear = view.findViewById(R.id.clear);
         clear.setVisibility(View.VISIBLE);
-        scheduleAdapter = new ScheduleAdapter(scheduleList, this);
+        scheduleAdapter = new ScheduleAdapter(scheduleList, this,getContext());
         myschedule.setLayoutManager(new LinearLayoutManager(getContext()));
         myschedule.setAdapter(scheduleAdapter);
         mKalendarView.setDateSelector(selectedDate -> handleDateSelection(selectedDate));

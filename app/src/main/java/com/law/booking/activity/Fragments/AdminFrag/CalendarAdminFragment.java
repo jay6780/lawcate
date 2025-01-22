@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,10 +31,12 @@ import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.OnScheduleLongClickListener;
 import com.law.booking.activity.tools.Model.Schedule;
 import com.law.booking.activity.tools.Model.Schedule2;
+import com.law.booking.activity.tools.Model.Schedule4;
 import com.law.booking.activity.tools.adapter.ScheduleAdapter;
 import com.law.booking.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -51,7 +54,7 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
     private ScheduleAdapter scheduleAdapter;
     private ImageView clear;
     private KalendarView mKalendarView;
-
+    private AppCompatButton saved;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,15 +73,17 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
     }
 
     private void initUI(View view) {
+        saved = view.findViewById(R.id.saved);
         mKalendarView = view.findViewById(R.id.kalendar);
         myschedule = view.findViewById(R.id.myschedule);
         clear = view.findViewById(R.id.clear);
         clear.setVisibility(View.VISIBLE);
-        scheduleAdapter = new ScheduleAdapter(scheduleList, this);
+        scheduleAdapter = new ScheduleAdapter(scheduleList, this,getContext());
         myschedule.setLayoutManager(new LinearLayoutManager(getContext()));
         myschedule.setAdapter(scheduleAdapter);
         mKalendarView.setDateSelector(selectedDate -> handleDateSelection(selectedDate));
         clear.setOnClickListener(v -> showClearScheduleDialog());
+        saved.setOnClickListener(click ->showSaveScheduleDialog());
     }
 
     private void fetchSchedules() {
@@ -90,13 +95,18 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     scheduleList.clear();
                     highlightedDates.clear();
+                    List<Schedule2> tempScheduleList = new ArrayList<>();
                     for (DataSnapshot scheduleSnapshot : dataSnapshot.getChildren()) {
                         Schedule schedule = scheduleSnapshot.getValue(Schedule.class);
                         if (schedule != null) {
                             String key = scheduleSnapshot.getKey();
-                            scheduleList.add(new Schedule2(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), key, schedule.getTime()));
-                            highlightedDates.add(new ColoredDate(schedule.getDate(), getResources().getColor(R.color.red_holiday)));
+                            tempScheduleList.add(new Schedule2(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), key, schedule.getTime()));
                         }
+                    }
+                    Collections.sort(tempScheduleList, (s1, s2) -> s2.getDate().compareTo(s1.getDate()));
+                    scheduleList.addAll(tempScheduleList);
+                    for (Schedule2 schedule : scheduleList) {
+                        highlightedDates.add(new ColoredDate(schedule.getDate(), getResources().getColor(R.color.red_holiday)));
                     }
                     mKalendarView.setColoredDates(highlightedDates);
                     scheduleAdapter.notifyDataSetChanged();
@@ -109,6 +119,7 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
             });
         }
     }
+
 
     private void initFirebase() {
         auth = FirebaseAuth.getInstance();
@@ -140,15 +151,10 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
             selectedDates.remove(selectedDate);
             removeHighlightForDate(selectedDate);
         } else {
-            if (selectedDates.size() < 3) {
                 selectedDates.add(selectedDate);
                 addHighlightForDate(selectedDate);
-                if (selectedDates.size() == 3) {
-                    showSaveScheduleDialog();
-                }
-            } else {
-                Toast.makeText(getContext(), "You can only select up to 3 dates!", Toast.LENGTH_SHORT).show();
-            }
+                saved.setVisibility(View.VISIBLE);
+
         }
 
         updateHighlightedDates();
@@ -177,11 +183,23 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
     private void showSaveScheduleDialog() {
         new AlertDialog.Builder(getContext())
                 .setTitle("Save Schedule")
-                .setMessage("You have selected exactly 3 dates. Do you want to save your schedule?")
-                .setPositiveButton("Yes", (dialog, which) -> checkAndSaveSchedule())
-                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .setMessage("Do you want to save your schedule?")
+                .setPositiveButton("Yes", (dialog, which) ->{
+                    checkAndSaveSchedule();
+                    saved.setVisibility(View.GONE);
+                })
+                .setNegativeButton("No", (dialog, which) -> {
+                    dialog.dismiss();
+                    saved.setVisibility(View.GONE);
+                    highlightedDates.clear();
+                    selectedDates.clear();
+                    mKalendarView.setColoredDates(highlightedDates);
+                    fetchSchedules();
+                })
                 .show();
     }
+
+
 
     private void checkAndSaveSchedule() {
         saveScheduleToFirebase();
@@ -195,7 +213,7 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
             for (Date date : selectedDates) {
                 String scheduleId = scheduleRef.push().getKey();
                 if (scheduleId != null) {
-                    Schedule schedule = new Schedule(userName, userImageUrl, date);
+                    Schedule4 schedule = new Schedule4(userName, userImageUrl, date,scheduleId,userId);
                     scheduleRef.child(scheduleId).setValue(schedule)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
@@ -222,6 +240,12 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
         if (currentUser != null) {
             String userId = currentUser.getUid();
             DatabaseReference scheduleRef = FirebaseDatabase.getInstance().getReference("Mysched").child(userId);
+            DatabaseReference Morning_slot = FirebaseDatabase.getInstance().getReference("Morning_slot").child(userId);
+            DatabaseReference Afternoon_slot = FirebaseDatabase.getInstance().getReference("Afternoon_slot").child(userId);
+            DatabaseReference Evening_slot = FirebaseDatabase.getInstance().getReference("Afternoon_slot").child(userId);
+            Morning_slot.removeValue();
+            Afternoon_slot.removeValue();
+            Evening_slot.removeValue();
             scheduleRef.removeValue()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {

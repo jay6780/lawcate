@@ -99,6 +99,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
         setupAddSubtractListeners();
         fetchSchedules();
         initClear();
+        proceed.setVisibility(View.GONE);
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -243,6 +244,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                         email = user.getEmail();
                         isOnline = user.isOnline();
                         phonenumber = user.getPhone();
+                        Savedbooknowdata(username,age,address,lengthofservice,image,email,isOnline,phonenumber,key);
                     }
                 }
             }
@@ -276,6 +278,17 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                 Log.e(TAG, "Error fetching user data: " + databaseError.getMessage());
             }
         });
+    }
+
+    private void Savedbooknowdata(String username, String age, String address, String lengthofservice, String image, String email, boolean isOnline, String phonenumber,String key) {
+        SPUtils.getInstance().put(AppConstans.AdminUsername,username);
+        SPUtils.getInstance().put(AppConstans.AdminAge,age);
+        SPUtils.getInstance().put(AppConstans.AdminAdress,address);
+        SPUtils.getInstance().put(AppConstans.AdminLenght,lengthofservice);
+        SPUtils.getInstance().put(AppConstans.AdminImage,image);
+        SPUtils.getInstance().put(AppConstans.Adminemail,email);
+        SPUtils.getInstance().put(AppConstans.AdminPhone,phonenumber);
+        SPUtils.getInstance().put(AppConstans.AdminKey,key);
     }
 
     private void initGuessData() {
@@ -430,7 +443,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
             services.setVisibility(View.VISIBLE);
             scroller.setVisibility(View.VISIBLE);
             services.setVisibility(View.GONE);
-            proceed.setVisibility(View.VISIBLE);
+            proceed.setVisibility(View.GONE);
             schedulerecycler.setVisibility(View.VISIBLE);
             ll_skeleton.setVisibility(View.GONE);
         }, 1000);

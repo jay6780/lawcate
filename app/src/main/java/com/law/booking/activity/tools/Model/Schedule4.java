@@ -2,28 +2,38 @@ package com.law.booking.activity.tools.Model;
 
 import java.util.Date;
 
-public class Schedule3 {
-    private String time;
+public class Schedule4 {
+    public String time;
     private String name;
     private String imageUrl;
     private Date date;
     private String key;
     private String userId;
-    public Schedule3() {
+    public Schedule4() {
     }
 
-    public Schedule3(String name, String imageUrl, Date date, String key, String time) { // Include key in constructor
+    public Schedule4(String name, String imageUrl, Date date,String key,String userId) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.date = date;
         this.key = key;
-        this.time = time;
+        this.userId = userId;
     }
-
-    // Getters
 
     public String getUserId() {
         return userId;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getName() {
@@ -42,11 +52,7 @@ public class Schedule3 {
         return date;
     }
 
-    public String getKey() {
-        return key;
-    }
 
-    // Setters
     public void setName(String name) {
         this.name = name;
     }
@@ -57,13 +63,5 @@ public class Schedule3 {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 }

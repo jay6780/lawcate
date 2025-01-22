@@ -252,19 +252,19 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
                     intent.putExtra("address", address);
                     intent.putExtra("key", key);
                     intent.putExtra("isOnline", isOnline);
-                    if (!serviceName.equals(previousServicename)) {
+//                    if (!serviceName.equals(previousServicename)) {
                         Toast.makeText(getApplicationContext(), "Availed Success", Toast.LENGTH_SHORT).show();
                         intent.putExtra("availedmessage", availedmessage);
                         intent.putExtra("serviceName", serviceName);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Already Availed", Toast.LENGTH_SHORT).show();
-                        SPUtils spUtils = SPUtils.getInstance();
-                        String previousdata = null;
-                        spUtils.put(AppConstans.previousService, previousdata);
-                        intent.putExtra("availedmessage", previousdata);
-                        intent.putExtra("serviceName", previousdata);
-                        Log.d(TAG, "Cleared: " + previousdata);
-                    }
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), "Already Availed", Toast.LENGTH_SHORT).show();
+//                        SPUtils spUtils = SPUtils.getInstance();
+//                        String previousdata = null;
+//                        spUtils.put(AppConstans.previousService, previousdata);
+//                        intent.putExtra("availedmessage", previousdata);
+//                        intent.putExtra("serviceName", previousdata);
+//                        Log.d(TAG, "Cleared: " + previousdata);
+//                    }
                     startActivity(intent);
                     finish();
                 }

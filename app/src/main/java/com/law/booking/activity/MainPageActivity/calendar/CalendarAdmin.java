@@ -79,7 +79,7 @@ public class CalendarAdmin extends AppCompatActivity implements OnScheduleLongCl
         datesColors.add(new ColoredDate(new Date(), getResources().getColor(R.color.red_holiday)));
         mKalendarView.setColoredDates(datesColors);
         clear.setVisibility(View.VISIBLE);
-        scheduleAdapter = new ScheduleAdapter(scheduleList,this);
+        scheduleAdapter = new ScheduleAdapter(scheduleList,this,CalendarAdmin.this);
         myschedule.setLayoutManager(new LinearLayoutManager(this));
         myschedule.setAdapter(scheduleAdapter);
 

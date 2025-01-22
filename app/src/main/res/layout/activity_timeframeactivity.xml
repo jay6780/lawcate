@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <include
+        android:id="@+id/title_bar2"
+        layout="@layout/title_bar2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+<Spinner
+    android:id="@+id/slots"
+    android:layout_below="@+id/title_bar2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/time_slot_recycler_view"
+        android:layout_below="@+id/slots"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/saved"/>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/saved"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/circle_btn"
+        android:fontFamily="@font/inter"
+        android:text="Saved Time Frame"
+        android:textColor="@color/white" />
+
+</RelativeLayout>

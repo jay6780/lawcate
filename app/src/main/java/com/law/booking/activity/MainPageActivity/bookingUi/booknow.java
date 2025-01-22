@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,36 +33,45 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
 import com.law.booking.activity.MainPageActivity.profile.providerProfile2;
+import com.law.booking.activity.tools.Model.BookingId;
 import com.law.booking.activity.tools.Model.ChatRoom;
 import com.law.booking.activity.tools.Model.Schedule;
 import com.law.booking.activity.tools.Model.Schedule3;
+import com.law.booking.activity.tools.Model.TimeSlot;
+import com.law.booking.activity.tools.Model.TimeSlotClickListener;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.ScheduleAdapter3;
 import com.law.booking.R;
+import com.law.booking.activity.tools.adapter.Time_adapter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
-public class booknow extends AppCompatActivity {
+public class booknow extends AppCompatActivity implements TimeSlotClickListener {
     private String chatRoomId;
     private String image;
     private String email;
     private String providerName;
-    private String address,key,price,heads,phonenumber;
+    private String address,adminkey,price,heads,phonenumber;
     private String serviceName;
     private String age,lengthOfservice;
+    private String schedulekey;
+    private String dateString;
     private boolean isOnline;
     private String TAG = "Booknow";
-    private TextView userAddress,userLenghtexp,name,profiletxt;
+    private TextView userAddress,userLenghtexp,name,profiletxt,morningslot,afternoon_slot,evening_slot;
     private ImageView profileimage,backBtn,bell,messageImg;
     private DatabaseReference databaseReference;
-    private RecyclerView myschedule;
+    private RecyclerView myschedule,afternoon_recycler,evening_recycler;
     private DatabaseReference adminRef,mySched;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
@@ -72,6 +83,7 @@ public class booknow extends AppCompatActivity {
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     AppCompatButton procced;
     KalendarView mKalendarView;
+    private RelativeLayout relative_lay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,13 +93,13 @@ public class booknow extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-        key = getIntent().getStringExtra("key");
-        SPUtils.getInstance().put(AppConstans.key, key);
+
+        SPUtils.getInstance().put(AppConstans.key, adminkey);
         isOnline = getIntent().getBooleanExtra("isOnline", false);
         serviceName = getIntent().getStringExtra("serviceName");
         Log.d(TAG, "Is Online: " + isOnline);
-        SPUtils.getInstance().put(AppConstans.KEY, key);
-        Log.d("SavedKey", "userId: " + key);
+        SPUtils.getInstance().put(AppConstans.KEY, adminkey);
+        Log.d("SavedKey", "userId: " + adminkey);
         image = getIntent().getStringExtra("image");
         providerName = getIntent().getStringExtra("username");
         address = getIntent().getStringExtra("address");
@@ -96,12 +108,19 @@ public class booknow extends AppCompatActivity {
         lengthOfservice = getIntent().getStringExtra("lengthOfservice");
         price = getIntent().getStringExtra("price");
         heads = getIntent().getStringExtra("heads");
+        adminkey = getIntent().getStringExtra("key");
+        dateString = getIntent().getStringExtra("date");
+        schedulekey = getIntent().getStringExtra("schedulekey");
+        Log.d("Schedulekey","keys: "+schedulekey);
+        Log.d("Schedulekey","adminkey: "+adminkey);
+        Log.d("Mydate","date: "+dateString);
         phonenumber = getIntent().getStringExtra("phonenumber");
         Log.d(TAG,"price: "+price);
         Log.d(TAG,"heads: "+heads);
         Log.d(TAG,"Phone: "+phonenumber);
         initUi();
         initShowbook();
+        show_timeframe(schedulekey,adminkey);
         messageImg.setOnClickListener(view -> chat());
     }
 
@@ -117,6 +136,12 @@ public class booknow extends AppCompatActivity {
     }
 
     private void initUi() {
+        relative_lay = findViewById(R.id.relative_lay);
+        evening_slot = findViewById(R.id.evening_slot);
+        evening_recycler = findViewById(R.id.evening_recycler);
+        afternoon_slot = findViewById(R.id.afternoon_slot);
+        afternoon_recycler = findViewById(R.id.afternoon_recycler);
+        morningslot = findViewById(R.id.morningslot);
         mKalendarView = findViewById(R.id.kalendar);
         messageImg = findViewById(R.id.messageImg);
         myschedule = findViewById(R.id.myschedule);
@@ -143,7 +168,7 @@ public class booknow extends AppCompatActivity {
         Log.d(TAG, "Storing Provider Name: " + providerName);
         SPUtils.getInstance().put(AppConstans.providerName, providerName);
         Log.d(TAG, "Storing Email: " + email);
-        SPUtils.getInstance().put(AppConstans.providers, key);
+        SPUtils.getInstance().put(AppConstans.providers, adminkey);
         SPUtils.getInstance().put(AppConstans.email, email);
         name.setText(names+" " + (providerName != null ? providerName : "N/A"));
         userAddress.setText(location+": " + (address != null ? address : "N/A"));
@@ -157,7 +182,23 @@ public class booknow extends AppCompatActivity {
         fetchSchedules();
         profiletxt.setText("Book process");
         List<EventObjects> events = new ArrayList<>();
+
         events.add(new EventObjects("meeting", new Date()));
+
+        SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
+        try {
+            Date date = inputFormat.parse(dateString);
+            String formattedDate = outputFormat.format(date);
+            SPUtils.getInstance().put(AppConstans.date,formattedDate);
+            Log.d("Formatted Date", formattedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+
+
         mKalendarView.setEvents(events);
         mKalendarView.setDateSelector(new KalendarView.DateSelector() {
             @Override
@@ -167,6 +208,8 @@ public class booknow extends AppCompatActivity {
         });
         procced.setEnabled(false);
         procced.setAlpha(0.5f);
+
+
 
     }
 
@@ -221,7 +264,7 @@ public class booknow extends AppCompatActivity {
         intent.putExtra("address", address);
         intent.putExtra("age", age);
         intent.putExtra("lengthOfservice", lengthOfservice);
-        intent.putExtra("key", key);
+        intent.putExtra("key", adminkey);
         intent.putExtra("isOnline", isOnline);
         intent.putExtra("serviceName", servicename);
         intent.putExtra("price",price);
@@ -235,21 +278,29 @@ public class booknow extends AppCompatActivity {
     }
 
     private void fetchSchedules() {
-        FirebaseDatabase.getInstance().getReference("Mysched").child(key).addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("Mysched").child(adminkey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 scheduleList.clear();
                 highlightedDates.clear();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+                dateString = getIntent().getStringExtra("date");
+                Date date = null;
+                try {
+                    date = dateFormat.parse(dateString);
+                } catch (ParseException e) {
+                    Log.e("DateParsing", "Error parsing date: " + dateString, e);
+                }
                 for (DataSnapshot scheduleSnapshot : dataSnapshot.getChildren()) {
                     Schedule schedule = scheduleSnapshot.getValue(Schedule.class);
-                    if (schedule != null) {
-                        scheduleList.add(new Schedule3(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), key, schedule.getTime()));
-                        highlightedDates.add(new ColoredDate(schedule.getDate(), getResources().getColor(R.color.red_holiday)));
+                    if (schedule != null && date != null) {
+                        scheduleList.add(new Schedule3(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), adminkey, schedule.getTime()));
+                        mKalendarView.moveToDate(date);
+                        highlightedDates.add(new ColoredDate(date, getResources().getColor(R.color.red_holiday)));
                     }
                 }
                 mKalendarView.setColoredDates(highlightedDates);
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("FirebaseData", "Database error: " + databaseError.getMessage());
@@ -258,7 +309,6 @@ public class booknow extends AppCompatActivity {
     }
 
     private void handleDateSelection(Date selectedDate) {
-        // Check if the selected date is highlighted
         boolean isHighlighted = false;
         for (ColoredDate coloredDate : highlightedDates) {
             if (isSameDay(coloredDate.getDate(), selectedDate)) {
@@ -267,31 +317,174 @@ public class booknow extends AppCompatActivity {
             }
         }
         if (!isHighlighted) {
+            relative_lay.setVisibility(View.GONE);
             Toast.makeText(this, "Please select a date that is highlighted.", Toast.LENGTH_SHORT).show();
-            procced.setEnabled(false);
-            procced.setAlpha(0.5f);
             return;
         }else{
-            procced.setEnabled(true);
-            procced.setAlpha(1.0f);
+            relative_lay.setVisibility(View.VISIBLE);
         }
 
-        // If highlighted, proceed with the selection
         if (selectedDates.contains(selectedDate)) {
             selectedDates.remove(selectedDate);
         } else {
             selectedDates.add(selectedDate);
         }
-
-        List<Schedule3> filteredSchedules = new ArrayList<>();
-        for (Schedule3 schedule : scheduleList) {
-            if (isSameDay(schedule.getDate(), selectedDate)) {
-                filteredSchedules.add(schedule);
-            }
-        }
-        scheduleAdapter.updateSchedules(filteredSchedules);
     }
 
+    private void show_timeframe(String schedulekey, String adminkey) {
+        Log.d("Keys", "schedulekey: " + schedulekey);
+        Log.d("Keys", "adminkey: " + adminkey);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Morning_slot");
+        reference.child(adminkey)
+                .orderByChild("key")
+                .equalTo(schedulekey)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+                        Date date = null;
+                        try {
+                            date = dateFormat.parse(dateString); // Assuming dateString is a valid date string passed to this method
+                        } catch (ParseException e) {
+                            Log.e("DateParsing", "Error parsing date: " + dateString, e);
+                        }
+                        if (dataSnapshot.exists() && date != null) {
+                            List<TimeSlot> timeSlots = new ArrayList<>();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
+                                if (timeSlot != null) {
+                                    String fromfirebase = timeSlot.getDate();
+                                    try {
+                                        Date firebaseDate = dateFormat.parse(fromfirebase);
+                                        Log.d("Mydate", "fromfirebase: " + firebaseDate);
+                                        Log.d("Mydate", "fromdate: " + date);
+                                        if (firebaseDate.equals(date)) {
+                                            timeSlots.add(timeSlot);
+                                            Log.d("Keys", "timeSlot: " + timeSlot.getTime());
+                                        }
+                                    } catch (ParseException e) {
+                                        Log.e("DateParsing", "Error parsing fromfirebase: " + fromfirebase, e);
+                                    }
+                                }
+                            }
+                            Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
+                            GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
+                            myschedule.setLayoutManager(gridLayoutManager);
+                            myschedule.setAdapter(timeAdapter);
+                        } else {
+                            Log.d("TimeSlot", "No data found for the given schedule key and admin key.");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("TimeSlot", "Error fetching data: " + databaseError.getMessage());
+                    }
+                });
+        show_afternoon(schedulekey,adminkey);
+    }
+
+    private void show_afternoon(String schedulekey, String adminkey) {
+        Log.d("Keys", "schedulekey: " + schedulekey);
+        Log.d("Keys", "adminkey: " + adminkey);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Afternoon_slot");
+        reference.child(adminkey)
+                .orderByChild("key")
+                .equalTo(schedulekey)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+                        Date date = null;
+                        try {
+                            date = dateFormat.parse(dateString); // Assuming dateString is a valid date string passed to this method
+                        } catch (ParseException e) {
+                            Log.e("DateParsing", "Error parsing date: " + dateString, e);
+                        }
+                        if (dataSnapshot.exists() && date != null) {
+                            List<TimeSlot> timeSlots = new ArrayList<>();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
+                                if (timeSlot != null) {
+                                    String fromfirebase = timeSlot.getDate();
+                                    try {
+                                        Date firebaseDate = dateFormat.parse(fromfirebase);
+                                        Log.d("Mydate", "fromfirebase: " + firebaseDate);
+                                        Log.d("Mydate", "fromdate: " + date);
+                                        if (firebaseDate.equals(date)) {
+                                            timeSlots.add(timeSlot);
+                                            Log.d("Keys", "timeSlot: " + timeSlot.getTime());
+                                        }
+                                    } catch (ParseException e) {
+                                        Log.e("DateParsing", "Error parsing fromfirebase: " + fromfirebase, e);
+                                    }
+                                }
+                            }
+                            Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
+                            GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
+                            afternoon_recycler.setLayoutManager(gridLayoutManager);
+                            afternoon_recycler.setAdapter(timeAdapter);
+                        } else {
+                            Log.d("TimeSlot", "No data found for the given schedule key and admin key.");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("TimeSlot", "Error fetching data: " + databaseError.getMessage());
+                    }
+                });
+        show_evening(schedulekey,adminkey);
+    }
+
+    private void show_evening(String schedulekey, String adminkey) {
+        Log.d("Keys", "schedulekey: " + schedulekey);
+        Log.d("Keys", "adminkey: " + adminkey);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Evening_slot");
+        reference.child(adminkey)
+                .orderByChild("key")
+                .equalTo(schedulekey)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+                        Date date = null;
+                        try {
+                            date = dateFormat.parse(dateString); // Assuming dateString is a valid date string passed to this method
+                        } catch (ParseException e) {
+                            Log.e("DateParsing", "Error parsing date: " + dateString, e);
+                        }
+                        if (dataSnapshot.exists() && date != null) {
+                            List<TimeSlot> timeSlots = new ArrayList<>();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
+                                if (timeSlot != null) {
+                                    String fromfirebase = timeSlot.getDate();
+                                    try {
+                                        Date firebaseDate = dateFormat.parse(fromfirebase);
+                                        Log.d("Mydate", "fromfirebase: " + firebaseDate);
+                                        Log.d("Mydate", "fromdate: " + date);
+                                        if (firebaseDate.equals(date)) {
+                                            timeSlots.add(timeSlot);
+                                            Log.d("Keys", "timeSlot: " + timeSlot.getTime());
+                                        }
+                                    } catch (ParseException e) {
+                                        Log.e("DateParsing", "Error parsing fromfirebase: " + fromfirebase, e);
+                                    }
+                                }
+                            }
+                            Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
+                            GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
+                            evening_recycler.setLayoutManager(gridLayoutManager);
+                            evening_recycler.setAdapter(timeAdapter);
+                        } else {
+                            Log.d("TimeSlot", "No data found for the given schedule key and admin key.");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("TimeSlot", "Error fetching data: " + databaseError.getMessage());
+                    }
+                });
+    }
 
     private boolean isSameDay(Date date1, Date date2) {
         return date1.getYear() == date2.getYear() &&
@@ -319,9 +512,9 @@ public class booknow extends AppCompatActivity {
                                 intent.putExtra("image",image);
                                 intent.putExtra("providerEmail",providerEmail);
                                 intent.putExtra("address",address);
-                                intent.putExtra("key",key);
+                                intent.putExtra("key",adminkey);
                                 intent.putExtra("isOnline",isOnline);
-                                SavedAta(chatRoomId,providerName,image,providerEmail,address,key,isOnline);
+                                SavedAta(chatRoomId,providerName,image,providerEmail,address,adminkey,isOnline);
                                 startActivity(intent);
                                 finish();
                             })
@@ -335,9 +528,9 @@ public class booknow extends AppCompatActivity {
                     intent.putExtra("image",image);
                     intent.putExtra("providerEmail",providerEmail);
                     intent.putExtra("address",address);
-                    intent.putExtra("key",key);
+                    intent.putExtra("key",adminkey);
                     intent.putExtra("isOnline",isOnline);
-                    SavedAta(chatRoomId,providerName,image,providerEmail,address,key,isOnline);
+                    SavedAta(chatRoomId,providerName,image,providerEmail,address,adminkey,isOnline);
                     startActivity(intent);
                     finish();
                 }
@@ -379,11 +572,22 @@ public class booknow extends AppCompatActivity {
         back.putExtra("address", address);
         back.putExtra("age", age);
         back.putExtra("lengthOfservice", lengthOfservice);
-        back.putExtra("key", key);
+        back.putExtra("key", adminkey);
         back.putExtra("isOnline", isOnline);
         startActivity(back);
         overridePendingTransition(0,0);
         finish();
         super.onBackPressed();
+    }
+
+    @Override
+    public void onTimeSlotSelected(String time, boolean isSelected) {
+        if (isSelected) {
+            procced.setEnabled(true);
+            procced.setAlpha(1.0f);
+        } else {
+            procced.setEnabled(false);
+            procced.setAlpha(0.5f);
+        }
     }
 }

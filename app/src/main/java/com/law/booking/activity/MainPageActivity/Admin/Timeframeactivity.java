@@ -165,7 +165,7 @@ public class Timeframeactivity extends AppCompatActivity implements TimeSlotClic
         DatabaseReference myRef = database.getReference(databasename)
                 .child(userId);
         String pushkey = myRef.push().getKey();
-        TimeSlot timeSlot = new TimeSlot(time, userId, timevalue, key,date);
+        TimeSlot timeSlot = new TimeSlot(time, userId, timevalue, key,date,pushkey);
         myRef.child(pushkey).setValue(timeSlot)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getApplicationContext(),"Time slot saved successfully",Toast.LENGTH_SHORT).show();

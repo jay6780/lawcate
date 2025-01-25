@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <include
+        android:id="@+id/title_bar2"
+        layout="@layout/title_bar2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title_bar2"
+        app:srlAccentColor="#00000000"
+        app:srlEnableNestedScrolling="false"
+        app:srlEnablePreviewInEditMode="false"
+        app:srlFooterTranslationViewId="@+id/nested_scroll"
+        app:srlPrimaryColor="#00000000">
+    <com.scwang.smart.refresh.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/refreshLayout">
+
+    <TextView
+        android:id="@+id/dateschedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/time_viewrecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/dateschedule"
+        android:layout_marginTop="5dp" />
+
+        </RelativeLayout>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+</RelativeLayout>

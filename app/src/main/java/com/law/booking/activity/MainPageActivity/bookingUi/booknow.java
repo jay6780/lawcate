@@ -86,7 +86,9 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
     KalendarView mKalendarView;
     private RelativeLayout relative_lay;
     private empty_schedule emptyAdapter;
-    List<TimeSlot> timeSlots = new ArrayList<>();
+    private List<TimeSlot> morningtimeslot = new ArrayList<>();
+    private List<TimeSlot> afternoontimeslot = new ArrayList<>();
+    private List<TimeSlot> eveningtimeslot = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -352,6 +354,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                             Log.e("DateParsing", "Error parsing date: " + dateString, e);
                         }
                         if (dataSnapshot.exists() && date != null) {
+                            morningtimeslot.clear();
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
                                 if (timeSlot != null) {
@@ -361,7 +364,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                         Log.d("Mydate", "fromfirebase: " + firebaseDate);
                                         Log.d("Mydate", "fromdate: " + date);
                                         if (firebaseDate.equals(date)) {
-                                            timeSlots.add(timeSlot);
+                                            morningtimeslot.add(timeSlot);
                                             Log.d("Keys", "timeSlot: " + timeSlot.getTime());
                                         }
                                     } catch (ParseException e) {
@@ -369,12 +372,12 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                     }
                                 }
                             }
-                            if (timeSlots.isEmpty()){
+                            if (morningtimeslot.isEmpty()){
                                 morningslot.setVisibility(View.GONE);
                             }else{
                                 morningslot.setVisibility(View.VISIBLE);
                             }
-                            Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
+                            Time_adapter timeAdapter = new Time_adapter(morningtimeslot,booknow.this);
                             GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
                             myschedule.setLayoutManager(gridLayoutManager);
                             myschedule.setAdapter(timeAdapter);
@@ -408,7 +411,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                             Log.e("DateParsing", "Error parsing date: " + dateString, e);
                         }
                         if (dataSnapshot.exists() && date != null) {
-
+                            afternoontimeslot.clear();
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
                                 if (timeSlot != null) {
@@ -418,7 +421,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                         Log.d("Mydate", "fromfirebase: " + firebaseDate);
                                         Log.d("Mydate", "fromdate: " + date);
                                         if (firebaseDate.equals(date)) {
-                                            timeSlots.add(timeSlot);
+                                            afternoontimeslot.add(timeSlot);
                                             Log.d("Keys", "timeSlot: " + timeSlot.getTime());
                                         }
                                     } catch (ParseException e) {
@@ -426,12 +429,12 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                     }
                                 }
                             }
-                            if (timeSlots.isEmpty()){
+                            if (afternoontimeslot.isEmpty()){
                                 afternoon_slot.setVisibility(View.GONE);
                             }else{
                                 afternoon_slot.setVisibility(View.VISIBLE);
                             }
-                            Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
+                            Time_adapter timeAdapter = new Time_adapter(afternoontimeslot,booknow.this);
                             GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
                             afternoon_recycler.setLayoutManager(gridLayoutManager);
                             afternoon_recycler.setAdapter(timeAdapter);
@@ -465,6 +468,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                             Log.e("DateParsing", "Error parsing date: " + dateString, e);
                         }
                         if (dataSnapshot.exists() && date != null) {
+                            eveningtimeslot.clear();
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
                                 if (timeSlot != null) {
@@ -474,7 +478,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                         Log.d("Mydate", "fromfirebase: " + firebaseDate);
                                         Log.d("Mydate", "fromdate: " + date);
                                         if (firebaseDate.equals(date)) {
-                                            timeSlots.add(timeSlot);
+                                            eveningtimeslot.add(timeSlot);
                                             Log.d("Keys", "timeSlot: " + timeSlot.getTime());
                                         }
                                     } catch (ParseException e) {
@@ -482,12 +486,12 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                     }
                                 }
                             }
-                            if (timeSlots.isEmpty()){
+                            if (eveningtimeslot.isEmpty()){
                                 evening_slot.setVisibility(View.GONE);
                             }else{
                                 evening_slot.setVisibility(View.VISIBLE);
                             }
-                            Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
+                            Time_adapter timeAdapter = new Time_adapter(eveningtimeslot,booknow.this);
                             GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
                             evening_recycler.setLayoutManager(gridLayoutManager);
                             evening_recycler.setAdapter(timeAdapter);

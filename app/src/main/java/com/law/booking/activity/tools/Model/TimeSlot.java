@@ -6,18 +6,27 @@ public class TimeSlot {
     private String timevalue;
     private String key;
     private String date;
-
+    private String snapshotkey;
 
     public TimeSlot(){
 
     }
     // Constructor
-    public TimeSlot(String time, String userId, String timevalue,String key,String date) {
+    public TimeSlot(String time, String userId, String timevalue,String key,String date,String snapshotkey) {
         this.time = time;
         this.userId = userId;
         this.timevalue = timevalue;
         this.key = key;
         this.date = date;
+        this.snapshotkey = snapshotkey;
+    }
+
+    public String getSnapshotkey() {
+        return snapshotkey;
+    }
+
+    public void setSnapshotkey(String snapshotkey) {
+        this.snapshotkey = snapshotkey;
     }
 
     public String getDate() {

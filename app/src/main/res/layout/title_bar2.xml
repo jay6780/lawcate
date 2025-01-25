@@ -29,4 +29,13 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
+    <ImageView
+        android:id="@+id/clear"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="5dp"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        android:src="@mipmap/eraser_circle" />
+
 </RelativeLayout>

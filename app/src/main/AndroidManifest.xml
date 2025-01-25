@@ -58,12 +58,15 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="face" />
+        <activity
+            android:name=".activity.MainPageActivity.Admin.Timeview_update"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activity.MainPageActivity.Admin.Timeframeactivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.pdf.pdf_activity"
             android:exported="false"

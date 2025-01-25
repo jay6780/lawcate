@@ -19,9 +19,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ak.ColoredDate;
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.ViewSkeletonScreen;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,17 +35,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.law.booking.activity.MainPageActivity.Guess.package_event;
 import com.law.booking.activity.MainPageActivity.bookingUi.booknow;
+import com.law.booking.activity.tools.Model.Schedule2;
 import com.law.booking.activity.tools.Model.Schedule3;
 import com.law.booking.activity.tools.Model.Service;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.ScheduleAdapter4;
+import com.law.booking.activity.tools.adapter.empty_schedule;
 import com.law.booking.activity.tools.adapter.portfolioAdapter;
 import com.law.booking.activity.tools.adapter.profileServiceAdapters;
 import com.law.booking.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -71,6 +76,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
     private int totalPrice = 0;
     private List<Schedule3> scheduleList = new ArrayList<>();
     private ScheduleAdapter4 scheduleAdapter;
+    private empty_schedule emptyAdapter;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -179,15 +185,23 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                     }
                 }
 
+                Collections.sort(schedule3s, (s1, s2) -> s2.getDate().compareTo(s1.getDate()));
+
                 if (schedule3s.isEmpty()) {
-                    sched.setVisibility(View.GONE);
                     layout_position();
                     Log.d(TAG, "No schedules available.");
+                    emptyAdapter = new empty_schedule(getContext());
+                    portfolioRecycler.setVisibility(View.GONE);
+                    schedulerecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                    schedulerecycler.setAdapter(emptyAdapter);
                 } else {
                     sched.setVisibility(View.VISIBLE);
+                    portfolioRecycler.setVisibility(View.VISIBLE);
                     scheduleAdapter = new ScheduleAdapter4(schedule3s, getContext());
-                    schedulerecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                    schedulerecycler.setLayoutManager(gridLayoutManager);
                     schedulerecycler.setAdapter(scheduleAdapter);
+
                 }
             }
 
@@ -438,7 +452,7 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                 .show();
         new Handler().postDelayed(() -> {
             skeletonScreen.hide();
-            portfolioRecycler.setVisibility(View.VISIBLE);
+//            portfolioRecycler.setVisibility(View.VISIBLE);
             myserviceRecycler.setVisibility(View.GONE);
             services.setVisibility(View.VISIBLE);
             scroller.setVisibility(View.VISIBLE);

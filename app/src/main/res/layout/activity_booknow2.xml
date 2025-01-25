@@ -146,9 +146,9 @@
                     android:id="@+id/morningslot"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
+                    android:visibility="gone"
                     android:text="Morning slot" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -166,6 +166,7 @@
                     android:layout_below="@+id/myschedule"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
+                    android:visibility="gone"
                     android:text="Afternoon slot" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -183,6 +184,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_below="@+id/afternoon_recycler"
                     android:layout_marginStart="10dp"
+                    android:visibility="gone"
                     android:text="Evening slot" />
 
                     <androidx.recyclerview.widget.RecyclerView

@@ -45,6 +45,7 @@ import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.ScheduleAdapter3;
 import com.law.booking.R;
 import com.law.booking.activity.tools.adapter.Time_adapter;
+import com.law.booking.activity.tools.adapter.empty_schedule;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -84,6 +85,8 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
     AppCompatButton procced;
     KalendarView mKalendarView;
     private RelativeLayout relative_lay;
+    private empty_schedule emptyAdapter;
+    List<TimeSlot> timeSlots = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -349,7 +352,6 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                             Log.e("DateParsing", "Error parsing date: " + dateString, e);
                         }
                         if (dataSnapshot.exists() && date != null) {
-                            List<TimeSlot> timeSlots = new ArrayList<>();
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
                                 if (timeSlot != null) {
@@ -366,6 +368,11 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                         Log.e("DateParsing", "Error parsing fromfirebase: " + fromfirebase, e);
                                     }
                                 }
+                            }
+                            if (timeSlots.isEmpty()){
+                                morningslot.setVisibility(View.GONE);
+                            }else{
+                                morningslot.setVisibility(View.VISIBLE);
                             }
                             Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
                             GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
@@ -401,7 +408,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                             Log.e("DateParsing", "Error parsing date: " + dateString, e);
                         }
                         if (dataSnapshot.exists() && date != null) {
-                            List<TimeSlot> timeSlots = new ArrayList<>();
+
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
                                 if (timeSlot != null) {
@@ -418,6 +425,11 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                         Log.e("DateParsing", "Error parsing fromfirebase: " + fromfirebase, e);
                                     }
                                 }
+                            }
+                            if (timeSlots.isEmpty()){
+                                afternoon_slot.setVisibility(View.GONE);
+                            }else{
+                                afternoon_slot.setVisibility(View.VISIBLE);
                             }
                             Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
                             GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
@@ -453,7 +465,6 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                             Log.e("DateParsing", "Error parsing date: " + dateString, e);
                         }
                         if (dataSnapshot.exists() && date != null) {
-                            List<TimeSlot> timeSlots = new ArrayList<>();
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TimeSlot timeSlot = snapshot.getValue(TimeSlot.class);
                                 if (timeSlot != null) {
@@ -470,6 +481,11 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
                                         Log.e("DateParsing", "Error parsing fromfirebase: " + fromfirebase, e);
                                     }
                                 }
+                            }
+                            if (timeSlots.isEmpty()){
+                                evening_slot.setVisibility(View.GONE);
+                            }else{
+                                evening_slot.setVisibility(View.VISIBLE);
                             }
                             Time_adapter timeAdapter = new Time_adapter(timeSlots,booknow.this);
                             GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);

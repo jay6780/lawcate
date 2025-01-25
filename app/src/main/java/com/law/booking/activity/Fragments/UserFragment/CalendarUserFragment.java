@@ -28,6 +28,7 @@ import com.law.booking.activity.tools.adapter.ScheduleAdapterUser;
 import com.law.booking.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -106,6 +107,7 @@ public class CalendarUserFragment extends Fragment implements AdminDialogCallbac
                             }
                         }
                     }
+                    Collections.sort(scheduleList, (s1, s2) -> s2.getDate().compareTo(s1.getDate()));
                     mKalendarView.setColoredDates(highlightedDates);
                     scheduleAdapter.notifyDataSetChanged();
                     if (firstDate != null) {

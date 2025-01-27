@@ -144,6 +144,7 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
                 intent.putExtra("age", age);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+                finish();
             }
         });
 

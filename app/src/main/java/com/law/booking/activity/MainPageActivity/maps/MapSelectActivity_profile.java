@@ -58,7 +58,7 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
     private MapResultAdapter adapter;
     private List<String> searchResults = new ArrayList<>();
     private EditText mapSearch;
-    private String selectedAddress,name,phone,username,image,email;
+    private String selectedAddress,name,phone,username,image,email,lengthOfService,age;
     private AppCompatButton skip;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
@@ -84,6 +84,8 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
         name = getIntent().getStringExtra("name");
         phone = getIntent().getStringExtra("phone");
         email = getIntent().getStringExtra("email");
+        lengthOfService = getIntent().getStringExtra("lengthOfService");
+        age = getIntent().getStringExtra("age");
         backBtn = findViewById(R.id.back);
         mAuth = FirebaseAuth.getInstance();
         skip = findViewById(R.id.skip);
@@ -138,6 +140,8 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
                 intent.putExtra("name", name);
                 intent.putExtra("phone", phone);
                 intent.putExtra("email", email);
+                intent.putExtra("lengthOfService", lengthOfService);
+                intent.putExtra("age", age);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
@@ -314,8 +318,11 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
         intent.putExtra("name", name);
         intent.putExtra("phone", phone);
         intent.putExtra("email", email);
+        intent.putExtra("lengthOfService", lengthOfService);
+        intent.putExtra("age", age);
         startActivity(intent);
         overridePendingTransition(0, 0);
+        finish();
         super.onBackPressed();
     }
 }

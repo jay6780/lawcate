@@ -160,7 +160,7 @@ public class profile_updateAdmin extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Dialog dialog = new Dialog();
-                    dialog.updateLocation(profile_updateAdmin.this, image, address, username, name, phone, email);
+                    dialog.updateLocation(profile_updateAdmin.this, image, address, username, name, phone, email,lengthOfService,age);
 
                 }
             });

@@ -160,7 +160,7 @@ public class profile_updateEvents extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Dialog dialog = new Dialog();
-                    dialog.updateEvent_location(profile_updateEvents.this, image, address, username, name, phone, email);
+                    dialog.updateEvent_location(profile_updateEvents.this, image, address, username, name, phone, email,lengthOfService,age);
 
                 }
             });

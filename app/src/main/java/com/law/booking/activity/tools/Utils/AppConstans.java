@@ -100,4 +100,5 @@ public class AppConstans {
     public static final String ChatAdminEmail = "ChatAdminEmail";
     public static final String tabnum ="tabnum";
     public static final String AdminKey ="AdminKey";
+    public static final String servicelength ="servicelength";
 }

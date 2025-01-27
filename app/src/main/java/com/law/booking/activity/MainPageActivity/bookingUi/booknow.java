@@ -31,9 +31,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
 import com.law.booking.activity.MainPageActivity.profile.providerProfile2;
-import com.law.booking.activity.tools.Model.BookingId;
 import com.law.booking.activity.tools.Model.ChatRoom;
 import com.law.booking.activity.tools.Model.Schedule;
 import com.law.booking.activity.tools.Model.Schedule3;
@@ -43,7 +43,6 @@ import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.ScheduleAdapter3;
-import com.law.booking.R;
 import com.law.booking.activity.tools.adapter.Time_adapter;
 import com.law.booking.activity.tools.adapter.empty_schedule;
 
@@ -591,7 +590,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
         back.putExtra("image", image);
         back.putExtra("address", address);
         back.putExtra("age", age);
-        back.putExtra("lengthOfservice", lengthOfservice);
+        back.putExtra("lengthOfservice", SPUtils.getInstance().getString(AppConstans.servicelength));
         back.putExtra("key", adminkey);
         back.putExtra("isOnline", isOnline);
         startActivity(back);

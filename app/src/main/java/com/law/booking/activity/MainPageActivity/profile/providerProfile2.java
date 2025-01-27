@@ -104,6 +104,7 @@ public class providerProfile2 extends AppCompatActivity {
         email = getIntent().getStringExtra("email");
         age = getIntent().getStringExtra("age");
         lengthOfservice = getIntent().getStringExtra("lengthOfservice");
+        SPUtils.getInstance().put(AppConstans.servicelength,lengthOfservice);
         userLenghtexp.setText((lengthOfservice != null ? lengthOfservice : "N/A")+" "+taon);
         Log.d(TAG, "Storing Provider Name: " + providerName);
         SPUtils.getInstance().put(AppConstans.providerName, providerName);

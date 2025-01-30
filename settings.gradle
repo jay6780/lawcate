@@ -3,6 +3,7 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
 dependencyResolutionManagement {
@@ -37,3 +38,7 @@ include ':refresh-footer-classics'
 include ':refresh-drawable-paint'
 include ':android-pdf-viewer'
 include ':filepicker'
+include ':library2'
+include ':custombutton'
+include ':custompermissionsdialogue'
+include ':blurrview'

@@ -9,8 +9,8 @@ android {
         applicationId "com.law.booking"
         minSdk 21
         targetSdk 28
-        versionCode 33
-        versionName "3.3"
+        versionCode 34
+        versionName "3.4"
 
         dexOptions {
             jumboMode = true
@@ -80,6 +80,7 @@ dependencies {
     implementation project(path: ':refresh-header-classics')
     implementation project(path: ':android-pdf-viewer')
     implementation project(path: ':filepicker')
+    implementation project(path: ':custompermissionsdialogue')
 //    implementation project(path: ':gifpack-giphy')
     testImplementation 'junit:junit:4.13.2'
     implementation 'com.orhanobut:dialogplus:1.11@aar'

@@ -1,13 +1,11 @@
 package com.law.booking.activity.MainPageActivity;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -24,8 +22,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
@@ -84,6 +80,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import stream.custompermissionsdialogue.PermissionsDialogue;
+
 public class newHome extends AppCompatActivity {
     private static final String FIRST_RUN_KEY = "firstRun";
     private ViewPager viewPager,adminPager,eventPager;
@@ -125,6 +123,7 @@ public class newHome extends AppCompatActivity {
     private TextView badge_count_admin,event_badge,status;
     private boolean isGuess = false;
     private LinearLayout admin_chatSupport;
+    private PermissionsDialogue.Builder alertPermissions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +138,6 @@ public class newHome extends AppCompatActivity {
         changeStatusBarColor(getResources().getColor(R.color.white2));
         initSkeleton();
         initGone();
-
         mAuth = FirebaseAuth.getInstance();
         bookId = FirebaseDatabase.getInstance().getReference("MybookId");
         guessRef = FirebaseDatabase.getInstance().getReference("Client");
@@ -910,10 +908,7 @@ public class newHome extends AppCompatActivity {
                             initAdminSaveData(user.getUsername(),user.getEmail(),user.getImage(),user.getPhone(),
                                     user.getName(),user.getAddress(),user.getAge(),user.getLengthOfService());
                             startService(new Intent(newHome.this, MessageNotificationService.class));
-                            requestPermissions2();
-                            showNotiff();
                             boolean Lawyer = true;
-
                             SPUtils.getInstance().put(AppConstans.userType,Lawyer);
 
                             boolean isAdmin = false;
@@ -987,7 +982,7 @@ public class newHome extends AppCompatActivity {
                                         boolean hasEmail = dataSnapshot.hasChild("email");
                                         boolean Lawyer = false;
                                         SPUtils.getInstance().put(AppConstans.userType,Lawyer);
-
+                                        initShowGuide();
                                         boolean isAdmin = false;
                                         SPUtils.getInstance().put(AppConstans.Administrator,isAdmin);
 
@@ -1023,13 +1018,10 @@ public class newHome extends AppCompatActivity {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                 if (dataSnapshot.exists()) {
-                                                    requestPermissions2();
-                                                    showNotiff();
                                                     Usermodel user = dataSnapshot.getValue(Usermodel.class);
                                                     boolean Lawyer = false;
                                                     SPUtils.getInstance().put(AppConstans.userType,Lawyer);
                                                     boolean isAdmin = true;
-
                                                     SPUtils.getInstance().put(AppConstans.Administrator,isAdmin);
                                                     boolean isSuperAdmin = dataSnapshot.hasChild("isSuperAdmin") && Boolean.TRUE.equals(dataSnapshot.child("isSuperAdmin").getValue(Boolean.class));
                                                     if (isSuperAdmin) {
@@ -1076,12 +1068,6 @@ public class newHome extends AppCompatActivity {
             loadDefault();
         }
     }
-
-    private void showNotiff() {
-        Dialog notification = new Dialog();
-        notification.notiffDialog(newHome.this);
-    }
-
     private void initEventbook() {
         startService(new Intent(this, MessageNotificationService.class));
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknumEvent);
@@ -1407,7 +1393,6 @@ public class newHome extends AppCompatActivity {
             initUserInfo_event(user.getImage(),user.getUsername(),user.getAddress(),user.getEmail());
         }else if (Client){
             isGuess = true;
-            initShowGuide();
             admin_chatSupport.setVisibility(View.GONE);
             default_menu.setVisibility(View.GONE);
             event_bell.setVisibility(View.GONE);
@@ -1472,78 +1457,9 @@ public class newHome extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(color);
     }
-    private void openNotificationSettings() {
-        Dialog notification = new Dialog();
-        notification.notiffDialog(this);
-    }
     private void showMore() {
-        if (hasRequiredPermissions()) {
-            showNewbieGuide();
-        } else {
-            requestPermissions();
-        }
+      showNewbieGuide();
     }
-
-    private boolean hasRequiredPermissions() {
-        openNotificationSettings();
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-    }
-    private void requestPermissions2() {
-        ActivityCompat.requestPermissions(
-                this,
-                new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_NETWORK_STATE,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                },
-                100
-        );
-    }
-
-    private void requestPermissions() {
-        ActivityCompat.requestPermissions(
-                this,
-                new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_NETWORK_STATE,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                },
-                100
-        );
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 100) {
-            boolean allGranted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
-                }
-            }
-
-            if (allGranted) {
-                showNewbieGuide();
-            } else {
-                Toast.makeText(this, "Permissions are required to continue.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     private void showNewbieGuide() {
         if(isGuess){
             NewbieGuide.with(this)
@@ -1558,7 +1474,6 @@ public class newHome extends AppCompatActivity {
                     )
                     .show();
         }
-
     }
 
 

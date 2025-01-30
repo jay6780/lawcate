@@ -24,11 +24,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.app.hubert.guide.NewbieGuide;
-import com.app.hubert.guide.core.Controller;
-import com.app.hubert.guide.listener.OnGuideChangedListener;
-import com.app.hubert.guide.model.GuidePage;
-import com.app.hubert.guide.model.HighLight;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,10 +35,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.law.booking.R;
-import com.law.booking.activity.tools.DialogUtils.Dialog;
-import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.Application.TinkerApplications;
 import com.law.booking.activity.MainPageActivity.Guess.Createacc;
+import com.law.booking.activity.tools.DialogUtils.Dialog;
+import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.orhanobut.dialogplus.DialogPlus;
@@ -87,10 +82,10 @@ public class login extends AppCompatActivity {
         // showLoginPrompt();
         //  }
         //   });
+        showNotiff();
 
-        initShowGuide();
+
         inithash();
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,48 +149,13 @@ public class login extends AppCompatActivity {
 //        }
     }
 
-    private void initShowGuide() {
-        NewbieGuide.with(this)
-                .setLabel("login_guide")
-                .setOnGuideChangedListener(new OnGuideChangedListener() {
-                    @Override
-                    public void onShowed(Controller controller) {
 
-                    }
-
-                    @Override
-                    public void onRemoved(Controller controller) {
-                        showMore();
-                    }
-                })
-                .addGuidePage(GuidePage.newInstance()
-                        .addHighLight(forgotPasswordButton, HighLight.Shape.ROUND_RECTANGLE, 1)
-                        .setLayoutRes(R.layout.recover_account)
-                )
-                .show();
+    private void showNotiff() {
+        Dialog notification = new Dialog();
+        notification.notiffDialog(login.this,forgotPasswordButton,emailEditText,createacc,google,passwordEditText);
     }
 
-    private void showMore() {
-        NewbieGuide.with(this)
-                .setLabel("login_guide2")
-                .addGuidePage(GuidePage.newInstance()
-                        .addHighLight(emailEditText, HighLight.Shape.ROUND_RECTANGLE, 1)
-                        .setLayoutRes(R.layout.email_guide)
-                )
-                .addGuidePage(GuidePage.newInstance()
-                        .addHighLight(passwordEditText, HighLight.Shape.ROUND_RECTANGLE, 1)
-                        .setLayoutRes(R.layout.password_guide)
-                )
-                .addGuidePage(GuidePage.newInstance()
-                        .addHighLight(createacc, HighLight.Shape.ROUND_RECTANGLE, 1)
-                        .setLayoutRes(R.layout.creat_accountguide)
-                )
-                .addGuidePage(GuidePage.newInstance()
-                        .addHighLight(google, HighLight.Shape.ROUND_RECTANGLE, 1)
-                        .setLayoutRes(R.layout.google_hint)
-                )
-                .show();
-    }
+
 
     private void changeStatusBarColor(int color) {
         Window window = getWindow();

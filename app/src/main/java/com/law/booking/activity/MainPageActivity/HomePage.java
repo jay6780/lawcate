@@ -426,8 +426,8 @@ public class HomePage extends AppCompatActivity {
     }
 
     private void openNotificationSettings() {
-        Dialog notification = new Dialog();
-        notification.notiffDialog(this);
+//        Dialog notification = new Dialog();
+//        notification.notiffDialog(this);
     }
     private void changeStatusBarColor(int color) {
         Window window = getWindow();

@@ -1,0 +1,11 @@
+<resources>
+    <!-- CustomAlertDialogue -->
+    <dimen name="alert_radius_actionsheet">10dp</dimen>
+    <dimen name="alert_dialogue_margin_side">30dp</dimen>
+    <dimen name="alert_dialogue_margin_top">30dp</dimen>
+    <dimen name="alert_button_margin">10dp</dimen>
+    <dimen name="alert_text_margin_border">18dp</dimen>
+    <dimen name="alert_text_message_margin_bottom">4dp</dimen>
+    <dimen name="alert_text_title_size">20sp</dimen>
+    <dimen name="alert_text_message_size">14sp</dimen>
+</resources>

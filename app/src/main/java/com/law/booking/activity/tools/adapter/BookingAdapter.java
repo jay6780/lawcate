@@ -150,6 +150,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                 if (currentUser != null) {
                                     String currentUserId = currentUser.getUid();
+                                    savedcancel(booking.getKey());
                                     String currentUserEmail = SPUtils.getInstance().getString(AppConstans.userEmail);;
                                     initRecentpackages(booking.getServiceName());
 
@@ -222,6 +223,27 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                 }
             });
         });
+    }
+
+    private void savedcancel(String key) {
+        DatabaseReference hmuaref = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("Lawyer")
+                .child(key)
+                .child("bookcancel");
+        hmuaref.get().addOnSuccessListener(snapshot -> {
+            int currentCount = 0;
+            if (snapshot.exists()) {
+                currentCount = snapshot.getValue(Integer.class);
+            }
+            int newCount = currentCount + 1;
+            hmuaref.setValue(newCount)
+                    .addOnSuccessListener(aVoid ->
+                            Log.d("FirebaseDB", "Count updated successfully to " + newCount))
+                    .addOnFailureListener(e ->
+                            Log.e("FirebaseDB", "Error updating count", e));
+        }).addOnFailureListener(e ->
+                Log.e("FirebaseDB", "Error fetching count", e));
     }
 
     private void initRecentpackages(String serviceName) {

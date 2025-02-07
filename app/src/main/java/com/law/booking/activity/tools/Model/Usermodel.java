@@ -23,6 +23,9 @@ public class Usermodel {
     private boolean isProperty;
     private boolean isVerify;
     private float ratings;
+    private int bookcount;
+    private int bookcomplete;
+    private int bookcancel;
     public Usermodel() {
     }
 
@@ -38,6 +41,30 @@ public class Usermodel {
         this.birthday = birthday;
     }
 
+
+    public int getBookcancel() {
+        return bookcancel;
+    }
+
+    public void setBookcancel(int bookcancel) {
+        this.bookcancel = bookcancel;
+    }
+
+    public int getBookcomplete() {
+        return bookcomplete;
+    }
+
+    public void setBookcomplete(int bookcomplete) {
+        this.bookcomplete = bookcomplete;
+    }
+
+    public int getBookcount() {
+        return bookcount;
+    }
+
+    public void setBookcount(int bookcount) {
+        this.bookcount = bookcount;
+    }
 
     public boolean isVerify() {
         return isVerify;

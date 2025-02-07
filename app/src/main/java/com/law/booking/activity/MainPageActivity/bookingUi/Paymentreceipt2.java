@@ -65,7 +65,7 @@ public class Paymentreceipt2 extends AppCompatActivity {
     private String age,lengthOfservice;
     private boolean isOnline;
     private Spinner payment_spinner;
-    private String TAG = "Paymentreceipt";
+    private String TAG = "Paymentreceipt2";
     private AppCompatButton confirm;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference,databaseReference2;
@@ -89,6 +89,7 @@ public class Paymentreceipt2 extends AppCompatActivity {
         isOnline = getIntent().getBooleanExtra("isOnline", false);
         serviceName = getIntent().getStringExtra("serviceName");
         Log.d(TAG, "Is Online: " + isOnline);
+        Log.d( "Payments",TAG);
         SPUtils.getInstance().put(AppConstans.KEY, key);
         Log.d("SavedKey", "userId: " + key);
         image = getIntent().getStringExtra("image");
@@ -288,6 +289,7 @@ public class Paymentreceipt2 extends AppCompatActivity {
                                 savedRecentAvailed(serviceName, packages,snapshotkey);
                                 savedRecentAvailedFoEvent(serviceName, packages,key,snapshotkey);
                                 savedBookCount(key);
+                                savedbookcounting(key);
                                 savEBookIdforAdmin(childKey, key);
                                 Intent intent = new Intent(Paymentreceipt2.this, history_book.class);
                                 startActivity(intent);
@@ -302,6 +304,28 @@ public class Paymentreceipt2 extends AppCompatActivity {
                     });
         }
     }
+
+    private void savedbookcounting(String key) {
+        DatabaseReference hmuaref = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("Lawyer")
+                .child(key)
+                .child("bookcount");
+        hmuaref.get().addOnSuccessListener(snapshot -> {
+            int currentCount = 0;
+            if (snapshot.exists()) {
+                currentCount = snapshot.getValue(Integer.class);
+            }
+            int newCount = currentCount + 1;
+            hmuaref.setValue(newCount)
+                    .addOnSuccessListener(aVoid ->
+                            Log.d("FirebaseDB", "Count updated successfully to " + newCount))
+                    .addOnFailureListener(e ->
+                            Log.e("FirebaseDB", "Error updating count", e));
+        }).addOnFailureListener(e ->
+                Log.e("FirebaseDB", "Error fetching count", e));
+    }
+
 
     private void savedRecentAvailedFoEvent(String serviceName, String packages, String key,String snapshotkey) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("RecentAvailed_event").child(key);

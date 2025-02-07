@@ -1,14 +1,5 @@
 package com.law.booking.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +11,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -228,9 +228,7 @@ public class myfavorites extends AppCompatActivity implements OnRefreshListener 
                     Collections.sort(providerList, new Comparator<Usermodel>() {
                         @Override
                         public int compare(Usermodel o1, Usermodel o2) {
-                            float rating1 = o1.getRatings();
-                            float rating2 = o2.getRatings();
-                            return Float.compare(rating2, rating1);
+                            return Integer.compare(o2.getBookcount(), o1.getBookcount());
                         }
                     });
 

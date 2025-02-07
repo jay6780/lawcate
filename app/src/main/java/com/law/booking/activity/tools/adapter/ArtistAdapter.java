@@ -1,6 +1,5 @@
 package com.law.booking.activity.tools.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -22,11 +21,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.Guess.Data_analyticsactivity;
 import com.law.booking.activity.MainPageActivity.profile.providerProfile2;
 import com.law.booking.activity.tools.Model.Usermodel;
-import com.law.booking.R;
-import com.law.booking.activity.tools.Utils.AppConstans;
-import com.law.booking.activity.tools.Utils.SPUtils;
 
 import java.util.ArrayList;
 
@@ -56,6 +54,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
         Usermodel provider = providerList.get(position);
         String address = context.getString(R.string.address);
         String years = context.getString(R.string.years);
+
+        String bookcount = "Booking serve: ";
+        String bookcomplete = "Booking complete: ";
+
         holder.nameTextView.setText(provider.getUsername());
 
         if(provider.getLengthOfService() == null){
@@ -63,6 +65,22 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
         }else{
             holder.experience.setText(years+": "+provider.getLengthOfService());
         }
+
+
+        if(provider.getBookcount() == 0){
+            holder.experience.setText(bookcount+"0");
+        }else{
+            holder.experience.setText(bookcount+provider.getBookcount());
+        }
+
+        if(provider.getBookcomplete()== 0){
+            holder.book_complete.setText(bookcomplete+"0");
+        }else{
+            holder.book_complete.setText(bookcomplete+provider.getBookcomplete());
+        }
+
+
+
         String userId = provider.getKey();
         Log.d("userId", "UserId: " + userId);
 
@@ -144,6 +162,16 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
         });
 
 
+        holder.data.setOnClickListener(view -> {
+            Intent bookdata = new Intent(context, Data_analyticsactivity.class);
+            bookdata.putExtra("id",provider.getKey());
+            bookdata.putExtra("username",provider.getUsername());
+            context.startActivity(bookdata);
+
+        });
+
+
+
         holder.address.setVisibility(View.VISIBLE);
         Glide.with(context)
                 .load(provider.getImage())
@@ -187,12 +215,14 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
     }
 
     public class ProviderViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,address,experience,ratevalue;
+        TextView nameTextView,address,experience,ratevalue,book_complete;
         ImageView imageView,heart,star;
-        AppCompatButton appointment;
+        AppCompatButton appointment,data;
 
         public ProviderViewHolder(@NonNull View itemView) {
             super(itemView);
+            data = itemView.findViewById(R.id.data);
+            book_complete = itemView.findViewById(R.id.book_complete);
             ratevalue = itemView.findViewById(R.id.ratevalue);
             heart = itemView.findViewById(R.id.heart);
             star = itemView.findViewById(R.id.star);

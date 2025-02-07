@@ -9,8 +9,8 @@ android {
         applicationId "com.law.booking"
         minSdk 21
         targetSdk 28
-        versionCode 34
-        versionName "3.4"
+        versionCode 35
+        versionName "3.5"
 
         dexOptions {
             jumboMode = true
@@ -112,4 +112,5 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation 'com.github.BeppiMenozzi:TriStateToggleButton:1.1.4'
     implementation 'com.github.fuzz-productions:RatingBar:1.0.6'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

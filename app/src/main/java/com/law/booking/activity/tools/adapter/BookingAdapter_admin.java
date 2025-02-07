@@ -30,15 +30,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.Admin.Bookingmap_Admin;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity2;
 import com.law.booking.activity.tools.Model.Booking;
 import com.law.booking.activity.tools.Model.Booking2;
-import com.law.booking.activity.tools.Model.BookingId;
 import com.law.booking.activity.tools.Model.ChatRoom;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -190,6 +189,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                 if (currentUser != null) {
                                     String currentUserId = currentUser.getUid();
+                                    savedbookcounting(currentUserId);
                                     String currentUserEmail = currentUser.getEmail();
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
@@ -225,6 +225,27 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                         .show();
             }
         });
+    }
+
+    private void savedbookcounting(String key) {
+        DatabaseReference hmuaref = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("Lawyer")
+                .child(key)
+                .child("bookcomplete");
+        hmuaref.get().addOnSuccessListener(snapshot -> {
+            int currentCount = 0;
+            if (snapshot.exists()) {
+                currentCount = snapshot.getValue(Integer.class);
+            }
+            int newCount = currentCount + 1;
+            hmuaref.setValue(newCount)
+                    .addOnSuccessListener(aVoid ->
+                            Log.d("FirebaseDB", "Count updated successfully to " + newCount))
+                    .addOnFailureListener(e ->
+                            Log.e("FirebaseDB", "Error updating count", e));
+        }).addOnFailureListener(e ->
+                Log.e("FirebaseDB", "Error fetching count", e));
     }
 
     private void openMap(String email,String name,String image,String key) {

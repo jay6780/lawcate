@@ -75,6 +75,7 @@ public class Paymentreceipt extends AppCompatActivity {
         isOnline = getIntent().getBooleanExtra("isOnline", false);
         serviceName = getIntent().getStringExtra("serviceName");
         Log.d(TAG, "Is Online: " + isOnline);
+        Log.d( "Payments",TAG);
         SPUtils.getInstance().put(AppConstans.KEY, key);
         Log.d("SavedKey", "userId: " + key);
         image = getIntent().getStringExtra("image");
@@ -229,6 +230,7 @@ public class Paymentreceipt extends AppCompatActivity {
                                 savedSchedId(email);
                                 savedBookId(childKey);
                                 savedBookCount(key);
+                                savedbookcounting(key);
                                 savEBookIdforAdmin(childKey, key);
                                 Intent intent = new Intent(Paymentreceipt.this, history_book.class);
                                 startActivity(intent);
@@ -243,6 +245,29 @@ public class Paymentreceipt extends AppCompatActivity {
                     });
         }
     }
+
+
+    private void savedbookcounting(String key) {
+        DatabaseReference hmuaref = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("Lawyer")
+                .child(key)
+                .child("bookcount");
+        hmuaref.get().addOnSuccessListener(snapshot -> {
+            int currentCount = 0;
+            if (snapshot.exists()) {
+                currentCount = snapshot.getValue(Integer.class);
+            }
+            int newCount = currentCount + 1;
+            hmuaref.setValue(newCount)
+                    .addOnSuccessListener(aVoid ->
+                            Log.d("FirebaseDB", "Count updated successfully to " + newCount))
+                    .addOnFailureListener(e ->
+                            Log.e("FirebaseDB", "Error updating count", e));
+        }).addOnFailureListener(e ->
+                Log.e("FirebaseDB", "Error fetching count", e));
+    }
+
 
     private void savEBookIdforAdmin(String chatId,String key) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();

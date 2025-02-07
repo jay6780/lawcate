@@ -364,9 +364,7 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
                 Collections.sort(providerList, new Comparator<Usermodel>() {
                     @Override
                     public int compare(Usermodel o1, Usermodel o2) {
-                        float rating1 = o1.getRatings();
-                        float rating2 = o2.getRatings();
-                        return Float.compare(rating2, rating1);
+                        return Integer.compare(o2.getBookcount(), o1.getBookcount());
                     }
                 });
 

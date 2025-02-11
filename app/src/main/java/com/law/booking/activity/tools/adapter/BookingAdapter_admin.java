@@ -89,7 +89,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
         holder.time.setText(booking.getTime());
         holder.date.setText(booking.getDate());
 
-        holder.servicename.setText("Law availed: "+ booking.getServiceName());
+        holder.servicename.setText(booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": " + booking.getPrice() + " php");
 
         Glide.with(holder.itemView.getContext())
@@ -374,12 +374,14 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                     if(isConfirmed){
                          availedMessage = "Hi, I'm " + username + "\n" +
                                 "The book has been confirmed with:\n" +
+                                 "law name select by client: "+serviceName+"\n"+
                                 "Selected schedule: " + "time: " + time + "\n" +
                                 "date: " + date + "\n" +
                                 "Thank you!";
                     }else{
                         availedMessage = "Hi, I'm " + username + "\n" +
                                 "The book has been complete with:\n" +
+                                "law name select by client: "+serviceName+"\n"+
                                 "Selected schedule: " + "time: " + time + "\n" +
                                 "date: " + date + "\n" +
                                 "Thank you!";

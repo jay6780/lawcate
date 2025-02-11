@@ -124,6 +124,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
         Log.d(TAG,"Phone: "+phonenumber);
         initUi();
         initShowbook();
+        relative_lay.setVisibility(View.VISIBLE);
         show_timeframe(schedulekey,adminkey);
         messageImg.setOnClickListener(view -> chat());
     }
@@ -204,12 +205,13 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
 
 
         mKalendarView.setEvents(events);
-        mKalendarView.setDateSelector(new KalendarView.DateSelector() {
-            @Override
-            public void onDateClicked(Date selectedDate) {
-                handleDateSelection(selectedDate);
-            }
-        });
+
+//        mKalendarView.setDateSelector(new KalendarView.DateSelector() {
+//            @Override
+//            public void onDateClicked(Date selectedDate) {
+//                handleDateSelection(selectedDate);
+//            }
+//        });
         procced.setEnabled(false);
         procced.setAlpha(0.5f);
 

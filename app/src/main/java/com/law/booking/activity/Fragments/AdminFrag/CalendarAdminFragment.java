@@ -37,6 +37,7 @@ import com.law.booking.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -103,7 +104,12 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
                             tempScheduleList.add(new Schedule2(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), key, schedule.getTime()));
                         }
                     }
-                    Collections.sort(tempScheduleList, (s1, s2) -> s2.getDate().compareTo(s1.getDate()));
+                    Collections.sort(tempScheduleList, new Comparator<Schedule2>() {
+                        @Override
+                        public int compare(Schedule2 s1, Schedule2 s2) {
+                            return s1.getDate().compareTo(s2.getDate());
+                        }
+                    });
                     scheduleList.addAll(tempScheduleList);
                     for (Schedule2 schedule : scheduleList) {
                         highlightedDates.add(new ColoredDate(schedule.getDate(), getResources().getColor(R.color.red_holiday)));

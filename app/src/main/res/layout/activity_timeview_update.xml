@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <include
         android:id="@+id/title_bar2"
         layout="@layout/title_bar2"
         android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp" />
 
 
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -22,31 +23,39 @@
         app:srlEnablePreviewInEditMode="false"
         app:srlFooterTranslationViewId="@+id/nested_scroll"
         app:srlPrimaryColor="#00000000">
-    <com.scwang.smart.refresh.header.ClassicsHeader
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/refreshLayout">
 
-    <TextView
-        android:id="@+id/dateschedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            <TextView
+                android:id="@+id/dateschedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:textSize="15sp"/>
 
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:textSize="15sp"/>
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                android:id="@+id/database_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/dateschedule"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/time_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/database_spinner"
+                android:layout_marginTop="5dp" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/time_viewrecycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/dateschedule"
-        android:layout_marginTop="5dp" />
 
         </RelativeLayout>
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>

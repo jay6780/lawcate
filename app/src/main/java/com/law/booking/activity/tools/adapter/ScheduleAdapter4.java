@@ -11,14 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.bookingUi.Paymentreceipt;
 import com.law.booking.activity.MainPageActivity.bookingUi.booknow;
 import com.law.booking.activity.tools.Model.Schedule3;
-import com.law.booking.R;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +46,7 @@ public class ScheduleAdapter4 extends RecyclerView.Adapter<ScheduleAdapter4.Sche
         String schedulekey = schedule.getKey();
         String date = String.valueOf(schedule.getDate());
         String userId = schedule.getUserId();
+        String timeframe = schedule.getTimeframe();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
         String formattedDate = dateFormat.format(schedule.getDate());
         holder.date.setText(formattedDate);
@@ -60,21 +61,43 @@ public class ScheduleAdapter4 extends RecyclerView.Adapter<ScheduleAdapter4.Sche
                 String address = SPUtils.getInstance().getString(AppConstans.AdminAdress);
                 String age = SPUtils.getInstance().getString(AppConstans.AdminAge);
                 String phonenumber = SPUtils.getInstance().getString(AppConstans.AdminPhone);
-                Intent intent = new Intent(context, booknow.class);
-                intent.putExtra("email", email);
-                intent.putExtra("username", username);
-                intent.putExtra("image", image);
-                intent.putExtra("address", address);
-                intent.putExtra("age", age);
-                intent.putExtra("lengthOfservice", "");
-                intent.putExtra("key", userId);
-                intent.putExtra("isOnline", false);
-                intent.putExtra("serviceName", "");
-                intent.putExtra("price", price);
-                intent.putExtra("heads", heads);
-                intent.putExtra("date", date);
-                intent.putExtra("schedulekey",schedulekey);
-                intent.putExtra("phonenumber", phonenumber);
+                String servicename = SPUtils.getInstance().getString(AppConstans.servicename);
+                Intent intent =null;
+                if(schedulekey == null || timeframe == null){
+                    intent = new Intent(context, Paymentreceipt.class);
+                    intent.putExtra("email", email);
+                    intent.putExtra("username", username);
+                    intent.putExtra("image", image);
+                    intent.putExtra("address", address);
+                    intent.putExtra("age", age);
+                    intent.putExtra("lengthOfservice", "");
+                    intent.putExtra("key", userId);
+                    intent.putExtra("isOnline", false);
+                    intent.putExtra("serviceName", servicename);
+                    intent.putExtra("price", price);
+                    intent.putExtra("heads", heads);
+                    intent.putExtra("date", formattedDate);
+                    intent.putExtra("schedulekey",schedulekey);
+                    intent.putExtra("phonenumber", phonenumber);
+                    intent.putExtra("time","Whole day");
+                }else{
+                    intent = new Intent(context, booknow.class);
+                    intent.putExtra("email", email);
+                    intent.putExtra("username", username);
+                    intent.putExtra("image", image);
+                    intent.putExtra("address", address);
+                    intent.putExtra("age", age);
+                    intent.putExtra("lengthOfservice", "");
+                    intent.putExtra("key", userId);
+                    intent.putExtra("isOnline", false);
+                    intent.putExtra("serviceName", "");
+                    intent.putExtra("price", price);
+                    intent.putExtra("heads", heads);
+                    intent.putExtra("date", date);
+                    intent.putExtra("schedulekey",schedulekey);
+                    intent.putExtra("phonenumber", phonenumber);
+                }
+
                 context.startActivity(intent);
                 if(context instanceof Activity){
                     ((Activity)context).overridePendingTransition(0,0);

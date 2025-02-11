@@ -14,16 +14,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.law.booking.R;
 import com.law.booking.activity.tools.Model.TimeSlot;
 import com.law.booking.activity.tools.adapter.Time_viewadapter;
+import com.law.booking.activity.tools.adapter.empty_schedule;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
@@ -31,19 +35,23 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class Timeview_update extends AppCompatActivity  implements OnRefreshListener {
-    private RecyclerView time_viewrecycler;
-    private String key,dateString,databasename,adminkey,nametitle;
+    private RecyclerView time_recycler;
+    private String key,dateString,adminkey;
     private List<TimeSlot> mytimeslot = new ArrayList<>();
     private TextView title,dateschedule;
     private ImageView back_btn,clear;
-    private  Time_viewadapter timeAdapter;
+    private Time_viewadapter timeAdapter;
     private SmartRefreshLayout refreshLayout;
-
+    private MaterialSpinner database_spinner;
+    private String databasename;
+    private String schedulename;
+    private empty_schedule emptyAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,29 +64,64 @@ public class Timeview_update extends AppCompatActivity  implements OnRefreshList
         key = getIntent().getStringExtra("key");
         dateString = getIntent().getStringExtra("date");
         adminkey = getIntent().getStringExtra("userId");
-        databasename = getIntent().getStringExtra("databasename");
-        nametitle = getIntent().getStringExtra("title");
-        time_viewrecycler = findViewById(R.id.time_viewrecycler);
+        time_recycler = findViewById(R.id.time_recycler);
         dateschedule = findViewById(R.id.dateschedule);
         back_btn = findViewById(R.id.back_btn);
         clear = findViewById(R.id.clear);
         title = findViewById(R.id.title);
+        title.setText("Schedule view");
+        database_spinner = findViewById(R.id.database_spinner);
         refreshLayout = findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableRefresh(true);
-        title.setText(nametitle);
         title.setTextSize(16);
         initdateformat();
         clear.setVisibility(View.VISIBLE);
         clear.setOnClickListener(view -> clearalldialog());
         back_btn.setOnClickListener(view -> onBackPressed());
-        show_timeframe(key,adminkey);
+        initTimeSpinner();
     }
+
+    private void initTimeSpinner() {
+        database_spinner.setItems("Select schedule","Morning schedule", "Afternoon schedule", "Evening schedule");
+        database_spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                switch (position) {
+                    case 1:
+                        databasename = "Morning_slot";
+                        show_timeframe(key,adminkey);
+                        schedulename = item;
+                        time_recycler.setVisibility(View.VISIBLE);
+                        break;
+                    case 2:
+                        databasename = "Afternoon_slot";
+                        schedulename = item;
+                        show_timeframe(key,adminkey);
+                        time_recycler.setVisibility(View.VISIBLE);
+                        break;
+                    case 3:
+                        databasename = "Evening_slot";
+                        show_timeframe(key,adminkey);
+                        schedulename = item;
+                        time_recycler.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        time_recycler.setVisibility(View.GONE);
+                        databasename = null;
+                }
+            }
+        });
+    }
+
 
     private void show_timeframe(String schedulekey, String adminkey) {
         Log.d("Keys", "schedulekey: " + schedulekey);
         Log.d("Keys", "adminkey: " + adminkey);
 
+        if(databasename == null){
+            databasename = "Morning_slot";
+        }
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(databasename);
         reference.child(adminkey)
                 .orderByChild("key")
@@ -95,13 +138,22 @@ public class Timeview_update extends AppCompatActivity  implements OnRefreshList
                                     Log.d("Keys", "timeSlot: " + timeSlot.getTime());
                                 }
                             }
-                            updateRecyclerView();
-                        } else {
-                            Log.d("TimeSlot", "No data found for the given schedule key and admin key.");
-                            mytimeslot.clear();
-                            updateRecyclerView();
                         }
+                        if (mytimeslot.isEmpty()) {
+                            emptyAdapter = new empty_schedule(Timeview_update.this);
+                            time_recycler.setLayoutManager(new LinearLayoutManager(Timeview_update.this, LinearLayoutManager.HORIZONTAL, false));
+                            time_recycler.setAdapter(emptyAdapter);
+                        } else {
+                            timeAdapter = new Time_viewadapter(mytimeslot);
+                            GridLayoutManager gridLayoutManager = new GridLayoutManager(Timeview_update.this, 3);
+                            time_recycler.setLayoutManager(gridLayoutManager);
+                            time_recycler.setAdapter(timeAdapter);
+                            timeAdapter.updateSchedules(mytimeslot);
+                        }
+
                     }
+
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -110,38 +162,36 @@ public class Timeview_update extends AppCompatActivity  implements OnRefreshList
                 });
     }
 
-    private void updateRecyclerView() {
-        if (timeAdapter == null) {
-            timeAdapter = new Time_viewadapter(mytimeslot);
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
-            time_viewrecycler.setLayoutManager(gridLayoutManager);
-            time_viewrecycler.setAdapter(timeAdapter);
-        } else {
-            timeAdapter.updateSchedules(mytimeslot);
-        }
-    }
 
     private void clearalldialog() {
         new AlertDialog.Builder(Timeview_update.this)
                 .setTitle("Clear Schedule")
-                .setMessage("Are you sure you want to clear all time  time slot: "+nametitle)
-                .setPositiveButton("Yes", (dialog, which) -> clearall())
+                .setMessage("Are you sure you want to clear: "+schedulename)
+                .setPositiveButton("Yes", (dialog, which) -> clearAll())
                 .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
-    private void clearall() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(databasename).child(adminkey);
-        databaseReference.removeValue()
-         .addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(getApplicationContext(), "All time slot cleared!", Toast.LENGTH_SHORT).show();
-                timeAdapter.notifyDataSetChanged();
-            } else {
-                Toast.makeText(getApplicationContext(), "Failed to clear  time slot.", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void clearAll() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        databaseRef.child("Mysched").child(userId).child(key).child("timeframe").removeValue();
+        List<String> slots = Arrays.asList(databasename);
+
+        // Loop through each slot and remove data
+        for (String slot : slots) {
+            databaseRef.child(slot).child(adminkey).removeValue()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "All time cleared!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Failed to clear time.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
+
 
     private void initdateformat() {
         String formattedDateString = "";

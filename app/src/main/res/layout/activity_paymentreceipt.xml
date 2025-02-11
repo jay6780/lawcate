@@ -103,6 +103,12 @@
                     android:textSize="15sp"
                     android:textStyle="normal" />
 
+                <com.jaredrummler.materialspinner.MaterialSpinner
+                    android:id="@+id/service_namespinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/Package"
+                    android:layout_marginTop="5dp" />
                 <TextView
                     android:id="@+id/price"
                     android:layout_width="wrap_content"
@@ -122,7 +128,7 @@
                     android:id="@+id/heads"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/package_recyler2"
+                    android:layout_below="@+id/service_namespinner"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="5dp"
                     android:visibility="gone"
@@ -184,12 +190,23 @@
                     android:textSize="15sp"
                     android:textStyle="normal" />
 
+                <TimePicker
+                    android:id="@+id/time_picker"
+                    android:layout_width="260dp"
+                    android:layout_height="wrap_content"
+                    android:timePickerMode="spinner"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/timevalue"
+                    android:importantForAccessibility="yes" />
+
 
                 <TextView
                     android:id="@+id/paymentmethod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/timevalue"
+                    android:layout_below="@+id/time_picker"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/inter"

@@ -95,7 +95,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.time.setText(booking.getTime());
         holder.date.setText(booking.getDate());
 
-        holder.servicename.setText("Law name"+": "+ booking.getServiceName());
+        holder.servicename.setText(booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": " + booking.getPrice() + " php");
 
         Glide.with(holder.itemView.getContext())
@@ -334,6 +334,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                             availedMessage = "Hi, I'm " + username + "\n" +
                                     "I'm sorry I cancel:\n" +
                                     "Selected schedule:" + " time: " + time + "\n" +
+                                    "law name choose: "+serviceName+"\n"+
                                     "date: " + date + "\n" +
                                     "My location: " + finalLocationLink + "\n" +
                                     "Thank you!";

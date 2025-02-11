@@ -9,6 +9,7 @@ public class Schedule3 {
     private Date date;
     private String key;
     private String userId;
+    private String timeframe;
     public Schedule3() {
     }
 
@@ -21,6 +22,10 @@ public class Schedule3 {
     }
 
     // Getters
+
+    public String getTimeframe() {
+        return timeframe;
+    }
 
     public String getUserId() {
         return userId;

@@ -69,7 +69,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     private void showdialog(Context context,Schedule2 schedule2) {
         new AlertDialog.Builder(context)
                 .setTitle("Choose an action")
-                .setItems(new String[]{"Delete", "Set time frame","Morning slot","Afternoon Slot","Evening Slot"}, (dialog, which) -> {
+                .setItems(new String[]{"Delete", "Set time frame","View save schedule"}, (dialog, which) -> {
                     if (which == 0) {
                         deleteschedule(schedule2,context);
                     } else if (which == 1) {
@@ -88,34 +88,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
                         String key = schedule2.getKey();
                         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         Intent gototime = new Intent(context, Timeview_update.class);
-                        gototime.putExtra("title","Morning slot");
-                        gototime.putExtra("databasename","Morning_slot");
-                        gototime.putExtra("key",key);
-                        gototime.putExtra("date",String.valueOf(schedule2.getDate()));
-                        gototime.putExtra("userId",userId);
-                        context.startActivity(gototime);
-                        if (context instanceof Activity){
-                            ((Activity) context).overridePendingTransition(0,0);
-                        }
-                    } else if (which == 3) {
-                        String key = schedule2.getKey();
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        Intent gototime = new Intent(context, Timeview_update.class);
-                        gototime.putExtra("title","Afternoon slot");
-                        gototime.putExtra("databasename","Afternoon_slot");
-                        gototime.putExtra("key",key);
-                        gototime.putExtra("date",String.valueOf(schedule2.getDate()));
-                        gototime.putExtra("userId",userId);
-                        context.startActivity(gototime);
-                        if (context instanceof Activity){
-                            ((Activity) context).overridePendingTransition(0,0);
-                        }
-                    } else if (which == 4) {
-                        String key = schedule2.getKey();
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        Intent gototime = new Intent(context, Timeview_update.class);
-                        gototime.putExtra("title","Evening slot");
-                        gototime.putExtra("databasename","Evening_slot");
                         gototime.putExtra("key",key);
                         gototime.putExtra("date",String.valueOf(schedule2.getDate()));
                         gototime.putExtra("userId",userId);

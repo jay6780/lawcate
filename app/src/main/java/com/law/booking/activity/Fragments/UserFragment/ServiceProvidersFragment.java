@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +22,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ak.ColoredDate;
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.ViewSkeletonScreen;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,9 +31,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.Guess.package_event;
 import com.law.booking.activity.MainPageActivity.bookingUi.booknow;
-import com.law.booking.activity.tools.Model.Schedule2;
 import com.law.booking.activity.tools.Model.Schedule3;
 import com.law.booking.activity.tools.Model.Service;
 import com.law.booking.activity.tools.Model.Usermodel;
@@ -45,10 +44,10 @@ import com.law.booking.activity.tools.adapter.ScheduleAdapter4;
 import com.law.booking.activity.tools.adapter.empty_schedule;
 import com.law.booking.activity.tools.adapter.portfolioAdapter;
 import com.law.booking.activity.tools.adapter.profileServiceAdapters;
-import com.law.booking.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -185,7 +184,12 @@ public class ServiceProvidersFragment extends Fragment implements profileService
                     }
                 }
 
-                Collections.sort(schedule3s, (s1, s2) -> s2.getDate().compareTo(s1.getDate()));
+                Collections.sort(schedule3s, new Comparator<Schedule3>() {
+                    @Override
+                    public int compare(Schedule3 s1, Schedule3 s2) {
+                        return s1.getDate().compareTo(s2.getDate());
+                    }
+                });
 
                 if (schedule3s.isEmpty()) {
                     layout_position();
@@ -389,10 +393,15 @@ public class ServiceProvidersFragment extends Fragment implements profileService
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Service> services = new ArrayList<>();
+                List<String> lawlist = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Service service = snapshot.getValue(Service.class);
                     if (service != null) {
                         String serviceName = service.getName();
+                        lawlist.add(serviceName);
+                        String lawlistjson = new Gson().toJson(lawlist);
+                        Log.d("lawnames","value: "+lawlistjson);
+                        SPUtils.getInstance().put(AppConstans.servicelist,lawlistjson);
                         if ((discountServiceName == null || discountServiceName.isEmpty() ||
                                         (serviceName != null && serviceName.equals(discountServiceName)))) {
                             services.add(service);

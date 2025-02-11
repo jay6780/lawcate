@@ -101,4 +101,6 @@ public class AppConstans {
     public static final String tabnum ="tabnum";
     public static final String AdminKey ="AdminKey";
     public static final String servicelength ="servicelength";
+    public static final String servicelist ="servicelist";
+    public static final String lawname = "lawname";
 }

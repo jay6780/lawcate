@@ -15,11 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.Guess.Guess_summary;
 import com.law.booking.activity.tools.Model.Booking2;
-import com.law.booking.R;
-import com.law.booking.activity.tools.Utils.AppConstans;
-import com.law.booking.activity.tools.Utils.SPUtils;
 
 import java.util.List;
 
@@ -70,7 +68,7 @@ public class Completebook_adapter_user extends RecyclerView.Adapter<Completebook
                 }
             }
         });
-        holder.servicename.setText("Law name: "+booking.getServiceName());
+        holder.servicename.setText(booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": "+booking.getPrice());
         Glide.with(holder.itemView.getContext())
                 .load(booking.getImage())

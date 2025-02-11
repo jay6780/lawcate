@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -24,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jaredrummler.materialspinner.MaterialSpinner;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.chat.User_list;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Booking2;
@@ -33,12 +36,16 @@ import com.law.booking.activity.tools.Model.Schedule;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.R;
 import com.orhanobut.dialogplus.DialogPlus;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Paymentreceipt extends AppCompatActivity {
@@ -61,6 +68,9 @@ public class Paymentreceipt extends AppCompatActivity {
     private DialogPlus loadingdilog;
     private String userName, userImageUrl,userAge,userEmail,userPhone,userAddress;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
+    private TimePicker time_picker;
+    private MaterialSpinner service_namespinner;
+    private String lawname;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,6 +159,8 @@ public class Paymentreceipt extends AppCompatActivity {
     }
 
     private void initView() {
+        service_namespinner = findViewById(R.id.service_namespinner);
+        time_picker = findViewById(R.id.time_picker);
         avatar = findViewById(R.id.avatar);
         name = findViewById(R.id.name);
         msgbtn = findViewById(R.id.messageImg);
@@ -188,11 +200,88 @@ public class Paymentreceipt extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         payment_spinner.setAdapter(adapter);
         payment_spinner.setSelection(0);
+        initTime();
+        initspinner();
 
+    }
+
+    private void initspinner() {
+        String serviceListJson = SPUtils.getInstance().getString(AppConstans.servicelist);
+        List<String> lawList = new ArrayList<>();
+        lawList.add("Select law");
+
+        try {
+            JSONArray jsonArray = new JSONArray(serviceListJson);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                lawList.add(jsonArray.getString(i));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, "lawnamelist list: " + lawList);
+
+        service_namespinner.setItems(lawList);
+        service_namespinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                switch (position) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        lawname = item;
+                        SPUtils.getInstance().put(AppConstans.lawname,lawname);
+                        Log.d("LAWNAME","value: "+lawname);
+                        break;
+                    default:
+                        lawname = null;
+                }
+            }
+        });
+    }
+
+
+    private void initTime() {
+        time_picker.setIs24HourView(false);
+        Log.d("Time","timevalue: "+time);
+        if (time.equals("Whole day")) {
+            timevalue.setText("0");
+            time = "0";
+            time_picker.setVisibility(View.VISIBLE);
+            startSpinner();
+        } else{
+            timevalue.setText(time);
+        }
+
+
+    }
+    private void startSpinner() {
+        time_picker.setOnTimeChangedListener((view, hourOfDay, minute) -> {
+            String amPm = (hourOfDay >= 12) ? "PM" : "AM";
+            int displayHour = (hourOfDay > 12) ? hourOfDay - 12 : (hourOfDay == 0 ? 12 : hourOfDay);
+            String selectedTime = String.format("%d:%02d %s", displayHour, minute, amPm);
+
+            if (time != null) {
+                timevalue.setText(selectedTime);
+                time = selectedTime;
+            }else{
+                time = "0";
+            }
+        });
     }
 
     private void confirmation() {
         String selectedPayment = "Cash";
+        if( lawname == null || lawname.equals("Select law")){
+            Toast.makeText(getApplicationContext(), "Select law name first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(time.equals("0")){
+            Toast.makeText(getApplicationContext(), "Select time first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (selectedPayment.equals("Select Payment")) {
             Toast.makeText(getApplicationContext(), "Please choose a payment method first", Toast.LENGTH_SHORT).show();
             return;
@@ -205,11 +294,11 @@ public class Paymentreceipt extends AppCompatActivity {
             String childKey = createChatRoomId(useremail, email);
             SPUtils.getInstance().put(AppConstans.bookprovideremail, email);
 
-
+            String lawname = SPUtils.getInstance().getString(AppConstans.lawname);
             String snapshotkey = databaseReference.push().getKey();
             String timestamp = String.valueOf(System.currentTimeMillis());
-            Booking2 booking = new Booking2(providerName, serviceName, price, heads, phonenumber, date, time, image, addressadmin, email, age, lengthOfservice, selectedPayment, key,snapshotkey,timestamp);
-            Booking2 booking2 = new Booking2(userName, serviceName, price, heads, userPhone, date, time, userImageUrl, userAddress, useremail, userAge, "", selectedPayment, userId,snapshotkey,timestamp);
+            Booking2 booking = new Booking2(providerName, lawname, price, heads, phonenumber, date, time, image, addressadmin, email, age, lengthOfservice, selectedPayment, key,snapshotkey,timestamp);
+            Booking2 booking2 = new Booking2(userName, lawname, price, heads, userPhone, date, time, userImageUrl, userAddress, useremail, userAge, "", selectedPayment, userId,snapshotkey,timestamp);
 
             // Add data to MybookUser
             DatabaseReference bookInfoRef2 = databaseReference2.child(childKey).child("bookInfo").child(snapshotkey);
@@ -231,6 +320,7 @@ public class Paymentreceipt extends AppCompatActivity {
                                 savedBookId(childKey);
                                 savedBookCount(key);
                                 savedbookcounting(key);
+                                savedlaw_count(key);
                                 savEBookIdforAdmin(childKey, key);
                                 Intent intent = new Intent(Paymentreceipt.this, history_book.class);
                                 startActivity(intent);
@@ -267,6 +357,29 @@ public class Paymentreceipt extends AppCompatActivity {
         }).addOnFailureListener(e ->
                 Log.e("FirebaseDB", "Error fetching count", e));
     }
+
+    private void savedlaw_count(String key) {
+        DatabaseReference hmuaref = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("Lawname")
+                .child(key);
+
+        hmuaref.child(lawname).get().addOnSuccessListener(snapshot -> {
+            int currentCount = 0;
+            if (snapshot.exists() && snapshot.getValue() instanceof Long) {
+                currentCount = snapshot.getValue(Integer.class);
+            }
+
+            int newCount = currentCount + 1;
+            hmuaref.child(lawname).setValue(newCount)
+                    .addOnSuccessListener(aVoid ->
+                            Log.d("FirebaseDB", "Count updated successfully to " + newCount))
+                    .addOnFailureListener(e ->
+                            Log.e("FirebaseDB", "Error updating count", e));
+        }).addOnFailureListener(e ->
+                Log.e("FirebaseDB", "Error fetching count", e));
+    }
+
 
 
     private void savEBookIdforAdmin(String chatId,String key) {

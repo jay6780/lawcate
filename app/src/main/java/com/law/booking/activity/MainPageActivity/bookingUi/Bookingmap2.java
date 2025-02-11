@@ -55,7 +55,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.libraries.places.api.Places;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -63,6 +62,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.chat.User_list;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
 import com.law.booking.activity.tools.Model.ChatRoom;
@@ -72,7 +72,6 @@ import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.R;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
@@ -778,6 +777,7 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
                     savedlocationLink(userId, locationLink);
                     availedmess = "Hi, I'm " + username + "\n" +
                             "I Choose Schedule" +" time: " + time + "\n" +
+                            "law i want to solve: "+serviceName+"\n"+
                             "date: " + date + "\n" +
                             "My location: " + locationLink + "\n" +
                             "Thank you!";

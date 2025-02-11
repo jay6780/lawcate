@@ -151,6 +151,7 @@ public class Guess_summary extends AppCompatActivity {
         bell = findViewById(R.id.bell);
         payment_spinner = findViewById(R.id.payment_spinner);
         servicename = findViewById(R.id.servicename);
+        servicename.setVisibility(View.VISIBLE);
         title = findViewById(R.id.profiletxt);
         headss = findViewById(R.id.heads);
         back = findViewById(R.id.back);

@@ -61,6 +61,7 @@ import com.law.booking.activity.MainPageActivity.calendar.CalendarAdmin;
 import com.law.booking.activity.MainPageActivity.chat.User_list;
 import com.law.booking.activity.MainPageActivity.maps.MapSelectActivity;
 import com.law.booking.activity.events.CreateEventorganizer;
+import com.law.booking.activity.events.account_manageactivity;
 import com.law.booking.activity.events.history_book_event;
 import com.law.booking.activity.events.setEvent_admin;
 import com.law.booking.activity.myfavorites;
@@ -118,7 +119,7 @@ public class newHome extends AppCompatActivity {
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     private LinearLayout home,privacy;
     private RelativeLayout user_viewsmenu,admin_menus,default_menu;
-    private LinearLayout setSuperAdmin,setEventAdmin;
+    private LinearLayout setSuperAdmin,setEventAdmin,manage_accounts;
     private ImageView adminbell,event_bell;
     private TextView badge_count_admin,event_badge,status;
     private boolean isGuess = false;
@@ -134,6 +135,7 @@ public class newHome extends AppCompatActivity {
         initEventView();
         initClear();
         initAppUpdate();
+        manage_accounts = findViewById(R.id.manage_accounts);
         sidenav = findViewById(R.id.sidenav);
         changeStatusBarColor(getResources().getColor(R.color.white2));
         initSkeleton();
@@ -862,6 +864,11 @@ public class newHome extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), history_book.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
+
+                } else if (v.getId() == R.id.manage_accounts) {
+                    Intent intent = new Intent(getApplicationContext(), account_manageactivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(intent);
                 }
             }
         };
@@ -869,6 +876,7 @@ public class newHome extends AppCompatActivity {
     idlisterners(clickListener);
 }
     private void idlisterners(View.OnClickListener clickListener) {
+        findViewById(R.id.manage_accounts).setOnClickListener(clickListener);
         findViewById(R.id.messageImg).setOnClickListener(clickListener);
         findViewById(R.id.messageImg2).setOnClickListener(clickListener);
         findViewById(R.id.admin_chatSupport).setOnClickListener(clickListener);
@@ -1026,11 +1034,13 @@ public class newHome extends AppCompatActivity {
                                                     boolean isSuperAdmin = dataSnapshot.hasChild("isSuperAdmin") && Boolean.TRUE.equals(dataSnapshot.child("isSuperAdmin").getValue(Boolean.class));
                                                     if (isSuperAdmin) {
                                                         lenght = user.getLengthOfService();
+                                                        manage_accounts.setVisibility(View.VISIBLE);
                                                         update.setVisibility(View.VISIBLE);
                                                         createadmin.setVisibility(View.VISIBLE);
                                                         addEventoraganizer.setVisibility(View.VISIBLE);
                                                         setEventAdmin.setVisibility(View.VISIBLE);
                                                     }else{
+                                                        manage_accounts.setVisibility(View.GONE);
                                                         update.setVisibility(View.GONE);
                                                         addEventoraganizer.setVisibility(View.GONE);
                                                         createadmin.setVisibility(View.GONE);

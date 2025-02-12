@@ -18,15 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.profile.providerProfile3;
 import com.law.booking.activity.tools.Model.Usermodel;
-import com.law.booking.R;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 
@@ -67,11 +66,15 @@ public class ArtistAdapter2 extends RecyclerView.Adapter<ArtistAdapter2.Provider
 
         if(SPUtils.getInstance().getBoolean(AppConstans.Administrator)){
             holder.appointment.setVisibility(View.GONE);
+            holder.book_complete.setVisibility(View.GONE);
+            holder.data.setVisibility(View.GONE);
             holder.star.setVisibility(View.GONE);
             holder.ratevalue.setVisibility(View.GONE);
             holder.heart.setVisibility(View.GONE);
             holder.verify_view.setVisibility(View.VISIBLE);
         }else{
+            holder.book_complete.setVisibility(View.VISIBLE);
+            holder.data.setVisibility(View.VISIBLE);
             holder.appointment.setVisibility(View.VISIBLE);
             holder.star.setVisibility(View.VISIBLE);
             holder.ratevalue.setVisibility(View.VISIBLE);
@@ -266,13 +269,16 @@ public class ArtistAdapter2 extends RecyclerView.Adapter<ArtistAdapter2.Provider
     }
 
     public class ProviderViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,address,experience,ratevalue,verify_value;
+        TextView nameTextView,address,experience,ratevalue,verify_value,book_complete;
         ImageView imageView,heart,star;
         AppCompatButton appointment;
         LinearLayout verify_view;
         TriStateToggleButton verifyToggle;
+        AppCompatButton data;
         public ProviderViewHolder(@NonNull View itemView) {
             super(itemView);
+            data = itemView.findViewById(R.id.data);
+            book_complete = itemView.findViewById(R.id.book_complete);
             ratevalue = itemView.findViewById(R.id.ratevalue);
             verify_value = itemView.findViewById(R.id.verify_value);
             verify_view = itemView.findViewById(R.id.verify_view);

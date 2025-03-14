@@ -41,6 +41,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -66,6 +67,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.chat.User_list;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
 import com.law.booking.activity.tools.Model.ChatRoom;
@@ -75,10 +77,6 @@ import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.R;
-import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,7 +90,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback , OnRefreshListener {
+public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final float POLYLINE_DISTANCE_THRESHOLD = 10f;
     private GoogleMap googleMap;
@@ -127,10 +125,10 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
     private String locationLink;
     private boolean isLocationFetchDelayed = false;
     private List<String> serviceNamesList;
-    private SmartRefreshLayout refreshLayout;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     private Bundle mapbundle;
     private boolean isRefresh = false;
+    private FloatingActionButton floating_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,15 +139,13 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         ages = findViewById(R.id.age);
         name = findViewById(R.id.name);
         backBtn = findViewById(R.id.back);
+        floating_refresh = findViewById(R.id.floating_refresh);
         profiletxt = findViewById(R.id.profiletxt);
         userAddress = findViewById(R.id.address);
         userLenghtexp = findViewById(R.id.lenghtofservice);
         messagebtn = findViewById(R.id.message);
         mapView = findViewById(R.id.mapview);
-        refreshLayout = findViewById(R.id.refreshLayout);
         profiletxt.setText(R.string.map);
-        refreshLayout.setOnRefreshListener(this);
-        refreshLayout.setEnableRefresh(true);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -207,6 +203,14 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
             @Override
             public void onClick(View view) {
                 onBackPressed();
+            }
+        });
+        floating_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initMap(mapView,mapbundle);
+                startLocationFetch(transactionId);
+                requestAndSetUserLocation();
             }
         });
 
@@ -471,9 +475,9 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
                 currentLocationMarker.showInfoWindow();
 
-                if(isRefresh){
+                if (isRefresh) {
                     currentLocationMarker.setVisible(false);
-                }else{
+                } else {
                     currentLocationMarker.setVisible(true);
                 }
 
@@ -972,31 +976,4 @@ public class Bookingmap extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        refreshLayout.getLayout().postDelayed(() -> {
-            boolean isRefreshSuccessful = fetchDataFromSource();
-            if (isRefreshSuccessful) {
-                refreshLayout.finishRefresh();
-            } else {
-                refreshLayout.finishRefresh(false);
-            }
-        }, 100);
-    }
-
-    private boolean fetchDataFromSource() {
-        try {
-            if (googleMap != null) {
-                googleMap.clear();
-                isRefresh = true;
-                initMap(mapView,mapbundle);
-                startLocationFetch(transactionId);
-                requestAndSetUserLocation();
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 }

@@ -6,7 +6,6 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-
     <LinearLayout
         android:id="@+id/loading_layout"
         android:orientation="vertical"
@@ -31,42 +30,59 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <LinearLayout
-        android:id="@+id/home_layout"
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:layout_above="@+id/bottom"
+        app:srlAccentColor="#00000000"
+        app:srlEnableNestedScrolling="false"
+        app:srlEnablePreviewInEditMode="false"
+        app:srlFooterTranslationViewId="@+id/nested_scroll"
+        app:srlPrimaryColor="#00000000">
+    <com.scwang.smart.refresh.header.ClassicsHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/refreshLayout"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/bottom"
-            app:srlAccentColor="#00000000"
-            app:srlEnableNestedScrolling="false"
-            app:srlEnablePreviewInEditMode="false"
-            app:srlFooterTranslationViewId="@+id/nested_scroll"
-            app:srlPrimaryColor="#00000000">
+            android:layout_height="match_parent">
 
-            <com.scwang.smart.refresh.header.ClassicsHeader
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.Material3.Light">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:contentScrim="@color/white"
+            app:statusBarScrim="@color/white"
+            app:expandedTitleMarginStart="48dp"
+            app:expandedTitleMarginEnd="64dp">
+            <LinearLayout
+                android:id="@+id/home_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:visibility="gone"
+                android:orientation="vertical">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nestedScroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -74,282 +90,289 @@
                 android:background="@drawable/rounded_top"
                 android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/inter"
+                android:layout_marginTop="10dp"
+                android:text="Search Top Lawyers"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+
+            <include
+                layout="@layout/search"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/relativeTop"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/rounded_top3">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp">
+
+            <LinearLayout
+                android:id="@+id/bannercontent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp">
+
+                <com.youth.banner.Banner
+                    android:id="@+id/banner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bannercontent"
+                android:layout_marginStart="20dp"
+                android:text="@string/category" />
+
+            </RelativeLayout>
+            </RelativeLayout>
+            </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <LinearLayout
+                android:id="@+id/linearView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <LinearLayout
+                    android:id="@+id/linear1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/law"
+                        app:civ_border_color="@color/black"
+                        app:civ_border_width="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter"
+                        android:text="Corporate"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear2"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/family"
+                        app:civ_border_color="@color/black"
+                        app:civ_border_width="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter"
+                        android:text="Family"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:id="@+id/linear3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/handcuffs"
+                        app:civ_border_color="@color/black"
+                        app:civ_border_width="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter"
+                        android:text="Criminal"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/imigration"
+                        app:civ_border_color="@color/black"
+                        app:civ_border_width="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter"
+                        android:text="Imigration"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/property"
+                        app:civ_border_color="@color/black"
+                        app:civ_border_width="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter"
+                        android:text="Property"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+            <RelativeLayout
+                android:id="@+id/rl1"
+                android:layout_below="@+id/linearView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp">
+
                 <TextView
-                    android:id="@+id/title"
+                    android:id="@+id/TopArt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/inter"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="Search Top Lawyers"
-                    android:textColor="@color/white"
-                    android:textSize="17sp" />
+                    android:fontFamily="@font/inter"
+                    android:text="All Lawyers"
+                    android:textColor="@color/black" />
 
-                <include
-                    layout="@layout/search"
-                    android:layout_marginTop="20dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/ViewAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/inter"
+                    android:text="@string/viewAll"
+                    android:visibility="gone"
+                    android:textColor="#A6AEBF" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/artist"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/relativeTop"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/rounded_top3">
+                    android:layout_below="@+id/TopArt"
+                    android:layout_marginTop="10dp" />
+            </RelativeLayout>
 
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="5dp">
+            <RelativeLayout
+                android:id="@+id/rl2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/rl1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp">
+                <TextView
+                    android:id="@+id/TopOrganizer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/inter"
+                    android:visibility="gone"
+                    android:text="@string/topOrganizers"
+                    android:textColor="@color/black" />
 
-                            <LinearLayout
-                                android:id="@+id/bannercontent"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_centerHorizontal="true"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginBottom="15dp">
-
-                                <com.youth.banner.Banner
-                                    android:id="@+id/banner"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="150dp"
-                                    android:visibility="gone" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/category"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/bannercontent"
-                                android:layout_marginStart="20dp"
-                                android:text="@string/category" />
-
-                            <LinearLayout
-                                android:id="@+id/linearView"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/category"
-                                android:orientation="horizontal"
-                                android:weightSum="5">
-
-                                <LinearLayout
-                                    android:id="@+id/linear1"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical">
-
-                                    <de.hdodenhof.circleimageview.CircleImageView
-                                        android:layout_width="45dp"
-                                        android:layout_height="45dp"
-                                        android:layout_gravity="center"
-                                        android:src="@mipmap/law"
-                                        app:civ_border_color="@color/black"
-                                        app:civ_border_width="2dp" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:fontFamily="@font/inter"
-                                        android:text="Corporate"
-                                        android:textSize="12sp" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/linear2"
-                                    android:layout_width="0dp"
-                                    android:layout_height="64dp"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical">
-
-                                    <de.hdodenhof.circleimageview.CircleImageView
-                                        android:layout_width="45dp"
-                                        android:layout_height="45dp"
-                                        android:layout_gravity="center"
-                                        android:src="@mipmap/family"
-                                        app:civ_border_color="@color/black"
-                                        app:civ_border_width="2dp" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:fontFamily="@font/inter"
-                                        android:text="Family"
-                                        android:textSize="12sp" />
-                                </LinearLayout>
+                <TextView
+                    android:id="@+id/ViewAll_artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/inter"
+                    android:visibility="gone"
+                    android:text="@string/viewAll"
+                    android:textColor="#A6AEBF" />
 
 
-
-                                <LinearLayout
-                                    android:id="@+id/linear3"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical">
-
-                                    <de.hdodenhof.circleimageview.CircleImageView
-                                        android:layout_width="45dp"
-                                        android:layout_height="45dp"
-                                        android:layout_gravity="center"
-                                        android:src="@mipmap/handcuffs"
-                                        app:civ_border_color="@color/black"
-                                        app:civ_border_width="2dp" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:fontFamily="@font/inter"
-                                        android:text="Criminal"
-                                        android:textSize="12sp" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/linear4"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical">
-
-                                    <de.hdodenhof.circleimageview.CircleImageView
-                                        android:layout_width="45dp"
-                                        android:layout_height="45dp"
-                                        android:layout_gravity="center"
-                                        android:src="@mipmap/imigration"
-                                        app:civ_border_color="@color/black"
-                                        app:civ_border_width="2dp" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:fontFamily="@font/inter"
-                                        android:text="Imigration"
-                                        android:textSize="12sp" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/linear5"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical">
-
-                                    <de.hdodenhof.circleimageview.CircleImageView
-                                        android:layout_width="45dp"
-                                        android:layout_height="45dp"
-                                        android:layout_gravity="center"
-                                        android:src="@mipmap/property"
-                                        app:civ_border_color="@color/black"
-                                        app:civ_border_width="2dp" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:fontFamily="@font/inter"
-                                        android:text="Property"
-                                        android:textSize="12sp" />
-                                </LinearLayout>
-                            </LinearLayout>
-
-                            <RelativeLayout
-                                android:id="@+id/rl1"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_below="@+id/linearView"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:layout_marginBottom="5dp">
-
-                                <TextView
-                                    android:id="@+id/TopArt"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:fontFamily="@font/inter"
-                                    android:text="All Lawyers"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:id="@+id/ViewAll"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:fontFamily="@font/inter"
-                                    android:text="@string/viewAll"
-                                    android:visibility="gone"
-                                    android:textColor="#A6AEBF" />
-
-
-                                <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/artist"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_below="@+id/TopArt"
-                                    android:layout_marginTop="10dp" />
-                            </RelativeLayout>
-
-                            <RelativeLayout
-                                android:id="@+id/rl2"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_below="@+id/rl1"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:layout_marginBottom="5dp">
-
-                                <TextView
-                                    android:id="@+id/TopOrganizer"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginTop="10dp"
-                                    android:fontFamily="@font/inter"
-                                    android:visibility="gone"
-                                    android:text="@string/topOrganizers"
-                                    android:textColor="@color/black" />
-
-                                <TextView
-                                    android:id="@+id/ViewAll_artist"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_marginTop="10dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:fontFamily="@font/inter"
-                                    android:visibility="gone"
-                                    android:text="@string/viewAll"
-                                    android:textColor="#A6AEBF" />
-
-
-                                <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/eventOrg"
-                                    android:visibility="gone"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_below="@+id/TopOrganizer"
-                                    android:layout_marginTop="10dp" />
-                            </RelativeLayout>
-
-                        </RelativeLayout>
-
-                </RelativeLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-    </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/eventOrg"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/TopOrganizer"
+                    android:layout_marginTop="10dp" />
+            </RelativeLayout>
+            </RelativeLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </LinearLayout>

@@ -40,6 +40,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -72,9 +73,6 @@ import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,7 +85,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback , OnRefreshListener {
+public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final float POLYLINE_DISTANCE_THRESHOLD = 10f;
     private GoogleMap googleMap;
@@ -123,10 +121,10 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
     private boolean isLocationFetchInProgress = false;
     private String locationLink;
     private boolean isLocationFetchDelayed = false;
-    private SmartRefreshLayout refreshLayout;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     private Bundle mapbundle;
     private boolean isRefresh = false;
+    private FloatingActionButton floating_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,13 +137,11 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
         backBtn = findViewById(R.id.back);
         profiletxt = findViewById(R.id.profiletxt);
         userAddress = findViewById(R.id.address);
+        floating_refresh = findViewById(R.id.floating_refresh);
         userLenghtexp = findViewById(R.id.lenghtofservice);
         messagebtn = findViewById(R.id.message);
         mapView = findViewById(R.id.mapview);
-        refreshLayout = findViewById(R.id.refreshLayout);
         profiletxt.setText(R.string.map);
-        refreshLayout.setOnRefreshListener(this);
-        refreshLayout.setEnableRefresh(true);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -166,7 +162,7 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
         email = getIntent().getStringExtra("email");
         age = getIntent().getStringExtra("age");
         lengthOfservice = getIntent().getStringExtra("lengthOfService");
-        Log.d("lengthOfservices","lengthOfservices+ "+lengthOfservice);
+        Log.d("lengthOfservices", "lengthOfservices+ " + lengthOfservice);
         key = getIntent().getStringExtra("key");
         ages.setText(getString(R.string.age) + ": " + (age != null ? age : "N/A"));
         userLenghtexp.setText(getString(R.string.years) + ": " + (lengthOfservice != null ? lengthOfservice : "N/A"));
@@ -204,7 +200,14 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
                 onBackPressed();
             }
         });
-
+        floating_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initMap(mapView, mapbundle);
+                startLocationFetch(transactionId);
+                requestAndSetUserLocation();
+            }
+        });
     }
 
 
@@ -252,9 +255,9 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
                     intent.putExtra("key", key);
                     intent.putExtra("isOnline", isOnline);
 //                    if (!serviceName.equals(previousServicename)) {
-                        Toast.makeText(getApplicationContext(), "Availed Success", Toast.LENGTH_SHORT).show();
-                        intent.putExtra("availedmessage", availedmessage);
-                        intent.putExtra("serviceName", serviceName);
+                    Toast.makeText(getApplicationContext(), "Availed Success", Toast.LENGTH_SHORT).show();
+                    intent.putExtra("availedmessage", availedmessage);
+                    intent.putExtra("serviceName", serviceName);
 //                    } else {
 //                        Toast.makeText(getApplicationContext(), "Already Availed", Toast.LENGTH_SHORT).show();
 //                        SPUtils spUtils = SPUtils.getInstance();
@@ -428,9 +431,9 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
                 currentLocationMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title(locationText.toString()));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
                 currentLocationMarker.showInfoWindow();
-                if(isRefresh){
+                if (isRefresh) {
                     currentLocationMarker.setVisible(false);
-                }else{
+                } else {
                     currentLocationMarker.setVisible(true);
                 }
 
@@ -776,8 +779,8 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
                     String locationLink = SPUtils.getInstance().getString(AppConstans.locationlink);
                     savedlocationLink(userId, locationLink);
                     availedmess = "Hi, I'm " + username + "\n" +
-                            "I Choose Schedule" +" time: " + time + "\n" +
-                            "law i want to solve: "+serviceName+"\n"+
+                            "I Choose Schedule" + " time: " + time + "\n" +
+                            "law i want to solve: " + serviceName + "\n" +
                             "date: " + date + "\n" +
                             "My location: " + locationLink + "\n" +
                             "Thank you!";
@@ -875,34 +878,6 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
         super.onLowMemory();
         if (mapView != null) {
             mapView.onLowMemory();
-        }
-    }
-
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        refreshLayout.getLayout().postDelayed(() -> {
-            boolean isRefreshSuccessful = fetchDataFromSource();
-            if (isRefreshSuccessful) {
-                refreshLayout.finishRefresh();
-            } else {
-                refreshLayout.finishRefresh(false);
-            }
-        }, 100);
-    }
-
-    private boolean fetchDataFromSource() {
-        try {
-            if (googleMap != null) {
-                googleMap.clear();
-                isRefresh = true;
-                initMap(mapView,mapbundle);
-                startLocationFetch(transactionId);
-                requestAndSetUserLocation();
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
     }
 }

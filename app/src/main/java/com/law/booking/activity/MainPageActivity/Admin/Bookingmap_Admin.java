@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
@@ -39,6 +40,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -61,7 +63,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity2;
 import com.law.booking.activity.MainPageActivity.newHome;
 import com.law.booking.activity.tools.Model.ChatRoom;
@@ -69,10 +71,6 @@ import com.law.booking.activity.tools.Model.RouteFetcher;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.R;
-import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,7 +84,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Bookingmap_Admin extends  AppCompatActivity implements OnMapReadyCallback , OnRefreshListener {
+public class Bookingmap_Admin extends  AppCompatActivity implements OnMapReadyCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final float POLYLINE_DISTANCE_THRESHOLD = 10f;
     private GoogleMap googleMap;
@@ -113,10 +111,9 @@ public class Bookingmap_Admin extends  AppCompatActivity implements OnMapReadyCa
     String address;
     String chatRoomId = SPUtils.getInstance().getString(AppConstans.ChatRoomId);
     private DatabaseReference databaseReference, chatroomIds;
-    private SmartRefreshLayout refreshLayout;
     private Bundle mapbundle;
     private boolean isRefresh = false;
-
+    private FloatingActionButton floating_refresh;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +125,7 @@ public class Bookingmap_Admin extends  AppCompatActivity implements OnMapReadyCa
         username = findViewById(R.id.name);
         backBtn = findViewById(R.id.back);
         title = findViewById(R.id.profiletxt);
+        floating_refresh = findViewById(R.id.floating_refresh);
         messagebtn = findViewById(R.id.message);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -148,9 +146,6 @@ public class Bookingmap_Admin extends  AppCompatActivity implements OnMapReadyCa
         location.setText(getString(R.string.address) + ": " + address);
         username.setText(getString(R.string.name) + ": " + (name != null ? name : "N/A"));
         title.setText(R.string.map);
-        refreshLayout = findViewById(R.id.refreshLayout);
-        refreshLayout.setOnRefreshListener(this);
-        refreshLayout.setEnableRefresh(true);
         Log.d(TAG, "email: " + providerEmail);
         Log.d(TAG, "chatroomId: " + chatRoomId);
         Log.d(TAG, "providerName: " + name);
@@ -162,6 +157,18 @@ public class Bookingmap_Admin extends  AppCompatActivity implements OnMapReadyCa
                 .error(R.drawable.baseline_person_24)
                 .into(profileimage);
         backBtn.setOnClickListener(view -> onBackPressed());
+        floating_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (googleMap != null) {
+                    googleMap.clear();
+                    isRefresh = true;
+                    initMap(mapView, mapbundle);
+                    requestAndSetUserLocation();
+                }
+            }
+        });
+
 
         messagebtn.setOnClickListener(view -> checkAndCreateChatRoom(providerEmail, name, image));
         mapbundle = savedInstanceState;
@@ -325,9 +332,9 @@ public class Bookingmap_Admin extends  AppCompatActivity implements OnMapReadyCa
                 currentLocationMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title(locationText.toString()));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
                 currentLocationMarker.showInfoWindow();
-                if(isRefresh){
+                if (isRefresh) {
                     currentLocationMarker.setVisible(false);
-                }else{
+                } else {
                     currentLocationMarker.setVisible(true);
                 }
             }
@@ -718,30 +725,4 @@ public class Bookingmap_Admin extends  AppCompatActivity implements OnMapReadyCa
         }
     }
 
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        refreshLayout.getLayout().postDelayed(() -> {
-            boolean isRefreshSuccessful = fetchDataFromSource();
-            if (isRefreshSuccessful) {
-                refreshLayout.finishRefresh();
-            } else {
-                refreshLayout.finishRefresh(false);
-            }
-        }, 100);
-    }
-
-    private boolean fetchDataFromSource() {
-        try {
-            if (googleMap != null) {
-                googleMap.clear();
-                isRefresh = true;
-                initMap(mapView,mapbundle);
-                requestAndSetUserLocation();
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 }

@@ -3,9 +3,11 @@ package com.law.booking.activity.MainPageActivity.Guess;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,6 +42,7 @@ public class Data_analyticsactivity extends AppCompatActivity {
     private BarChart barGraph;
     private PieChart pieChart;
     private TextView complete_txt,cancel_txt,total_txt,title,content;
+    private LinearLayout linear_graph;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +54,7 @@ public class Data_analyticsactivity extends AppCompatActivity {
         changeStatusBarColor(getResources().getColor(R.color.purple_theme));
         barGraph = findViewById(R.id.barGraph);
         pieChart = findViewById(R.id.piechart);
+        linear_graph = findViewById(R.id.linear_graph);
         back = findViewById(R.id.back);
         complete_txt = findViewById(R.id.complete_txt);
         title = findViewById(R.id.title);
@@ -62,6 +66,7 @@ public class Data_analyticsactivity extends AppCompatActivity {
         username = getIntent().getStringExtra("username");
         Log.d(TAG,"key: "+key);
         title.setText(username+" "+"Data");
+        linear_graph.setVisibility(View.VISIBLE);
         initFirebase();
 
     }

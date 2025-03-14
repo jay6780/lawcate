@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -84,7 +85,7 @@ import java.util.Map;
 
 import okhttp3.OkHttpClient;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefreshListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap googleMap;
     private MapResultAdapter adapter;
     private List<String> searchResults = new ArrayList<>();
@@ -101,19 +102,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
     private Marker currentLocationMarker;
     private LocationCallback locationCallback;
     private boolean isMapReady = false;
-    private SmartRefreshLayout refreshLayout;
     private Bundle mapstate;
+    private FloatingActionButton floating_refresh;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmentmap, container, false);
         mapSearch = view.findViewById(R.id.map_search);
+        floating_refresh = view.findViewById(R.id.floating_refresh);
         RecyclerView mapResult = view.findViewById(R.id.mapResult);
-        refreshLayout = view.findViewById(R.id.refreshLayout);
         mapResult.setVisibility(View.GONE);
         mapView = view.findViewById(R.id.mapview);
-        refreshLayout.setOnRefreshListener(this);
-        refreshLayout.setEnableRefresh(true);
         mapResult.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new MapResultAdapter(searchResults, address -> {
             selectedAddress = address;
@@ -150,11 +150,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         client = new OkHttpClient();
 
-
+        floating_refresh.setOnClickListener(view1 ->initMap(mapView, mapstate));
         mapstate = savedInstanceState;
         initMap(mapView, mapstate);
         return view;
     }
+
     private void moveCameraToAddress(String selectedAddress) {
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
@@ -174,6 +175,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             Toast.makeText(getContext(), "Error fetching location", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void fetchProvidersAndShowMarkers(String selectedAddress) {
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -230,7 +232,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
                 }
 
             }
-                @Override
+
+            @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(getContext(), "Failed to retrieve data", Toast.LENGTH_SHORT).show();
                 Log.e("MapFragment", "DatabaseError: " + databaseError.getMessage());
@@ -283,10 +286,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
 
         return output;
     }
+
     private LatLng getOffsetLocation(LatLng originalLocation, int index) {
         double offset = 0.0001 * index;
         return new LatLng(originalLocation.latitude + offset, originalLocation.longitude + offset);
     }
+
     private void updateMapLine(LatLng latLng) {
         if (currentLocationMarker != null) {
             currentLocationMarker.remove();
@@ -300,6 +305,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
 
         fetchRouteData(latLng, userLocation);
     }
+
     private void fetchRouteData(LatLng end, LatLng start) {
         RouteFetcher routeFetcher = new RouteFetcher();
         routeFetcher.fetchRouteData(end, start, new RouteFetcher.RouteFetchListener() {
@@ -366,6 +372,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             valueAnimator.start();
         }, delay);
     }
+
     private void initMap(MapView mapView, Bundle savedInstanceState) {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
@@ -403,6 +410,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
                     Log.e("MapFragment", "Error getting user location: " + e.getMessage());
                 });
     }
+
     private void geocodeLocation(LatLng latLng) {
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
@@ -421,6 +429,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             Log.e("MapFragment", "Geocoding failed: " + e.getMessage());
         }
     }
+
     private void startLocationUpdates() {
         locationCallback = new LocationCallback() {
             @Override
@@ -441,6 +450,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
+
     private void updateCurrentLocationMarker(Location location) {
         LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         LatLng nearestPoint = findNearestPointOnPolyline(currentLatLng, routePoints);
@@ -456,6 +466,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             adjustPolyline(nearestPoint);
         }
     }
+
     private void adjustPolyline(LatLng nearestPoint) {
         int nearestIndex = routePoints.indexOf(nearestPoint);
         if (nearestIndex != -1 && nearestIndex < routePoints.size() - 1) {
@@ -467,6 +478,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             }
         }
     }
+
     private LatLng findNearestPointOnPolyline(LatLng userLocation, List<LatLng> polylinePoints) {
         LatLng nearestPoint = null;
         float minDistance = Float.MAX_VALUE;
@@ -482,6 +494,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
         }
         return nearestPoint;
     }
+
     private void fetchUserDetailsAndAddMarker(LatLng userLocation) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -505,6 +518,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             });
         }
     }
+
     private void loadUserImageAndAddMarker(Usermodel usermodel, LatLng offsetLocation) {
         Context context = getContext();
         if (context == null) {
@@ -555,6 +569,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             e.printStackTrace();
         }
     }
+
     private void performSearch(String query) {
         if (userLocation != null) {
             PlacesClient placesClient = Places.createClient(getContext());
@@ -579,6 +594,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             Log.e("MapFragment", "User location is not available for performing search.");
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -586,6 +602,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             mapView.onStart();
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -593,6 +610,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             mapView.onResume();
         }
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -600,6 +618,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             mapView.onPause();
         }
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -607,6 +626,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
             mapView.onStop();
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -620,28 +640,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnRefre
         super.onLowMemory();
         if (mapView != null) {
             mapView.onLowMemory();
-        }
-    }
-
-    @Override
-    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        refreshLayout.getLayout().postDelayed(() -> {
-            boolean isRefreshSuccessful = fetchDataFromSource();
-            if (isRefreshSuccessful) {
-                refreshLayout.finishRefresh();
-            } else {
-                refreshLayout.finishRefresh(false);
-            }
-        }, 100);
-}
-
-    private boolean fetchDataFromSource() {
-        try {
-            initMap(mapView, mapstate);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
     }
 }

@@ -176,13 +176,13 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
             public void onClick(View view) {
                 new AlertDialog.Builder(context)
                         .setTitle("Cofirmed book?")
-                        .setMessage("Are you sure want to complete this book?")
+                        .setMessage("Are you sure want to confirm this book?")
                         .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 isConfirmed = true;
                                 ProgressDialog progressDialog = new ProgressDialog(context);
-                                progressDialog.setMessage("Complete booking....");
+                                progressDialog.setMessage("Confirm booking....");
                                 progressDialog.setCancelable(false);
                                 progressDialog.show();
 

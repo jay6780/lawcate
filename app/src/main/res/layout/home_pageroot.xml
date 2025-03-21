@@ -17,7 +17,7 @@
         <include
             layout="@layout/default_menu"
             android:layout_width="match_parent"
-            android:layout_height="115dp" />
+            android:layout_height="80dp" />
 <LinearLayout
     android:id="@+id/admin_linear"
     android:layout_width="match_parent"
@@ -29,7 +29,7 @@
     <include
         layout="@layout/menu"
         android:layout_width="match_parent"
-        android:layout_height="115dp" />
+        android:layout_height="80dp" />
     <include
         layout="@layout/admin_menu"
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
             <include
                 layout="@layout/event_menu"
                 android:layout_width="match_parent"
-                android:layout_height="115dp" />
+                android:layout_height="70dp" />
             <include
                 layout="@layout/events"
                 android:layout_width="match_parent"
@@ -63,7 +63,7 @@
         <include
             layout="@layout/newhowmenu"
             android:layout_width="match_parent"
-            android:layout_height="115dp" />
+            android:layout_height="80dp" />
         <include
             layout="@layout/selectiontab"
             android:layout_width="match_parent"

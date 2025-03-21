@@ -129,7 +129,7 @@
     <string name="yes">Oo</string>
     <string name="no">Hindi</string>
     <string name="cancelling_book">Kinakansela ang booking...</string>
-    <string name="appointment_failed">Nabigo ang appointment</string>
+    <string name="appointment_failed">Nabigo</string>
 
 
     <string-array name="language_array">

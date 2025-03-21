@@ -133,7 +133,7 @@
     <string name="yes">Yes</string>
     <string name="no">no</string>
     <string name="cancelling_book">Cancelling booking...</string>
-    <string name="appointment_failed">Appointment Failed</string>
+    <string name="appointment_failed">Failed</string>
 
 
     <string-array name="language_array">

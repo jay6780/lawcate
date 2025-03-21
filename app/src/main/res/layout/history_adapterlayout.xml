@@ -16,7 +16,7 @@
         <LinearLayout
             android:id="@+id/ll1"
             android:layout_width="wrap_content"
-            android:layout_height="150dp"
+            android:layout_height="170dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
@@ -122,6 +122,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
+            android:padding="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toRightOf="@+id/ll1"
             android:background="@drawable/cancel_bg"

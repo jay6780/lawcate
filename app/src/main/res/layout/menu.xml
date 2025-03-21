@@ -5,7 +5,7 @@
     android:visibility="gone"
     android:layout_width="match_parent"
     android:background="@color/white2"
-    android:layout_height="110dp">
+    android:layout_height="80dp">
 
     <ImageView
         android:id="@+id/newtoggle"
@@ -20,8 +20,8 @@
         android:id="@+id/avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_below="@+id/newtoggle"
-        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="40dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:src="@mipmap/man"
@@ -31,10 +31,8 @@
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/newtoggle"
-        android:layout_centerInParent="true"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/avatar"
         android:ellipsize="end"
         android:maxLines="1"
@@ -47,7 +45,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/username"
-        android:layout_centerInParent="true"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@+id/avatar"
@@ -57,12 +54,13 @@
         android:textColor="@color/black"
         android:textSize="12sp"
         tools:text="location" />
+
     <ImageView
         android:id="@+id/adminbell"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/messageImg2"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
@@ -72,24 +70,24 @@
         android:id="@+id/badge_count_admin"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:layout_centerVertical="true"
         android:layout_marginRight="11dp"
-        android:visibility="visible"
+        android:layout_toLeftOf="@+id/messageImg2"
+        android:background="@drawable/badge"
         android:fontFamily="@font/inter"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
         android:textColor="@color/white"
         android:textSize="10sp"
-        android:gravity="center"
-        android:layout_toLeftOf="@+id/messageImg2"
-        android:background="@drawable/badge"/>
+        android:visibility="visible" />
 
 
     <ImageView
         android:id="@+id/messageImg2"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
-        android:layout_centerVertical="true"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
         android:src="@mipmap/chat" />

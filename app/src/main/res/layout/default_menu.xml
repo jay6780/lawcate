@@ -4,23 +4,23 @@
     android:id="@+id/default_menu"
     android:layout_width="match_parent"
     android:background="@color/white2"
-    android:layout_height="110dp">
+    android:layout_height="80dp">
 
     <ImageView
         android:id="@+id/default_toggle"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:paddingLeft="4dp"
-        android:visibility="visible"
         android:paddingRight="4dp"
-        android:src="@mipmap/newmenu" />
+        android:src="@mipmap/newmenu"
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/avatar_default"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_below="@+id/default_toggle"
-        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="40dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:src="@mipmap/man"
@@ -30,10 +30,8 @@
         android:id="@+id/username_default"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/default_toggle"
-        android:layout_centerInParent="true"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/avatar_default"
         android:ellipsize="end"
         android:maxLines="1"
@@ -61,8 +59,8 @@
         android:id="@+id/default_bell"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/defaultMessageimg"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
@@ -86,9 +84,9 @@
         android:id="@+id/defaultMessageimg"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
-        android:layout_centerVertical="true"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
         android:src="@mipmap/chat" />

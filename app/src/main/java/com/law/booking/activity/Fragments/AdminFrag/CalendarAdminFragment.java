@@ -36,6 +36,7 @@ import com.law.booking.activity.tools.adapter.ScheduleAdapter;
 import com.law.booking.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -56,6 +57,7 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
     private ImageView clear;
     private KalendarView mKalendarView;
     private AppCompatButton saved;
+    private boolean dateExists = false;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -153,17 +155,54 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
     }
 
     private void handleDateSelection(Date selectedDate) {
-        if (selectedDates.contains(selectedDate)) {
-            selectedDates.remove(selectedDate);
-            removeHighlightForDate(selectedDate);
+        dateExists = false;
+
+        for (Schedule2 schedule : scheduleList) {
+            if (isSameDay(schedule.getDate(), selectedDate)) {
+                Log.d("month", "data: " + schedule.getDate());
+                dateExists = true;
+                break;
+            }
+        }
+
+        if (dateExists) {
+            saved.setVisibility(View.GONE);
+            selectedDates.clear();
+            Toast.makeText(getContext(), "This date is already scheduled.", Toast.LENGTH_SHORT).show();
         } else {
+            if (selectedDates.contains(selectedDate)) {
+                selectedDates.remove(selectedDate);
+                removeHighlightForDate(selectedDate);
+            } else {
                 selectedDates.add(selectedDate);
                 addHighlightForDate(selectedDate);
                 saved.setVisibility(View.VISIBLE);
-
+            }
         }
 
         updateHighlightedDates();
+    }
+
+    private boolean isSameDay(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+
+        cal1.setTime(date1);
+        cal2.setTime(date2);
+
+        cal1.set(Calendar.HOUR_OF_DAY, 0);
+        cal1.set(Calendar.MINUTE, 0);
+        cal1.set(Calendar.SECOND, 0);
+        cal1.set(Calendar.MILLISECOND, 0);
+
+        cal2.set(Calendar.HOUR_OF_DAY, 0);
+        cal2.set(Calendar.MINUTE, 0);
+        cal2.set(Calendar.SECOND, 0);
+        cal2.set(Calendar.MILLISECOND, 0);
+
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
 
     private void updateHighlightedDates() {

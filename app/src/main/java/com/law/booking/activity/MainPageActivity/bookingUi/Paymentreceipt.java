@@ -30,7 +30,6 @@ import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.chat.User_list;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Booking2;
-import com.law.booking.activity.tools.Model.BookingId;
 import com.law.booking.activity.tools.Model.MychatId;
 import com.law.booking.activity.tools.Model.Schedule;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
@@ -45,8 +44,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class Paymentreceipt extends AppCompatActivity {
     private ImageView avatar, back,bell,msgbtn;
@@ -317,11 +318,11 @@ public class Paymentreceipt extends AppCompatActivity {
                                 }
                                 savedSchedule(userId, key, date);
                                 savedSchedId(email);
-                                savedBookId(childKey);
+                                savedBookId(childKey,snapshotkey);
                                 savedBookCount(key);
                                 savedbookcounting(key);
                                 savedlaw_count(key);
-                                savEBookIdforAdmin(childKey, key);
+                                savEBookIdforAdmin(childKey, key,snapshotkey);
                                 Intent intent = new Intent(Paymentreceipt.this, history_book.class);
                                 startActivity(intent);
                                 finish();
@@ -382,11 +383,15 @@ public class Paymentreceipt extends AppCompatActivity {
 
 
 
-    private void savEBookIdforAdmin(String chatId,String key) {
+    private void savEBookIdforAdmin(String chatId,String key,String snapshotkey) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         String time = String.valueOf(System.currentTimeMillis());
-        BookingId mychatId = new BookingId(time, chatId);
-        databaseReference.child("BookIdAdmin").child(key).push().setValue(mychatId)
+        Map<String ,String> dataId = new HashMap<>();
+        dataId.put("snapshotkey",snapshotkey);
+        dataId.put("time",time);
+        dataId.put("chatId",chatId);
+        dataId.put("key",key);
+        databaseReference.child("BookIdAdmin").child(key).push().setValue(dataId)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("FirebaseDB", "Data saved successfully");
                 })
@@ -411,12 +416,16 @@ public class Paymentreceipt extends AppCompatActivity {
         }).addOnFailureListener(e -> Log.e("FirebaseDB", "Error fetching count", e));
     }
 
-    private void savedBookId(String childKey) {
+    private void savedBookId(String childKey,String snapshotkey) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String time = String.valueOf(System.currentTimeMillis());
-        BookingId mychatId = new BookingId(time, childKey);
-        databaseReference.child("BookingId").child(userId).push().setValue(mychatId)
+        Map<String , String> dataId = new HashMap<>();
+        dataId.put("snapshotkey",snapshotkey);
+        dataId.put("time",time);
+        dataId.put("chatId",childKey);
+        dataId.put("key",userId);
+        databaseReference.child("BookingId").child(userId).push().setValue(dataId)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("FirebaseDB", "Data saved successfully");
                 })

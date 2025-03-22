@@ -7,12 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,6 +57,9 @@ public class login extends AppCompatActivity {
     private DialogPlus dialogPlus,dialogPlus2;
     private ImageView google;
     private LinearLayout facebook;
+    private CheckBox remember_checkbox;
+    private ImageView password_eye1;
+    private boolean eye1check = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,12 +74,14 @@ public class login extends AppCompatActivity {
         facebook = findViewById(R.id.facebook);
         google = findViewById(R.id.google);
         emailEditText = findViewById(R.id.login_email);
+        password_eye1 = findViewById(R.id.password_eye1);
         passwordEditText = findViewById(R.id.plogin_password);
         createacc = findViewById(R.id.createaccount);
+        remember_checkbox = findViewById(R.id.remember_checkbox);
         loginButton = findViewById(R.id.btn_login);
         forgotPasswordButton = findViewById(R.id.txtforgot);
         firebaseAuth = FirebaseAuth.getInstance();
-        changeStatusBarColor(getResources().getColor(R.color.purple_theme));
+        changeStatusBarColor(getResources().getColor(R.color.purple_theme2));
         mDatabase = FirebaseDatabase.getInstance().getReference();
         //  create.setOnClickListener(new View.OnClickListener() {
         //   @Override
@@ -83,6 +90,44 @@ public class login extends AppCompatActivity {
         //  }
         //   });
         showNotiff();
+
+        password_eye1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                eye1check = !eye1check;
+
+                if (eye1check) {
+                    passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    password_eye1.setImageResource(R.mipmap.eye_open);
+                } else {
+                    passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    password_eye1.setImageResource(R.mipmap.eye_close);
+                }
+                passwordEditText.setSelection(passwordEditText.getText().length());
+            }
+        });
+
+
+        if(Boolean.TRUE.equals(SPUtils.getInstance().getBoolean(AppConstans.isRemembered))){
+            remember_checkbox.setChecked(true);
+            passwordEditText.setText(SPUtils.getInstance().getString(AppConstans.myPassord));
+            emailEditText.setText(SPUtils.getInstance().getString(AppConstans.myEmail));
+        }else{
+            remember_checkbox.setChecked(false);
+            SPUtils.getInstance().put(AppConstans.myEmail,"");
+            SPUtils.getInstance().put(AppConstans.myPassord,"");
+        }
+
+        remember_checkbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               if(remember_checkbox.isChecked()){
+                   SPUtils.getInstance().put(AppConstans.isRemembered,true);
+               }else{
+                   SPUtils.getInstance().put(AppConstans.isRemembered,false);
+               }
+            }
+        });
 
 
         inithash();
@@ -317,6 +362,7 @@ public class login extends AppCompatActivity {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
+
         if (email.isEmpty()) {
             emailEditText.setError("Please enter your email");
             emailEditText.requestFocus();
@@ -339,6 +385,8 @@ public class login extends AppCompatActivity {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null) {
                     if (user.isEmailVerified()) {
+                        SPUtils.getInstance().put(AppConstans.myEmail,email);
+                        SPUtils.getInstance().put(AppConstans.myPassord,password);
                         SPUtils.getInstance().put(AppConstans.passwordkey, password);
                         SPUtils.getInstance().put(AppConstans.passwordkey_admin, password);
                         String userId = user.getUid();

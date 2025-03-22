@@ -2,12 +2,20 @@ package com.law.booking.activity.events;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,8 +31,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.law.booking.activity.MainPageActivity.login;
 import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.login;
+import com.law.booking.activity.tools.Utils.Agreement_content;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 
 public class CreateEventorganizer extends AppCompatActivity {
     AppCompatButton back;
@@ -33,6 +44,11 @@ public class CreateEventorganizer extends AppCompatActivity {
     private AppCompatButton registerButton;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private ImageView password_eye1, password_eye2;
+    private boolean eye1check = false;
+    private boolean eye1check2 = false;
+    private CheckBox agreement_cb;
+    private boolean isAgreed = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,16 +59,60 @@ public class CreateEventorganizer extends AppCompatActivity {
             actionBar.hide();
         }
 
-        changeStatusBarColor(getResources().getColor(R.color.purple_theme));
+        changeStatusBarColor(getResources().getColor(R.color.purple_theme2));
         nameEditText = findViewById(R.id.name);
         emailEditText = findViewById(R.id.email);
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password);
+        password_eye1 = findViewById(R.id.password_eye1);
+        password_eye2 = findViewById(R.id.password_eye2);
+        agreement_cb = findViewById(R.id.agreement_cb);
         phoneEditText = findViewById(R.id.Phone);
         confirmPasswordEditText = findViewById(R.id.confirm_password);
         registerButton = findViewById(R.id.registered);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("ADMIN");
+        agreement_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                isAgreed = b;
+                if(isAgreed){
+                    showdagreementdialog();
+                }
+            }
+        });
+        findViewById(R.id.password_eye1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                eye1check = !eye1check;
+
+                if (eye1check) {
+                    passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    password_eye1.setImageResource(R.mipmap.eye_open);
+                } else {
+                    passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    password_eye1.setImageResource(R.mipmap.eye_close);
+                }
+                passwordEditText.setSelection(passwordEditText.getText().length());
+            }
+        });
+
+        findViewById(R.id.password_eye2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                eye1check2 = !eye1check2;
+
+                if (eye1check2) {
+                    confirmPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    password_eye2.setImageResource(R.mipmap.eye_open);
+                } else {
+                    confirmPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    password_eye2.setImageResource(R.mipmap.eye_close);
+                }
+                confirmPasswordEditText.setSelection(passwordEditText.getText().length());
+            }
+        });
+
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +132,54 @@ public class CreateEventorganizer extends AppCompatActivity {
         });
     }
 
+    private void showdagreementdialog() {
+        DialogPlus dialog = DialogPlus.newDialog(CreateEventorganizer.this)
+                .setContentHolder(new ViewHolder(R.layout.agreement_layout))
+                .setContentWidth(ViewGroup.LayoutParams.MATCH_PARENT)
+                .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setGravity(Gravity.CENTER)
+                .setCancelable(false)
+                .create();
+        View dialogView = dialog.getHolderView();
+        Button agreed = dialogView.findViewById(R.id.agreed);
+        Button ignore = dialogView.findViewById(R.id.ignore);
+
+        TextView introductionContent = dialogView.findViewById(R.id.introductionContent);
+        TextView Acceptance_content = dialogView.findViewById(R.id.Acceptance_content);
+        TextView Responsibilities_content = dialogView.findViewById(R.id.Responsibilities_content);
+        TextView Conduct_content =  dialogView.findViewById(R.id.Conduct_content);
+        TextView User_Conduct_content = dialogView.findViewById(R.id.User_Conduct_content);
+        TextView Data_Protection_content = dialogView.findViewById(R.id.Data_Protection_content);
+        TextView Intellectual_content = dialogView.findViewById(R.id.Intellectual_content);
+        TextView Liability_content = dialogView.findViewById(R.id.Liability_content);
+        TextView Services_content = dialogView.findViewById(R.id.Services_content);
+        TextView Amendments_content = dialogView.findViewById(R.id.Amendments_content);
+        TextView Governing_content = dialogView.findViewById(R.id.Governing_content);
+        TextView Contact_content = dialogView.findViewById(R.id.Contact_content);
+
+        introductionContent.setText(Agreement_content.Introduction_content);
+        Acceptance_content.setText(Agreement_content.Acceptance_content);
+        Responsibilities_content.setText(Agreement_content.Responsibilities_content);
+        Conduct_content.setText(Agreement_content.Conduct_content);
+        User_Conduct_content.setText(Agreement_content.User_Conduct_content);
+        Data_Protection_content.setText(Agreement_content.Data_Protection_content);
+        Intellectual_content.setText(Agreement_content.Intellectual_content);
+        Liability_content.setText(Agreement_content.Liability_content);
+        Services_content.setText(Agreement_content.Services_content);
+        Amendments_content.setText(Agreement_content.Amendments_content);
+        Governing_content.setText(Agreement_content.Governing_content);
+        Contact_content.setText(Agreement_content.Contact_content);
+        agreed.setOnClickListener(view -> dialog.dismiss());
+        ignore.setOnClickListener(view ->cancelAgree(dialog));
+        dialog.show();
+    }
+
+    private void cancelAgree(DialogPlus dialog) {
+        dialog.dismiss();
+        agreement_cb.setChecked(false);
+        isAgreed = false;
+    }
+
     private void changeStatusBarColor(int color) {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -86,6 +194,10 @@ public class CreateEventorganizer extends AppCompatActivity {
         String password = passwordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
 
+        if(!isAgreed){
+            Toast.makeText(getApplicationContext(),"Please agree Terms and Conditions.",Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (TextUtils.isEmpty(phone)) {
             phoneEditText.setError("Please enter your phone number");
             phoneEditText.requestFocus();

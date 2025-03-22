@@ -12,6 +12,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.law.booking.R;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.welcome;
 
 public class Splash extends AppCompatActivity {
@@ -34,16 +36,22 @@ public class Splash extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                Intent intent;
                 if (currentUser != null) {
-                    Intent intent = new Intent(Splash.this, newHome.class);
+                    intent = new Intent(Splash.this, newHome.class);
                     String userId = currentUser.getUid();
                     adminRef = adminRef.child(userId);
                     guessRef = guessRef.child(userId);
                     startActivity(intent);
+                    overridePendingTransition(0, 0);
+                    finish();
+                }else if (Boolean.TRUE.equals(SPUtils.getInstance().getBoolean(AppConstans.isRemembered))){
+                    intent = new Intent(Splash.this, login.class);
+                    startActivity(intent);
                     overridePendingTransition(0,0);
                     finish();
                 } else {
-                    Intent intent = new Intent(Splash.this, welcome.class);
+                    intent = new Intent(Splash.this, welcome.class);
                     startActivity(intent);
                     overridePendingTransition(0,0);
                     finish();

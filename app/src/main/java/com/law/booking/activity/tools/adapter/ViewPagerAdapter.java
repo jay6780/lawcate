@@ -8,8 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.law.booking.activity.Fragments.UserFragment.CalendarUserFragment;
-import com.law.booking.activity.Fragments.UserFragment.FacedectionFragment;
-import com.law.booking.activity.Fragments.UserFragment.HomeFragment;
+import com.law.booking.activity.Fragments.UserFragment.Home_user_fragment;
 import com.law.booking.activity.Fragments.UserFragment.MapFragment;
 import com.law.booking.activity.Fragments.UserFragment.ProfileUserFragment;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -26,7 +25,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new HomeFragment();
+                fragment = new Home_user_fragment();
                 break;
             case 1:
                 fragment = new CalendarUserFragment();

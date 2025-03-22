@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <include layout="@layout/layout_agreeeheader"/>
+        <TextView
+            android:text="Introduction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/introductionContent"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+        <TextView
+            android:text="Acceptance of Terms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Acceptance_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+        <TextView
+            android:text="User Responsibilities"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Responsibilities_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+        <TextView
+            android:text="Legal Services and Professional Conduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Conduct_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+
+        <TextView
+            android:text="User Conduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/User_Conduct_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+        <TextView
+            android:text="Privacy and Data Protection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Data_Protection_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+
+        <TextView
+            android:text="Intellectual Property"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Intellectual_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+
+        <TextView
+            android:text="Limitation of Liability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Liability_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+
+        <TextView
+            android:text="Termination of Services"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Services_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+
+        <TextView
+            android:text="Amendments to Terms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Amendments_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+
+        <TextView
+            android:text="Governing Law"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Governing_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+
+        <TextView
+            android:text="Contact Information"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+        <TextView
+            android:id="@+id/Contact_content"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textStyle="normal"
+            android:layout_marginBottom="10dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/montaguslab"/>
+
+        <include layout="@layout/agree_footer"/>
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
+</LinearLayout>

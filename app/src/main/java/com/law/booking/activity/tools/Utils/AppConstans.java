@@ -103,4 +103,8 @@ public class AppConstans {
     public static final String servicelength ="servicelength";
     public static final String servicelist ="servicelist";
     public static final String lawname = "lawname";
+    public static final String isRemembered = "isRemembered";
+    public static final String myPassord = "myPassord";
+    public static final String myEmail="myEmail";
+
 }

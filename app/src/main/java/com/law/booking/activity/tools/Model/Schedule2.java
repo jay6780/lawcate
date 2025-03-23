@@ -8,19 +8,39 @@ public class Schedule2 {
     private String imageUrl;
     private Date date;
     private String key;
-
+    private String timeframe;
+    private String userId;
+    private boolean timeframeset;
     public Schedule2() {
     }
 
-    public Schedule2(String name, String imageUrl, Date date, String key,String time) { // Include key in constructor
+    public Schedule2(String name, String imageUrl, Date date, String key,String time,String timeframe) { // Include key in constructor
         this.name = name;
         this.imageUrl = imageUrl;
         this.date = date;
         this.key = key;
         this.time = time;
+        this.timeframe = timeframe;
     }
 
     // Getters
+
+    public boolean isTimeframeset() {
+        return timeframeset;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getTimeframe() {
+        return timeframe;
+    }
+
+    public void setTimeframe(String timeframe) {
+        this.timeframe = timeframe;
+    }
+
     public String getName() {
         return name;
     }

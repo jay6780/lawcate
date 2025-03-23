@@ -278,7 +278,7 @@ public class Createadmin extends AppCompatActivity {
         userRef.child("email").setValue(email);
         userRef.child("username").setValue(username);
         userRef.child("phone").setValue(phone); // Save phone number
-
+        userRef.child("userId").setValue(uid);
         Map<String, Object> updates = new HashMap<>();
         boolean isVerify = false;
         updates.put("isVerify", isVerify);

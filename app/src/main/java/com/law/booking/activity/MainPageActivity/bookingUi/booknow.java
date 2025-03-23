@@ -148,6 +148,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
         afternoon_recycler = findViewById(R.id.afternoon_recycler);
         morningslot = findViewById(R.id.morningslot);
         mKalendarView = findViewById(R.id.kalendar);
+        mKalendarView.setVisibility(View.GONE);
         messageImg = findViewById(R.id.messageImg);
         myschedule = findViewById(R.id.myschedule);
         profiletxt = findViewById(R.id.profiletxt);
@@ -185,7 +186,6 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
         datesColors.add(new ColoredDate(new Date(), getResources().getColor(R.color.red_holiday)));
         mKalendarView.setColoredDates(datesColors);
         fetchSchedules();
-        profiletxt.setText("Book process");
         List<EventObjects> events = new ArrayList<>();
 
         events.add(new EventObjects("meeting", new Date()));
@@ -195,6 +195,7 @@ public class booknow extends AppCompatActivity implements TimeSlotClickListener 
         try {
             Date date = inputFormat.parse(dateString);
             String formattedDate = outputFormat.format(date);
+            profiletxt.setText(formattedDate);
             SPUtils.getInstance().put(AppConstans.date,formattedDate);
             Log.d("Formatted Date", formattedDate);
         } catch (ParseException e) {

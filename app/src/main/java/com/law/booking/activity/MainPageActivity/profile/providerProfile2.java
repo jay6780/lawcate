@@ -4,10 +4,6 @@ package com.law.booking.activity.MainPageActivity.profile;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +20,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.flyco.tablayout.CommonTabLayout;
+import com.flyco.tablayout.listener.CustomTabEntity;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +39,7 @@ import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.ServiceProviderAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class providerProfile2 extends AppCompatActivity {
@@ -55,9 +55,11 @@ public class providerProfile2 extends AppCompatActivity {
     private String TAG = "providerProfile2";
     private boolean isOnline;
     private DatabaseReference databaseReference;
-    private TextView servicesTab, reviewsTab;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     private ViewPager viewPager;
+    private CommonTabLayout tab_profile;
+    private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+    private String[] mTitles;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +73,8 @@ public class providerProfile2 extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         ServiceProviderAdapter adapter = new ServiceProviderAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
-        servicesTab = findViewById(R.id.services);
-        reviewsTab = findViewById(R.id.reviews);
         profiletxt = findViewById(R.id.profiletxt);
+        tab_profile = findViewById(R.id.tab_profile);
         profileimage = findViewById(R.id.avatar);
         name = findViewById(R.id.name);
         bell = findViewById(R.id.bell);
@@ -187,61 +188,60 @@ public class providerProfile2 extends AppCompatActivity {
     }
 
     private void initTabs() {
-        selectTab(servicesTab);
-        initialtab(reviewsTab);
-        initialgray(reviewsTab);
-        servicesTab.setOnClickListener(v -> viewPager.setCurrentItem(0));
-        reviewsTab.setOnClickListener(v -> viewPager.setCurrentItem(2));
+        mTitles = new String[]{
+                "Portfolio","Service","Reviews"
+
+        };
+        mTabEntities = new ArrayList<>();
+        for (int i = 0; i < mTitles.length; i++) {
+            final int j = i;
+            mTabEntities.add(new CustomTabEntity() {
+                @Override
+                public String getTabTitle() {
+                    return mTitles[j];
+                }
+
+                @Override
+                public int getTabSelectedIcon() {
+                    return 0;
+                }
+
+                @Override
+                public int getTabUnselectedIcon() {
+                    return 0;
+                }
+            });
+        }
+
+
+        tab_profile.setTabData(mTabEntities);
+
+        tab_profile.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelect(int position) {
+                viewPager.setCurrentItem(position);
+            }
+
+            @Override
+            public void onTabReselect(int position) {
+
+            }
+        });
+
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
             @Override
             public void onPageSelected(int position) {
-                switch (position) {
-                    case 0:
-                        selectTab(servicesTab);
-                        break;
-                    case 1:
-                        selectTab(reviewsTab);
-                        break;
-                }
+                tab_profile.setCurrentTab(position);
+
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
-    }
-
-    private void selectTab(TextView selectedTab) {
-        // Apply maroon color and underline to the selected tab
-        resetTabStyle(servicesTab);
-        resetTabStyle(reviewsTab);
-        SpannableString spannable = new SpannableString(selectedTab.getText());
-        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.black)), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new UnderlineSpan(), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        selectedTab.setText(spannable);
-    }
-
-    private void initialtab(TextView selectedTab) {
-        SpannableString spannable = new SpannableString(selectedTab.getText());
-        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.black)), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new UnderlineSpan(), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        selectedTab.setText(spannable);
-    }
-
-    private void initialgray(TextView selectedTab) {
-        SpannableString spannable = new SpannableString(selectedTab.getText());
-        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.transaprent2)), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new UnderlineSpan(), 0, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        selectedTab.setText(spannable);
-    }
-
-
-    private void resetTabStyle(TextView tab) {
-        SpannableString content = new SpannableString(tab.getText());
-        content.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.transaprent2)), 0, content.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tab.setText(content);
     }
 
 

@@ -278,7 +278,8 @@ public class Createacc extends AppCompatActivity {
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
         userRef.child("username").setValue(username);
-        userRef.child("phone").setValue(phone); // Save phone number
+        userRef.child("phone").setValue(phone);
+        userRef.child("userId").setValue(uid); // Save phone number
     }
 
     private void sendEmailVerification(final FirebaseUser user) {

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tl="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
 
@@ -160,42 +161,28 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:orientation="vertical">
-            <LinearLayout
-                android:id="@+id/ll1"
+
+
+            <com.flyco.tablayout.CommonTabLayout
+                android:id="@+id/tab_profile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
-                android:layout_below="@+id/message"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                tl:tl_indicator_color="@color/purple_theme"
+                tl:tl_indicator_style="NORMAL"
+                tl:tl_indicator_width="60dp"
+                tl:tl_tab_space_equal="true"
+                tl:tl_textBold="BOTH"
+                tl:tl_textSelectColor="@color/purple_theme"
+                tl:tl_textUnselectColor="#000000"
+                tl:tl_textsize="15sp"
+                tl:tl_underline_color="@color/purple_theme" />
 
-                <TextView
-                    android:id="@+id/services"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/inter"
-                    android:text="Portfolio"
-                    android:textColor="@color/maroon"
-                    android:textSize="18sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:id="@+id/reviews"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/inter"
-                    android:text="Reviews"
-                    android:textColor="@color/maroon"
-                    android:textSize="18sp"
-                    android:gravity="center" />
-
-            </LinearLayout>
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true">
+
 
                 <androidx.viewpager.widget.ViewPager
                     android:id="@+id/viewPager"

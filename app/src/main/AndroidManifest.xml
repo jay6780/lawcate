@@ -32,7 +32,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-
         <service
             android:name=".activity.tools.Service.MessageNotificationService"
             android:exported="false" />
@@ -59,17 +58,24 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="face" />
+
+        <activity
+            android:name=".activity.MainPageActivity.Guess.nearby_activity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".activity.events.account_manageactivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MainPageActivity.Guess.Time_activity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainPageActivity.Guess.Data_analyticsactivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
-
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainPageActivity.Admin.Timeview_update"
             android:exported="false"

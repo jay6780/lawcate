@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.law.booking.activity.Fragments.UserFragment.ReviewFragment;
 import com.law.booking.activity.Fragments.UserFragment.ServiceProvidersFragment;
+import com.law.booking.activity.MainPageActivity.bookingUi.Service_lisfragment;
 
 public class ServiceProviderAdapter extends FragmentPagerAdapter {
 
@@ -21,6 +22,8 @@ public class ServiceProviderAdapter extends FragmentPagerAdapter {
             case 0:
                 return new ServiceProvidersFragment();
             case 1:
+                return new Service_lisfragment();
+            case 2:
                 return new ReviewFragment();
             default:
                 return null;
@@ -29,6 +32,6 @@ public class ServiceProviderAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 }

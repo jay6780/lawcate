@@ -3,44 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
     android:background="@color/white2">
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:cardCornerRadius="20dp"
-        android:layout_marginTop="10dp">
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/artist_available"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/map_search"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:visibility="visible"
-                android:hint="Search address" />
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
-        android:id="@+id/mapResult"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"/>
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="Find the Lawyer's near you!" />
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapview"
             android:layout_marginTop="5dp"
@@ -51,9 +28,9 @@
         android:id="@+id/floating_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
         fab:fab_colorNormal="@color/purple_theme"
         android:src="@mipmap/refresh_white"
-        android:layout_alignParentBottom="true"/>
+        android:layout_marginLeft="15dp" />
 </RelativeLayout>

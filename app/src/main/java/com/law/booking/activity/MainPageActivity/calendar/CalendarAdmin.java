@@ -118,7 +118,7 @@ public class CalendarAdmin extends AppCompatActivity implements OnScheduleLongCl
                         Schedule schedule = scheduleSnapshot.getValue(Schedule.class);
                         if (schedule != null) {
                             String key = scheduleSnapshot.getKey();
-                            scheduleList.add(new Schedule2(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), key,schedule.getTime()));
+                            scheduleList.add(new Schedule2(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), key,schedule.getTime(),schedule.getTimeframe()));
                             highlightedDates.add(new ColoredDate(schedule.getDate(), getResources().getColor(R.color.red_holiday)));
                         }
                     }

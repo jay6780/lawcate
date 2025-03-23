@@ -180,6 +180,9 @@ public class newHome extends AppCompatActivity {
                         adminBottom.setSelectedItemId(R.id.adminCalendar);
                         break;
                     case 2:
+                        adminBottom.setSelectedItemId(R.id.data_analytics);
+                        break;
+                    case 3:
                         adminBottom.setSelectedItemId(R.id.admin_profile);
                         break;
                 }
@@ -232,9 +235,6 @@ public class newHome extends AppCompatActivity {
                         break;
 
                     case 2:
-                        bottomNavigationView.setSelectedItemId(R.id.nav_location);
-                        break;
-                    case 3:
                         bottomNavigationView.setSelectedItemId(R.id.nav_profile);
                         break;
                 }
@@ -271,18 +271,8 @@ public class newHome extends AppCompatActivity {
                         return true;
 
 
-                    case R.id.nav_location:
-                        viewPager.setCurrentItem(2);
-                        avatar_user.setVisibility(View.VISIBLE);
-                        username_user.setVisibility(View.VISIBLE);
-                        location_address_user.setVisibility(View.VISIBLE);
-                        //gone
-                        profiletxt.setVisibility(View.GONE);
-                        gunting.setVisibility(View.GONE);
-                        return true;
-
                     case R.id.nav_profile:
-                        viewPager.setCurrentItem(3);
+                        viewPager.setCurrentItem(2);
                         avatar_user.setVisibility(View.GONE);
                         username_user.setVisibility(View.GONE);
                         location_address_user.setVisibility(View.GONE);
@@ -326,8 +316,11 @@ public class newHome extends AppCompatActivity {
                     case R.id.adminCalendar:
                         adminPager.setCurrentItem(1);
                         return true;
-                    case R.id.admin_profile:
+                    case R.id.data_analytics:
                         adminPager.setCurrentItem(2);
+                        return true;
+                    case R.id.admin_profile:
+                        adminPager.setCurrentItem(3);
                         return true;
                 }
                 adminPager.getAdapter().notifyDataSetChanged();

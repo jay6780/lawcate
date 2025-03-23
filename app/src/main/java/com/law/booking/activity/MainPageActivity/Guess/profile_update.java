@@ -247,6 +247,7 @@ public class profile_update extends AppCompatActivity {
                 userRef.child("phone").setValue(phoneNumber);
                 userRef.child("address").setValue(userAddress);
                 userRef.child("age").setValue(age);
+                userRef.child("userId").setValue(userId);
                 Uri imageUri = getImageUri();
                 if (imageUri != null) {
                     progressDialog = new ProgressDialog(profile_update.this);

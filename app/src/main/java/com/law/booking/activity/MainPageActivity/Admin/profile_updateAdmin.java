@@ -255,7 +255,7 @@ public class profile_updateAdmin extends AppCompatActivity {
                 userRef.child("address").setValue(userAddress);
                 userRef.child("age").setValue(age);
                 userRef.child("lengthOfService").setValue(lengthService);
-
+                userRef.child("userId").setValue(userId);
                 // If image is picked, upload it
                 if (isImagePicked) {
                     Uri imageUri = getImageUri();

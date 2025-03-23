@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.law.booking.activity.Fragments.UserFragment.CalendarUserFragment;
 import com.law.booking.activity.Fragments.UserFragment.Home_user_fragment;
-import com.law.booking.activity.Fragments.UserFragment.MapFragment;
 import com.law.booking.activity.Fragments.UserFragment.ProfileUserFragment;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     private String imageUrl;
@@ -30,11 +29,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 fragment = new CalendarUserFragment();
                 break;
-
             case 2:
-                fragment = new MapFragment();
-                break;
-            case 3:
                 fragment = new ProfileUserFragment();
                 break;
         }
@@ -50,7 +45,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 4; // Number of fragments
+        return 3; // Number of fragments
     }
 
     @Override

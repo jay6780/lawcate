@@ -1,10 +1,13 @@
 package com.law.booking.activity.Fragments.UserFragment;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,38 +23,41 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.law.booking.activity.tools.DialogUtils.AdminDialog;
-import com.law.booking.activity.tools.Model.AdminDialogCallback;
-import com.law.booking.activity.tools.Model.Schedule;
-import com.law.booking.activity.tools.Model.Usermodel;
-import com.law.booking.activity.tools.adapter.ScheduleAdapterUser;
 import com.law.booking.R;
+import com.law.booking.activity.tools.Model.Schedule;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
+import com.law.booking.activity.tools.adapter.ScheduleAdapterUser;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 
-public class CalendarUserFragment extends Fragment implements AdminDialogCallback {
+public class CalendarUserFragment extends Fragment {
     private RecyclerView myschedule;
     private List<Schedule> scheduleList = new ArrayList<>();
-    private String userName, userImageUrl;
-    private Set<Date> selectedDates = new HashSet<>();
-    private List<ColoredDate> highlightedDates = new ArrayList<>();
     private ScheduleAdapterUser scheduleAdapter;
     private String key;
     KalendarView mKalendarView;
+    private TextView artist_available;
     private FirebaseAuth auth;
     private ImageView dots;
-    private List<Usermodel> adminList = new ArrayList<>();
+    private Date dateselected;
+    private String formattedDate;
+    private String TAG = "CalendarUserFragment";
+    private TextView provider_name, date_text, time_text, duration;
+    int booknumber = 0;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.scheduleview_fragment, container, false);
+        return inflater.inflate(R.layout.user_scheduleview, container, false);
     }
 
     @Override
@@ -59,94 +65,109 @@ public class CalendarUserFragment extends Fragment implements AdminDialogCallbac
         super.onViewCreated(view, savedInstanceState);
 
         key = getArguments() != null ? getArguments().getString("key") : null;
-
         mKalendarView = view.findViewById(R.id.kalendar);
         myschedule = view.findViewById(R.id.myschedule);
+        provider_name = view.findViewById(R.id.provider_name);
+        date_text = view.findViewById(R.id.date);
+        time_text = view.findViewById(R.id.time);
+        artist_available = view.findViewById(R.id.artist_available);
+        artist_available.setVisibility(View.VISIBLE);
+        //initialized
         dots = view.findViewById(R.id.dots);
-        initFirebase();
+        dots.setVisibility(View.GONE);
+        myschedule.setVisibility(View.VISIBLE);
         auth = FirebaseAuth.getInstance();
         List<ColoredDate> datesColors = new ArrayList<>();
         datesColors.add(new ColoredDate(new Date(), getResources().getColor(R.color.red_holiday)));
         mKalendarView.setColoredDates(datesColors);
-        scheduleAdapter = new ScheduleAdapterUser(scheduleList);
+        scheduleAdapter = new ScheduleAdapterUser(scheduleList, getContext());
         myschedule.setLayoutManager(new LinearLayoutManager(getContext()));
         myschedule.setAdapter(scheduleAdapter);
-
-        fetchSchedules();
-
         List<EventObjects> events = new ArrayList<>();
         events.add(new EventObjects("meeting", new Date()));
         mKalendarView.setEvents(events);
-
         mKalendarView.setMonthChanger(changedMonth -> Log.d("Changed", "month changed " + changedMonth));
-
-        dots.setOnClickListener(view1 -> {
-            AdminDialog adminDialog = new AdminDialog();
-            adminDialog.adminDialog(getActivity(), CalendarUserFragment.this);
+        mKalendarView.setDateSelector(new KalendarView.DateSelector() {
+            @Override
+            public void onDateClicked(Date selectedDate) {
+                dateselected = selectedDate;
+                SPUtils.getInstance().put(AppConstans.selectdate, String.valueOf(dateselected));
+                fetchSchedules(selectedDate);
+                scheduleAdapter.notifyDataSetChanged();
+            }
         });
+        initcalendarposition();
+
 
     }
 
-    private void fetchSchedules() {
-        if (key == null || key.isEmpty()) {
-        Log.e( "NoSched","No schedule for this provider");
-        } else {
-            FirebaseDatabase.getInstance().getReference("Mysched").child(key).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    scheduleList.clear();
-                    highlightedDates.clear();
-                    Date firstDate = null;
-                    for (DataSnapshot scheduleSnapshot : dataSnapshot.getChildren()) {
-                        Schedule schedule = scheduleSnapshot.getValue(Schedule.class);
-                        if (schedule != null) {
-                            scheduleList.add(schedule);
-                            highlightedDates.add(new ColoredDate(schedule.getDate(), getActivity().getResources().getColor(R.color.red_holiday)));
-                            if (firstDate == null || schedule.getDate().before(firstDate)) {
-                                firstDate = schedule.getDate();
+
+    private void initcalendarposition() {
+        Date firstDate = null;
+        Date currentMonth = mKalendarView.getShowingMonth();
+        if (firstDate != null && !currentMonth.equals(firstDate)) {
+            mKalendarView.setMonth(currentMonth);
+        }
+    }
+
+    private void fetchSchedules(Date dateselected) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(String.valueOf(dateselected));
+            formattedDate = outputFormat.format(date);
+            Log.d("Formatted Date", formattedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        FirebaseDatabase.getInstance().getReference("Mysched")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        scheduleList.clear();
+                        for (DataSnapshot providerSnapshot : dataSnapshot.getChildren()) {
+                            for (DataSnapshot scheduleSnapshot : providerSnapshot.getChildren()) {
+                                Schedule schedule = scheduleSnapshot.getValue(Schedule.class);
+                                if (schedule != null) {
+                                    if (isSameDay(schedule.getDate(), dateselected)) {
+                                        scheduleList.add(schedule);
+                                    }
+                                }
                             }
                         }
+                        if (scheduleList.isEmpty()) {
+                            scheduleAdapter.notifyDataSetChanged();
+                            Toast.makeText(getContext(), "No schedules available for " + formattedDate, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Collections.sort(scheduleList, new Comparator<Schedule>() {
+                                @Override
+                                public int compare(Schedule s1, Schedule s2) {
+                                    return s1.getDate().compareTo(s2.getDate());
+                                }
+                            });
+                            scheduleAdapter.notifyDataSetChanged();
+                        }
                     }
-                    Collections.sort(scheduleList, (s1, s2) -> s2.getDate().compareTo(s1.getDate()));
-                    mKalendarView.setColoredDates(highlightedDates);
-                    scheduleAdapter.notifyDataSetChanged();
-                    if (firstDate != null) {
-                        mKalendarView.setMonth(firstDate);
-                    }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.e("FirebaseData", "Database error: " + databaseError.getMessage());
-                }
-            });
-        }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("FirebaseData", "Database error: " + databaseError.getMessage());
+                    }
+                });
     }
 
-    private void initFirebase() {
-        if (key == null || key.isEmpty()) {
-            Log.d("nodata", "No Guess data");
-        } else {
-            FirebaseDatabase.getInstance().getReference("Lawyer").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        userName = dataSnapshot.child("username").getValue(String.class);
-                        userImageUrl = dataSnapshot.child("image").getValue(String.class);
-                    }
-                }
+    private boolean isSameDay(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date1);
+        cal2.setTime(date2);
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.e("FirebaseData", "Database error: " + databaseError.getMessage());
-                }
-            });
-        }
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
 
-    @Override
-    public void onAdminSelected(String adminKey) {
-        key = adminKey;
-        fetchSchedules();
-    }
 }

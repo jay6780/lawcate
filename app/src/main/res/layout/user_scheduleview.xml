@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.Material3.Light">
+
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:contentScrim="@color/white"
+                app:statusBarScrim="@color/white"
+                app:expandedTitleMarginStart="48dp"
+                app:expandedTitleMarginEnd="64dp">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/dots"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_alignParentEnd="true"
+                        android:src="@mipmap/dots" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/dots"
+                        android:layout_marginTop="10dp">
+
+                        <TextView
+                            android:id="@+id/description_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:text="Find the Lawyer's that fits your Schedule!" />
+
+                        <com.ak.KalendarView
+                            android:id="@+id/kalendar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="350dp"
+                            android:layout_below="@+id/description_text"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginTop="10dp"
+                            app:calendarBackground="#FFFFFF"
+                            app:dateTextStyle="@style/weekText"
+                            app:monthTextStyle="@style/weekText"
+                            app:nextIcon="@drawable/calendarview_front"
+                            app:prevIcon="@drawable/calendarview_back"
+                            app:selectedIndicator="@drawable/custom_select_date"
+                            app:weekTextStyle="@style/weekText" />
+
+                    </RelativeLayout>
+                </RelativeLayout>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <TextView
+                android:id="@+id/artist_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Lawyer's available" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/myschedule"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:layout_below="@+id/artist_available"
+                android:layout_marginTop="10dp" />
+        </RelativeLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

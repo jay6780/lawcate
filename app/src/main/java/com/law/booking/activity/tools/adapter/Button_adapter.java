@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.Guess.nearby_activity;
 import com.law.booking.activity.MainPageActivity.Provider.hmua;
 import com.law.booking.activity.tools.Model.Button_class;
 
@@ -123,6 +124,8 @@ public class Button_adapter extends RecyclerView.Adapter<Button_adapter.ViewHold
                             context.startActivity(intent);
                             break;
                         case "Nearby Firms":
+                            intent = new Intent(context, nearby_activity.class);
+                            context.startActivity(intent);
                             break;
                     }
 

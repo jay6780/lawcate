@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.law.booking.activity.Fragments.AdminFrag.CalendarAdminFragment;
+import com.law.booking.activity.Fragments.AdminFrag.Data_analytics_fragment;
 import com.law.booking.activity.Fragments.AdminFrag.MyServicePriceFragment;
 import com.law.booking.activity.Fragments.AdminFrag.admin_profileFragment;
 
@@ -25,6 +26,8 @@ public class AdminViewpagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return new CalendarAdminFragment();
             case 2:
+                return new Data_analytics_fragment();
+            case 3:
                 return new admin_profileFragment();
             default:
                 return null;
@@ -33,6 +36,6 @@ public class AdminViewpagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3; // Number of fragments
+        return 4; // Number of fragments
     }
 }

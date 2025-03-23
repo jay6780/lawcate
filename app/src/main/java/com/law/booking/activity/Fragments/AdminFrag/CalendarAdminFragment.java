@@ -103,7 +103,7 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
                         Schedule schedule = scheduleSnapshot.getValue(Schedule.class);
                         if (schedule != null) {
                             String key = scheduleSnapshot.getKey();
-                            tempScheduleList.add(new Schedule2(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), key, schedule.getTime()));
+                            tempScheduleList.add(new Schedule2(schedule.getName(), schedule.getImageUrl(), schedule.getDate(), key, schedule.getTime(),schedule.getTimeframe()));
                         }
                     }
                     Collections.sort(tempScheduleList, new Comparator<Schedule2>() {

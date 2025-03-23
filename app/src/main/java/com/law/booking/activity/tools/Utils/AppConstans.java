@@ -106,5 +106,5 @@ public class AppConstans {
     public static final String isRemembered = "isRemembered";
     public static final String myPassord = "myPassord";
     public static final String myEmail="myEmail";
-
+    public static final String selectdate ="selectdate";
 }

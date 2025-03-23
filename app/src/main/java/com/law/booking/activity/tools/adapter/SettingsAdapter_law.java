@@ -87,7 +87,7 @@ public class SettingsAdapter_law extends RecyclerView.Adapter<SettingsAdapter_la
                 case "Online":
                     lawKey = "isOnline_book";
                     break;
-                case "On Site":
+                case "On site":
                     lawKey = "isOnsite_book";
                     break;
             }

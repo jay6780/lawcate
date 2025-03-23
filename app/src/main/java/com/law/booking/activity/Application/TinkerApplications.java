@@ -189,7 +189,6 @@ public class TinkerApplications extends MultiDexApplication implements Applicati
             setOnlineStatus2(userId, logout, () -> {
                 Intent intent = new Intent(activity, newHome.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 activity.startActivity(intent);
                 activity.finish();
             });
@@ -276,7 +275,6 @@ public class TinkerApplications extends MultiDexApplication implements Applicati
                             System.out.println("User signed out successfully.");
                             Intent intent = new Intent(activity, login.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                             activity.startActivity(intent);
                             activity.finish();
                         });

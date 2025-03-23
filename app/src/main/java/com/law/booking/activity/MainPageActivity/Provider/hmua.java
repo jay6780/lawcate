@@ -83,7 +83,7 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
     private boolean isSkeletonShown = false;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     private emptyAdapter_package empty;
-    private boolean corporate,criminal,family,immigration,property,isAll;
+    private boolean corporate,criminal,family,HumanRights,Tax,Contract,isAll,online,onsite;
     private String selectedLocation;
     private DialogPlus dialog;
     private SmartRefreshLayout refreshLayout;
@@ -109,11 +109,15 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
+        online = intent.getBooleanExtra("isOnline_book", false);
+        onsite = intent.getBooleanExtra("isOnsite_book", false);
         corporate = intent.getBooleanExtra("isCorporate", false);
         criminal = intent.getBooleanExtra("isCriminal", false);
         family = intent.getBooleanExtra("isFamily", false);
-        immigration = intent.getBooleanExtra("isImmigration", false);
-        property = intent.getBooleanExtra("isProperty", false);
+        HumanRights = intent.getBooleanExtra("isHumanRights", false);
+        Tax = intent.getBooleanExtra("isTax", false);
+        Contract = intent.getBooleanExtra("isContract", false);
+        isAll = intent.getBooleanExtra("isAll", false);
         isAll = intent.getBooleanExtra("isAll", false);
         settings.setOnClickListener(view -> filterBy());
         profiletxt.setText(title);
@@ -333,8 +337,12 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
                         Boolean isCorporate = snapshot.child("isCorporate").getValue(Boolean.class);
                         Boolean isCriminal = snapshot.child("isCriminal").getValue(Boolean.class);
                         Boolean isFamily = snapshot.child("isFamily").getValue(Boolean.class);
-                        Boolean isImmigration = snapshot.child("isImmigration").getValue(Boolean.class);
-                        Boolean isProperty = snapshot.child("isProperty").getValue(Boolean.class);
+                        Boolean isHumanRights = snapshot.child("isHumanRights").getValue(Boolean.class);
+                        Boolean isTax = snapshot.child("isTax").getValue(Boolean.class);
+                        Boolean isContract = snapshot.child("isContract").getValue(Boolean.class);
+                        Boolean isOnline_book = snapshot.child("isOnline_book").getValue(Boolean.class);
+                        Boolean isOnsite_book = snapshot.child("isOnsite_book").getValue(Boolean.class);
+
                         Boolean isSuperAdmin = snapshot.child("isSuperAdmin").getValue(Boolean.class);
                         Boolean isVerify = snapshot.child("isVerify").getValue(Boolean.class);
                         boolean addressMatchesRegion = false;
@@ -347,8 +355,10 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
                         boolean matches = (corporate && isCorporate != null && isCorporate) ||
                                 (criminal && isCriminal != null && isCriminal) ||
                                 (family && isFamily != null && isFamily) ||
-                                (immigration && isImmigration != null && isImmigration) ||
-                                (property && isProperty != null && isProperty);
+                                (HumanRights && isHumanRights != null && isHumanRights) ||
+                                (Tax && isTax != null && isTax || Contract && isContract !=null && isContract
+                                ||online && isOnline_book !=null && isOnline_book
+                                        || onsite && isOnsite_book !=null && isOnsite_book);
 
                         if (addressMatchesRegion && (matches || isAll) &&
                                 (isSuperAdmin == null || !isSuperAdmin) &&

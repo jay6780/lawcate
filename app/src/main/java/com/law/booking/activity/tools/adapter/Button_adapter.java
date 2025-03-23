@@ -1,6 +1,7 @@
 package com.law.booking.activity.tools.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.Provider.hmua;
 import com.law.booking.activity.tools.Model.Button_class;
 
 import java.util.List;
@@ -49,28 +51,84 @@ public class Button_adapter extends RecyclerView.Adapter<Button_adapter.ViewHold
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Button_class button_class = button_list.get(position);
         viewHolder.name.setText(button_class.getName());
-        if(button_class.getName().equals("Nearby Firms")){
-            viewHolder.icons.setImageResource(R.mipmap.location_icon);
 
-        }else if(button_class.getName().equals("Corporate Law")){
-            viewHolder.icons.setImageResource(R.mipmap.group_icon);
-
-        }else if(button_class.getName().equals("Criminal Law")){
-            viewHolder.icons.setImageResource(R.mipmap.posas);
-
-        }else if(button_class.getName().equals("Tax Law")){
-            viewHolder.icons.setImageResource(R.mipmap.tax);
-
-        }else if(button_class.getName().equals("Human Rights Law")){
-            viewHolder.icons.setImageResource(R.mipmap.human_rights_icon);
-
-        }else if(button_class.getName().equals("Contract Law")){
-            viewHolder.icons.setImageResource(R.mipmap.building_icon);
-
-        }else if(button_class.getName().equals("Family Law")){
-            viewHolder.icons.setImageResource(R.mipmap.family_icon);
-
+        switch (button_class.getName()){
+            case "Nearby Firms":
+                viewHolder.icons.setImageResource(R.mipmap.location_icon);
+                break;
+            case "Corporate Law":
+                viewHolder.icons.setImageResource(R.mipmap.group_icon);
+                break;
+            case "Criminal Law":
+                viewHolder.icons.setImageResource(R.mipmap.posas);
+                break;
+            case "Tax Law":
+                viewHolder.icons.setImageResource(R.mipmap.tax);
+                break;
+            case "Human Rights Law":
+                viewHolder.icons.setImageResource(R.mipmap.human_rights_icon);
+                break;
+            case "Contract Law":
+                viewHolder.icons.setImageResource(R.mipmap.building_icon);
+                break;
+            case "Family Law":
+                viewHolder.icons.setImageResource(R.mipmap.family_icon);
+                break;
         }
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    Intent intent = null;
+                    switch (button_class.getName()) {
+                        case "Corporate Law":
+                            intent = new Intent(context, hmua.class);
+                            intent.putExtra("title", "Corporate Law");
+                            intent.putExtra("isCorporate", true);
+                            context.startActivity(intent);
+                            break;
+
+                        case "Criminal Law":
+                            intent = new Intent(context, hmua.class);
+                            intent.putExtra("title", "Criminal Law");
+                            intent.putExtra("isCriminal", true);
+                            context.startActivity(intent);
+                            break;
+
+                        case "Tax Law":
+                            intent = new Intent(context, hmua.class);
+                            intent.putExtra("title", "Tax Law");
+                            intent.putExtra("isTax", true);
+                            context.startActivity(intent);
+                            break;
+
+                        case "Human Rights Law":
+                            intent = new Intent(context, hmua.class);
+                            intent.putExtra("title", "Human Rights Law");
+                            intent.putExtra("isHumanRights", true);
+                            context.startActivity(intent);
+                            break;
+
+                        case "Family Law":
+                            intent = new Intent(context, hmua.class);
+                            intent.putExtra("title", "Family");
+                            intent.putExtra("isFamily", true);
+                            context.startActivity(intent);
+                            break;
+
+                        case "Contract Law":
+                            intent = new Intent(context, hmua.class);
+                            intent.putExtra("title", "Contract Law");
+                            intent.putExtra("isContract", true);
+                            context.startActivity(intent);
+                            break;
+                        case "Nearby Firms":
+                            break;
+                    }
+
+            }
+
+        });
     }
 
     @Override

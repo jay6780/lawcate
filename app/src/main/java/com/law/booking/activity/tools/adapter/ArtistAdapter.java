@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -22,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.law.booking.R;
-import com.law.booking.activity.MainPageActivity.Guess.Data_analyticsactivity;
 import com.law.booking.activity.MainPageActivity.profile.providerProfile2;
 import com.law.booking.activity.tools.Model.Usermodel;
 
@@ -45,7 +43,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
     @NonNull
     @Override
     public ProviderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.artist_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.information_layout, parent, false);
         return new ProviderViewHolder(view);
     }
 
@@ -162,23 +160,13 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
         });
 
 
-        holder.data.setOnClickListener(view -> {
-            Intent bookdata = new Intent(context, Data_analyticsactivity.class);
-            bookdata.putExtra("id",provider.getKey());
-            bookdata.putExtra("username",provider.getUsername());
-            context.startActivity(bookdata);
-
-        });
-
-
-
         holder.address.setVisibility(View.VISIBLE);
         Glide.with(context)
                 .load(provider.getImage())
                 .placeholder(R.mipmap.man)
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.imageView);
-        holder.appointment.setOnClickListener(view -> {
+        holder.itemView.setOnClickListener(view -> {
             openProfile(provider.getEmail(), provider.getUsername(), provider.getImage(),
                     provider.getAddress(), provider.getAge(), provider.getLengthOfService(),
                     provider.getKey(),provider.isOnline());
@@ -217,18 +205,15 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
     public class ProviderViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView,address,experience,ratevalue,book_complete;
         ImageView imageView,heart,star;
-        AppCompatButton appointment,data;
 
         public ProviderViewHolder(@NonNull View itemView) {
             super(itemView);
-            data = itemView.findViewById(R.id.data);
             book_complete = itemView.findViewById(R.id.book_complete);
             ratevalue = itemView.findViewById(R.id.ratevalue);
             heart = itemView.findViewById(R.id.heart);
             star = itemView.findViewById(R.id.star);
             experience = itemView.findViewById(R.id.experience);
             address = itemView.findViewById(R.id.address);
-            appointment = itemView.findViewById(R.id.appointment);
             nameTextView = itemView.findViewById(R.id.provider_name);
             imageView = itemView.findViewById(R.id.provider_image);
         }

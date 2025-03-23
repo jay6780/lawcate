@@ -66,7 +66,6 @@ import com.law.booking.activity.events.history_book_event;
 import com.law.booking.activity.events.setEvent_admin;
 import com.law.booking.activity.myfavorites;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
-import com.law.booking.activity.tools.DialogUtils.UserProviderDialog;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
@@ -780,37 +779,31 @@ public class newHome extends AppCompatActivity {
             public void onClick(View v) {
                 if (v.getId() == R.id.messageImg) {
                     Intent intent = new Intent(getApplicationContext(), User_list.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                 } else if (v.getId() == R.id.messageImg2) {
                     Intent intent = new Intent(getApplicationContext(), UserChat.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
 
                 } else if (v.getId() == R.id.eventMessageimg) {
                     Intent intent = new Intent(getApplicationContext(), Event_userchat.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
 
                 } else if (v.getId() == R.id.home) {
                     Intent intent = new Intent(getApplicationContext(), newHome.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
                 } else if (v.getId() == R.id.addAdmin) {
                     Intent intent = new Intent(getApplicationContext(), Createadmin.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
 
                 } else if (v.getId() == R.id.addEventoraganizer) {
                     Intent intent = new Intent(getApplicationContext(), CreateEventorganizer.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
@@ -823,13 +816,11 @@ public class newHome extends AppCompatActivity {
                     dialog.logout(newHome.this);
                 } else if (v.getId() == R.id.service_manage) {
                     Intent intent = new Intent(getApplicationContext(), MyservicePrice.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
                 } else if (v.getId() == R.id.admin_Calendar) {
                     Intent intent = new Intent(getApplicationContext(), CalendarAdmin.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
@@ -839,35 +830,28 @@ public class newHome extends AppCompatActivity {
 
                 } else if (v.getId() == R.id.update) {
                     Intent intent = new Intent(getApplicationContext(), updateActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                 } else if (v.getId() == R.id.setSuperAdmin) {
                     Intent intent = new Intent(getApplicationContext(), set_superAdmin.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
 
                 } else if (v.getId() == R.id.admin_chatSupport) {
                     Intent intent = new Intent(getApplicationContext(), admin_chatsupport.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                     finish();
 
                 } else if (v.getId() == R.id.setEventAdmin) {
                     Intent intent = new Intent(getApplicationContext(), setEvent_admin.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                 } else if (v.getId() == R.id.event_bell) {
                     Intent intent = new Intent(getApplicationContext(), history_book_event.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                 } else if (v.getId() == R.id.bell) {
                     Intent intent = new Intent(getApplicationContext(), history_book.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
 
                 } else if (v.getId() == R.id.manage_accounts) {
                     Intent intent = new Intent(getApplicationContext(), account_manageactivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
                 }
             }
@@ -928,8 +912,7 @@ public class newHome extends AppCompatActivity {
 
                             boolean isCorporate = dataSnapshot.hasChild("isCorporate");
                             if(!isCorporate){
-                                UserProviderDialog userProviderDialog = new UserProviderDialog();
-                                userProviderDialog.serviceDialog(newHome.this);
+                                pushData();
                             }
 
                             boolean isSuperAdmin = dataSnapshot.hasChild("isSuperAdmin") && Boolean.TRUE.equals(dataSnapshot.child("isSuperAdmin").getValue(Boolean.class));
@@ -1078,6 +1061,33 @@ public class newHome extends AppCompatActivity {
             loadDefault();
         }
     }
+
+    private void pushData() {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("isCorporate", false);
+        updates.put("isCriminal", false);
+        updates.put("isFamily", false);
+        updates.put("isTax", false);
+        updates.put("isContract", false);
+        updates.put("isHumanRights", false);
+        updates.put("isOnsite_book", false);
+        updates.put("isOnline_book", false);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            DatabaseReference adminRef = FirebaseDatabase.getInstance()
+                    .getReference("Lawyer")
+                    .child(user.getUid());
+
+            adminRef.updateChildren(updates)
+                    .addOnSuccessListener(unused -> {
+                        Toast.makeText(getApplicationContext(), "Data update!", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Saveddatafromservice", "Failed to save data: " + e.getMessage());
+                    });
+        }
+    }
+
     private void initEventbook() {
         startService(new Intent(this, MessageNotificationService.class));
         String badgenum = SPUtils.getInstance().getString(AppConstans.booknumEvent);

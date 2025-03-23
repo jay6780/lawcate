@@ -9,14 +9,15 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="40dp"
         android:src="@mipmap/login_title" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="170dp"
         android:gravity="center">
 
         <LinearLayout

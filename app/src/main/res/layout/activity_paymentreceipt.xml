@@ -74,11 +74,17 @@
                     android:textSize="15sp"
                     android:textStyle="normal" />
 
+                <com.jaredrummler.materialspinner.MaterialSpinner
+                    android:id="@+id/lawyer_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/servicename" />
+
                 <TextView
                     android:id="@+id/Package"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/servicename"
+                    android:layout_below="@+id/lawyer_type"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/inter"
@@ -136,7 +142,7 @@
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/heads"
+                    android:layout_below="@+id/lawyer_type"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/inter"

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -44,6 +45,13 @@ public class Completebook_adapter_admin extends RecyclerView.Adapter<Completeboo
         holder.time.setText(booking.getTime());
         holder.date.setText(booking.getDate());
         holder.cancel.setText("View Summary");
+        if(booking.getLawType()!= null){
+            holder.lawyer_typetxt.setTextColor(ContextCompat.getColor(context, R.color.light_blue));
+            holder.lawyer_typetxt.setText(booking.getLawType());
+        }else{
+            holder.lawyer_typetxt.setVisibility(View.GONE);
+        }
+
         holder.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,12 +85,13 @@ public class Completebook_adapter_admin extends RecyclerView.Adapter<Completeboo
     }
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,time,date,servicename,price;
+        TextView nameTextView,time,date,servicename,price,lawyer_typetxt;
         ImageView avatar;
         AppCompatButton cancel;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
             cancel = itemView.findViewById(R.id.cancel);
+            lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
             price = itemView.findViewById(R.id.price);
             servicename = itemView.findViewById(R.id.servicename);
             nameTextView = itemView.findViewById(R.id.username);

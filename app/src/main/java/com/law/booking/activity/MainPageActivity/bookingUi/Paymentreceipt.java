@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.chat.User_list;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
@@ -64,7 +65,8 @@ public class Paymentreceipt extends AppCompatActivity {
     private String userName, userImageUrl,userAge,userEmail,userPhone,userAddress;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     private TimePicker time_picker;
-    private String lawname;
+    private String lawType;
+    private MaterialSpinner lawyer_type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,6 +155,7 @@ public class Paymentreceipt extends AppCompatActivity {
     }
 
     private void initView() {
+        lawyer_type = findViewById(R.id.lawyer_type);
         time_picker = findViewById(R.id.time_picker);
         avatar = findViewById(R.id.avatar);
         name = findViewById(R.id.name);
@@ -194,6 +197,16 @@ public class Paymentreceipt extends AppCompatActivity {
         payment_spinner.setAdapter(adapter);
         payment_spinner.setSelection(0);
         initTime();
+        lawType = "Select type";
+        lawyer_type.setItems("Select type", "Legal advice and consultation", "Representation in court", "Document Preparation", "Dispute Resolution");
+        lawyer_type.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                if(!item.equals("Select type")){
+                    lawType = item;
+                    Log.d("SelectedTYPE","TYPE: "+lawType);
+                }
+            }
+        });
 
     }
 
@@ -229,6 +242,11 @@ public class Paymentreceipt extends AppCompatActivity {
 
     private void confirmation() {
         String selectedPayment = "Cash";
+
+        if(lawType.equals("Select type")){
+            Toast.makeText(getApplicationContext(), "Please select correct law type", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if(time.equals("0")){
             Toast.makeText(getApplicationContext(), "Select time first", Toast.LENGTH_SHORT).show();
             return;
@@ -249,10 +267,10 @@ public class Paymentreceipt extends AppCompatActivity {
             String timestamp = String.valueOf(System.currentTimeMillis());
             Booking2 booking = new Booking2(providerName, serviceName, price, heads, phonenumber, date, time, image, addressadmin, email, age, lengthOfservice, selectedPayment, key,snapshotkey,timestamp);
             Booking2 booking2 = new Booking2(userName, serviceName, price, heads, userPhone, date, time, userImageUrl, userAddress, useremail, userAge, "", selectedPayment, userId,snapshotkey,timestamp);
-
             // Add data to MybookUser
             DatabaseReference bookInfoRef2 = databaseReference2.child(childKey).child("bookInfo").child(snapshotkey);
             bookInfoRef2.setValue(booking2);
+
 
             // Add data to Mybook
             DatabaseReference bookInfoRef = databaseReference.child(childKey).child("bookInfo").child(snapshotkey);
@@ -268,6 +286,7 @@ public class Paymentreceipt extends AppCompatActivity {
                                 savedSchedule(userId, key, date);
                                 savedSchedId(email);
                                 savedBookId(childKey,snapshotkey);
+                                savedLaWType(childKey,snapshotkey,lawType);
                                 savedBookCount(key);
                                 savedbookcounting(key);
                                 savedlaw_count(key);
@@ -284,6 +303,19 @@ public class Paymentreceipt extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void savedLaWType(String childKey, String snapshotkey,String type) {
+        DatabaseReference lawtype2 = databaseReference2.child(childKey).child("bookInfo").child(snapshotkey);
+        DatabaseReference lawtype1 = databaseReference.child(childKey).child("bookInfo").child(snapshotkey);
+        lawtype2.child("lawType").setValue(type).addOnSuccessListener(aVoid ->
+                        Log.d("Lawtype","push Success"))
+                .addOnFailureListener(aVoid ->
+                        Log.d("Lawtype","push Failed"));
+        lawtype1.child("lawType").setValue(type).addOnSuccessListener(aVoid ->
+                        Log.d("Lawtype","push Success"))
+                .addOnFailureListener(aVoid ->
+                        Log.d("Lawtype","push Failed"));
     }
 
 

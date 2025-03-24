@@ -9,8 +9,8 @@ android {
         applicationId "com.law.booking"
         minSdk 21
         targetSdk 28
-        versionCode 40
-        versionName "4.0"
+        versionCode 41
+        versionName "4.1"
 
         dexOptions {
             jumboMode = true

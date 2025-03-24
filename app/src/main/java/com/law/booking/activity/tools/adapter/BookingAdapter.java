@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -33,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.Guess.Guess_summary;
 import com.law.booking.activity.MainPageActivity.bookingUi.Bookingmap;
 import com.law.booking.activity.MainPageActivity.bookingUi.Bookingmap2;
@@ -42,7 +44,6 @@ import com.law.booking.activity.tools.Model.BookingId;
 import com.law.booking.activity.tools.Model.ChatRoom;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.R;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -98,6 +99,13 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.servicename.setText(booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": " + booking.getPrice() + " php");
 
+
+        if(booking.getLawType()!= null){
+            holder.lawyer_typetxt.setTextColor(ContextCompat.getColor(context, R.color.light_blue));
+            holder.lawyer_typetxt.setText(booking.getLawType());
+        }else{
+            holder.lawyer_typetxt.setVisibility(View.GONE);
+        }
         Glide.with(holder.itemView.getContext())
                 .load(booking.getImage())
                 .apply(RequestOptions.circleCropTransform())
@@ -177,7 +185,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                                                     booking.getAge(),
                                                     booking.getLengthOfservice(),
                                                     booking.getPhonenumber(),
-                                                    booking.getSnapshotkey()
+                                                    booking.getSnapshotkey(),
+                                                    booking.getLawType()
                                             );
                                             progressDialog.dismiss();
                                         }
@@ -274,7 +283,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
 
     private void checkIfUserIsGuess(String userId, String time, String heads, String cash, String serviceName, String price, String date, String address, String provideremail, String curruntUserEmail,
-                                    String providerName, String image, Context context, String key, String age, String lengthOfservice, String phonenumber,String snapshotkey) {
+                                    String providerName, String image, Context context, String key, String age, String lengthOfservice, String phonenumber,String snapshotkey,String lawType) {
         DatabaseReference guessRef = FirebaseDatabase.getInstance().getReference("Client").child(userId);
         DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("ADMIN").child(key);  // Reference to check if the event exists
         guessRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -356,7 +365,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                                     }
                                 });
 
-                        cancelled.child(chatRoomId).child("bookInfo").child(snapshotKey2).setValue(booking)
+                        cancelled.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking)
                                 .addOnCompleteListener(task1 -> {
                                     if (task1.isSuccessful()) {
                                         Log.d(TAG, "Cancel data saved successfully.");
@@ -364,6 +373,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                                         MybookUser.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
                                         RecentAvailed.child(uid).removeValue();
                                         RecentAvailed_event.child(key).removeValue();
+                                        setCancelled(chatRoomId,snapshotkey,lawType);
                                         decreasebookCount(key);
                                     }
                                 });
@@ -377,6 +387,20 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                 Log.e(TAG, "Error checking Guess user: " + databaseError.getMessage());
             }
         });
+    }
+
+    private void setCancelled(String chatRoomId, String snapshotkey,String type) {
+        DatabaseReference lawtype2 = CancelbookArtist.child(chatRoomId).child("bookInfo").child(snapshotkey);
+        DatabaseReference lawtype1 = cancelled.child(chatRoomId).child("bookInfo").child(snapshotkey);
+        lawtype2.child("lawType").setValue(type).addOnSuccessListener(aVoid ->
+                        Log.d("Lawtype","push Success"))
+                .addOnFailureListener(aVoid ->
+                        Log.d("Lawtype","push Failed"));
+        lawtype1.child("lawType").setValue(type).addOnSuccessListener(aVoid ->
+                        Log.d("Lawtype","push Success"))
+                .addOnFailureListener(aVoid ->
+                        Log.d("Lawtype","push Failed"));
+
     }
 
     private void decreasebookCount(String key) {
@@ -490,12 +514,13 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     }
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,time,date,servicename,price;
+        TextView nameTextView,time,date,servicename,price,lawyer_typetxt;
         ImageView avatar;
         AppCompatButton cancel,viewsummary;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
             viewsummary = itemView.findViewById(R.id.viewsummary);
+            lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
             cancel = itemView.findViewById(R.id.cancel);
             servicename = itemView.findViewById(R.id.servicename);
             nameTextView = itemView.findViewById(R.id.username);

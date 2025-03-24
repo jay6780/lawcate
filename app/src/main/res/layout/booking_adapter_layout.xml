@@ -16,7 +16,7 @@
         <LinearLayout
             android:id="@+id/ll1"
             android:layout_width="wrap_content"
-            android:layout_height="170dp"
+            android:layout_height="200dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
@@ -58,67 +58,68 @@
             android:textSize="15sp" />
 
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card"
+        <LinearLayout
+            android:id="@+id/ll_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/username"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
             android:layout_toRightOf="@+id/ll1"
-            app:cardCornerRadius="15dp">
+            android:orientation="vertical"
+            android:padding="8dp">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/purple_theme"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:drawablePadding="5dp"
+                android:paddingStart="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/calendar_pink"
-                    android:drawablePadding="5dp"
-                    android:paddingStart="10dp"
-                    android:paddingRight="10dp"
-                    android:text="date"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
+            <TextView
+                android:id="@+id/servicename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:paddingStart="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/servicename"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:paddingStart="10dp"
-                    android:paddingRight="10dp"
-                    android:text="date"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
+            <TextView
+                android:id="@+id/lawyer_typetxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:paddingStart="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:paddingStart="10dp"
-                    android:visibility="gone"
-                    android:paddingRight="10dp"
-                    android:text="date"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:paddingStart="10dp"
+                android:paddingRight="10dp"
+                android:text="date"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@id/cancel"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/card"
+            android:layout_below="@+id/ll_info"
             android:layout_marginStart="30dp"
             android:layout_marginTop="10dp"
             android:visibility="gone"
@@ -135,7 +136,7 @@
             android:id="@+id/viewsummary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/card"
+            android:layout_below="@+id/ll_info"
             android:layout_marginStart="30dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="15dp"

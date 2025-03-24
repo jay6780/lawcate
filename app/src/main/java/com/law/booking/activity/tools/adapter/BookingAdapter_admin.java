@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -92,6 +93,12 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
         holder.servicename.setText(booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": " + booking.getPrice() + " php");
 
+        if(booking.getLawType()!= null){
+            holder.lawyer_typetxt.setTextColor(ContextCompat.getColor(context, R.color.light_blue));
+            holder.lawyer_typetxt.setText(booking.getLawType());
+        }else{
+            holder.lawyer_typetxt.setVisibility(View.GONE);
+        }
         Glide.with(holder.itemView.getContext())
                 .load(booking.getImage())
                 .apply(RequestOptions.circleCropTransform())
@@ -157,7 +164,8 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                                     booking.getAge(),
                                                     booking.getLengthOfservice(),
                                                     booking.getPhonenumber(),
-                                                    booking.getSnapshotkey()
+                                                    booking.getSnapshotkey(),
+                                                    booking.getLawType()
                                             );
                                             progressDialog.dismiss();
                                         }
@@ -213,7 +221,8 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                                     booking.getAge(),
                                                     booking.getLengthOfservice(),
                                                     booking.getPhonenumber(),
-                                                    booking.getSnapshotkey()
+                                                    booking.getSnapshotkey(),
+                                                    booking.getLawType()
                                             );
                                             progressDialog.dismiss();
                                         }
@@ -346,7 +355,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     }
 
     private void checkIfUserIsGuess(String userId, String time, String heads, String cash, String serviceName, String price, String date, String address, String provideremail, String curruntUserEmail,
-                                    String providerName, String image, Context context, String key, String age, String lengthOfservice, String phonenumber,String snapshotkey) {
+                                    String providerName, String image, Context context, String key, String age, String lengthOfservice, String phonenumber,String snapshotkey,String lawType) {
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(userId);
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -410,6 +419,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                         Log.d(TAG, "Cancel data saved successfully.");
                                         book.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
                                         Mybook.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
+                                        setConfirmed(chatRoomId,snapshotkey,lawType);
                                     }
                                 });
                     }else{
@@ -429,6 +439,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                         confirmed_lawyer.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
                                         transactionMap.child(chatRoomId).removeValue();
                                         decreasebookCount();
+                                        setComplete(chatRoomId,snapshotkey,lawType);
                                     }
                                 });
                     }
@@ -440,6 +451,33 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                 Log.e(TAG, "Error checking Guess user: " + databaseError.getMessage());
             }
         });
+    }
+
+    private void setComplete(String chatRoomId, String snapshotkey, String lawType) {
+        DatabaseReference CompletebookArtist = FirebaseDatabase.getInstance().getReference("CompletebookLawyer").child(chatRoomId).child("bookInfo").child(snapshotkey);
+        DatabaseReference complete =  FirebaseDatabase.getInstance().getReference("Completebook").child(chatRoomId).child("bookInfo").child(snapshotkey);
+        CompletebookArtist.child("lawType").setValue(lawType).addOnSuccessListener(aVoid ->
+                        Log.d("Lawtype","push Success"))
+                .addOnFailureListener(aVoid ->
+                        Log.d("Lawtype","push Failed"));
+        complete.child("lawType").setValue(lawType).addOnSuccessListener(aVoid ->
+                        Log.d("Lawtype","push Success"))
+                .addOnFailureListener(aVoid ->
+                        Log.d("Lawtype","push Failed"));
+    }
+
+    private void setConfirmed(String chatRoomId, String snapshotkey, String lawType) {
+        DatabaseReference lawtype2 = confirmed_client.child(chatRoomId).child("bookInfo").child(snapshotkey);
+        DatabaseReference lawtype1 = confirmed_lawyer.child(chatRoomId).child("bookInfo").child(snapshotkey);
+        lawtype2.child("lawType").setValue(lawType).addOnSuccessListener(aVoid ->
+                        Log.d("Lawtype","push Success"))
+                .addOnFailureListener(aVoid ->
+                        Log.d("Lawtype","push Failed"));
+        lawtype1.child("lawType").setValue(lawType).addOnSuccessListener(aVoid ->
+                        Log.d("Lawtype","push Success"))
+                .addOnFailureListener(aVoid ->
+                        Log.d("Lawtype","push Failed"));
+
     }
 
     private void decreasebookCount() {
@@ -541,12 +579,13 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     }
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,time,date,servicename,price;
+        TextView nameTextView,time,date,servicename,price,lawyer_typetxt;
         ImageView avatar;
         AppCompatButton cancel,confirmed;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
             confirmed = itemView.findViewById(R.id.confirmed);
+            lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
             cancel = itemView.findViewById(R.id.cancel);
             servicename = itemView.findViewById(R.id.servicename);
             nameTextView = itemView.findViewById(R.id.username);

@@ -1,6 +1,7 @@
 package com.law.booking.activity.tools.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -50,8 +52,18 @@ public class CancelBookAdapter extends RecyclerView.Adapter<CancelBookAdapter.Bo
         holder.time.setText(booking.getTime());
         holder.date.setText(booking.getDate());
         holder.cancel.setText(context.getString(R.string.appointment_failed));
-        holder.servicename.setText("Law name"+": "+booking.getServiceName());
+        holder.servicename.setText(booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": "+booking.getPrice());
+
+
+        Log.d("Lawtype","Value: "+booking.getLawType());
+        if(booking.getLawType()!= null){
+            holder.lawyer_typetxt.setTextColor(ContextCompat.getColor(context, R.color.light_blue));
+            holder.lawyer_typetxt.setText(booking.getLawType());
+        }else{
+            holder.lawyer_typetxt.setVisibility(View.GONE);
+        }
+
         Glide.with(holder.itemView.getContext())
                 .load(booking.getImage())
                 .apply(RequestOptions.circleCropTransform())
@@ -65,12 +77,13 @@ public class CancelBookAdapter extends RecyclerView.Adapter<CancelBookAdapter.Bo
     }
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,time,date,servicename,price;
+        TextView nameTextView,time,date,servicename,price,lawyer_typetxt;
         ImageView avatar;
         AppCompatButton cancel;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
             cancel = itemView.findViewById(R.id.cancel);
+            lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
             price = itemView.findViewById(R.id.price);
             servicename = itemView.findViewById(R.id.servicename);
             nameTextView = itemView.findViewById(R.id.username);

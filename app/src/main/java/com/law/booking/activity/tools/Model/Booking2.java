@@ -17,6 +17,7 @@ public class Booking2 {
     private String paymentMethod;
     private String snapshotkey;
     private String timestamp;
+    private String lawType;
 
     // Default constructor
     public Booking2() {
@@ -46,6 +47,10 @@ public class Booking2 {
 
     // Setters
 
+
+    public String getLawType() {
+        return lawType;
+    }
 
     public String getTimestamp() {
         return timestamp;

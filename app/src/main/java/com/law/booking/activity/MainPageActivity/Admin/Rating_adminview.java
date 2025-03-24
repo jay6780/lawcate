@@ -1,11 +1,5 @@
 package com.law.booking.activity.MainPageActivity.Admin;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +15,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ethanhua.skeleton.Skeleton;
@@ -32,7 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
+import com.law.booking.R;
 import com.law.booking.activity.tools.Model.Review;
 import com.law.booking.activity.tools.Model.Service;
 import com.law.booking.activity.tools.Utils.AppConstans;
@@ -40,7 +40,6 @@ import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.Utils.Utils;
 import com.law.booking.activity.tools.adapter.ReviewAdapter;
 import com.law.booking.activity.tools.adapter.coverAdapter;
-import com.law.booking.R;
 import com.taufiqrahman.reviewratings.BarLabels;
 import com.taufiqrahman.reviewratings.RatingReviews;
 import com.youth.banner.Banner;
@@ -128,7 +127,7 @@ public class Rating_adminview extends AppCompatActivity {
 
                     if (image != null) {
                         bannercontent.setVisibility(View.VISIBLE);
-                        adjustMargin(userImage, -40);
+                        adjustMargin(userImage, -70);
                     } else {
                         bannercontent.setVisibility(View.GONE);
                         adjustMargin(userImage, 20);

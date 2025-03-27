@@ -4,7 +4,9 @@ plugins {
 }
 android {
     compileSdk 33
-
+    lintOptions {
+        baseline file("lint-baseline.xml")
+    }
     defaultConfig {
         applicationId "com.law.booking"
         minSdk 21

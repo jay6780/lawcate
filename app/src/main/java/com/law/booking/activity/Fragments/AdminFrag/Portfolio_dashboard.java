@@ -152,7 +152,6 @@ public class Portfolio_dashboard extends Fragment {
 
     private void fetchPortfoliorecycler(List<Service> services) {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
-        portfolioRecycler.setHasFixedSize(true);
         portfolioRecycler.setLayoutManager(gridLayoutManager);
         portfolioAdapter = new portfolioAdapter_admin(services, getContext());
         portfolioRecycler.setAdapter(portfolioAdapter);

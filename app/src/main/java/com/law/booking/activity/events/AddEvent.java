@@ -192,7 +192,7 @@ public class AddEvent extends AppCompatActivity {
 
     private void saveServiceToDatabase(String serviceName, int servicePrice, String imageUrl, String gender) {
         String serviceId = databaseReference.push().getKey();
-        Service service = new Service(serviceName, servicePrice, imageUrl, gender,serviceId); // Include gender
+        Service service = new Service(serviceName, servicePrice, imageUrl, gender,serviceId,""); // Include gender
 
         if (serviceId != null) {
             databaseReference.child(serviceId).setValue(service)

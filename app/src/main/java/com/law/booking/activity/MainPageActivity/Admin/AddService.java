@@ -10,10 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,10 +26,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.newHome;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Service;
-import com.law.booking.R;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.yalantis.ucrop.UCrop;
 
@@ -198,7 +196,7 @@ public class AddService extends AppCompatActivity {
 
     private void saveServiceToDatabase(String serviceName, int servicePrice, String imageUrl, String gender) {
         String serviceId = databaseReference.push().getKey();
-        Service service = new Service(serviceName, servicePrice, imageUrl, gender,serviceId); // Include gender
+        Service service = new Service(serviceName, servicePrice, imageUrl, gender,serviceId,""); // Include gender
 
         if (serviceId != null) {
             databaseReference.child(serviceId).setValue(service)

@@ -124,6 +124,8 @@ public class newHome extends AppCompatActivity {
     private boolean isGuess = false;
     private LinearLayout admin_chatSupport;
     private PermissionsDialogue.Builder alertPermissions;
+    private String description;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -311,15 +313,19 @@ public class newHome extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.adminHome:
+                        menu2.setVisibility(View.VISIBLE);
                         adminPager.setCurrentItem(0);
                         return true;
                     case R.id.adminCalendar:
+                        menu2.setVisibility(View.VISIBLE);
                         adminPager.setCurrentItem(1);
                         return true;
                     case R.id.data_analytics:
+                        menu2.setVisibility(View.VISIBLE);
                         adminPager.setCurrentItem(2);
                         return true;
                     case R.id.admin_profile:
+                        menu2.setVisibility(View.GONE);
                         adminPager.setCurrentItem(3);
                         return true;
                 }
@@ -803,7 +809,7 @@ public class newHome extends AppCompatActivity {
 
                 } else if (v.getId() == R.id.adminprofile) {
                     Dialog dialog = new Dialog();
-                    dialog.updateAdminProfile(newHome.this,guessImageAdmin,userEmailAdmin,usernameTextAdin,phoneAdmin,fullnameAdmin,addressUserAdmin,ageAdmin,lenght);
+                    dialog.updateAdminProfile(newHome.this,guessImageAdmin,userEmailAdmin,usernameTextAdin,phoneAdmin,fullnameAdmin,addressUserAdmin,ageAdmin,lenght,description);
                 } else if (v.getId() == R.id.logoutAdmin) {
                     Dialog dialog = new Dialog();
                     dialog.logout(newHome.this);
@@ -893,6 +899,9 @@ public class newHome extends AppCompatActivity {
                             initAdminSaveData(user.getUsername(),user.getEmail(),user.getImage(),user.getPhone(),
                                     user.getName(),user.getAddress(),user.getAge(),user.getLengthOfService());
                             startService(new Intent(newHome.this, MessageNotificationService.class));
+                            if(user!=null){
+                                description = user.getDescription();
+                            }
                             boolean Lawyer = true;
                             SPUtils.getInstance().put(AppConstans.userType,Lawyer);
 
@@ -936,7 +945,7 @@ public class newHome extends AppCompatActivity {
                                         storeUserInDatabase(name);
                                         updateUserUI(user, true,false,false);
 
-                                        initAdminBook();
+//                                        initAdminBook();
                                         initUserInfo_admin(user.getImage(),user.getUsername(),user.getAddress(),user.getEmail(),isVerify);
                                     } else {
                                         if (!hasAge) {
@@ -1128,6 +1137,8 @@ public class newHome extends AppCompatActivity {
         SPUtils.getInstance().put(AppConstans.AdminAdress,address);
         SPUtils.getInstance().put(AppConstans.AdminAge,age);
         SPUtils.getInstance().put(AppConstans.AdminLenght,lengthOfService);
+        SPUtils.getInstance().put(AppConstans.profilename,username);
+        SPUtils.getInstance().put(AppConstans.image_profile,image);
     }
 
     private void initEventSaveData(String username, String email, String image, String phone, String name, String address, String age, String lengthOfService) {
@@ -1352,8 +1363,8 @@ public class newHome extends AppCompatActivity {
             default_menu.setVisibility(View.GONE);
             event_bell.setVisibility(View.GONE);
             event_badge.setVisibility(View.GONE);
-            adminbell.setVisibility(View.VISIBLE);
-            badge_count_admin.setVisibility(View.VISIBLE);
+            adminbell.setVisibility(View.GONE);
+            badge_count_admin.setVisibility(View.GONE);
             sidenav.setVisibility(View.VISIBLE);
             admin_menus.setVisibility(View.VISIBLE);
             admin_linear.setVisibility(View.VISIBLE);

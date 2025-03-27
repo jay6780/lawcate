@@ -132,7 +132,7 @@ public class HomePage extends AppCompatActivity {
 
                 } else if (v.getId() == R.id.adminprofile) {
                     Dialog dialog = new Dialog();
-                    dialog.updateAdminProfile(HomePage.this,guessImage,userEmail,usernameText,phone,fullname,addressUser,ageAdmin,"");
+                    dialog.updateAdminProfile(HomePage.this,guessImage,userEmail,usernameText,phone,fullname,addressUser,ageAdmin,"","");
 
                  } else if (v.getId() == R.id.logout) {
                     Dialog dialog = new Dialog();

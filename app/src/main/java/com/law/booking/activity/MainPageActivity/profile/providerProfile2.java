@@ -4,11 +4,13 @@ package com.law.booking.activity.MainPageActivity.profile;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,37 +36,45 @@ import com.law.booking.activity.MainPageActivity.chat.User_list;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
 import com.law.booking.activity.MainPageActivity.maps.MapsActivity2;
 import com.law.booking.activity.tools.Model.ChatRoom;
+import com.law.booking.activity.tools.Model.Service;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
+import com.law.booking.activity.tools.Utils.Utils;
 import com.law.booking.activity.tools.adapter.ServiceProviderAdapter;
+import com.law.booking.activity.tools.adapter.coverAdapter_user;
+import com.youth.banner.Banner;
+import com.youth.banner.indicator.CircleIndicator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class providerProfile2 extends AppCompatActivity {
-    private TextView userAddress,userLenghtexp,name,profiletxt;
+    private TextView userAddress,name,profiletxt;
     private ImageView profileimage,backBtn,bell,messageImg;
     CardView messagebtn;
     private String chatRoomId;
     private String image;
+    private String description;
     private String email;
+    private String[] mTitles;
     private String providerName;
     private String address,key;
     private String age,lengthOfservice;
     private String TAG = "providerProfile2";
     private boolean isOnline;
     private DatabaseReference databaseReference;
+    private TextView description_view;
+    private Banner banner;
+    private CommonTabLayout hmua_tab;
     String bookprovideremail = SPUtils.getInstance().getString(AppConstans.bookprovideremail);
     private ViewPager viewPager;
-    private CommonTabLayout tab_profile;
-    private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
-    private String[] mTitles;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.provider_activity);
+        setContentView(R.layout.lawyer_profile_user);
         changeStatusBarColor(getResources().getColor(R.color.white2));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -73,18 +83,20 @@ public class providerProfile2 extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         ServiceProviderAdapter adapter = new ServiceProviderAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+        hmua_tab = findViewById(R.id.hmua_tab);
         profiletxt = findViewById(R.id.profiletxt);
-        tab_profile = findViewById(R.id.tab_profile);
+        description_view = findViewById(R.id.description_view);
+        banner = findViewById(R.id.banner);
         profileimage = findViewById(R.id.avatar);
         name = findViewById(R.id.name);
         bell = findViewById(R.id.bell);
         backBtn = findViewById(R.id.back);
         messageImg = findViewById(R.id.messageImg);
         userAddress = findViewById(R.id.address);
-        userLenghtexp = findViewById(R.id.lenghtofservice);
         messagebtn = findViewById(R.id.message);
         key = getIntent().getStringExtra("key");
         profiletxt.setText("Lawyer details");
+        profiletxt.setTextSize(18);
         isOnline = getIntent().getBooleanExtra("isOnline", false);
         Log.d(TAG, "Is Online: " + isOnline);
         SPUtils.getInstance().put(AppConstans.KEY, key);
@@ -98,30 +110,44 @@ public class providerProfile2 extends AppCompatActivity {
             return;
         }
         String location = getString(R.string.address);
+        String names = getString(R.string.name);
         String taon = getString(R.string.yearss);
+
+
+
+
+        description = getIntent().getStringExtra("description");
         image = getIntent().getStringExtra("image");
+        SPUtils.getInstance().put(AppConstans.image_profile,image);
         providerName = getIntent().getStringExtra("username");
+        SPUtils.getInstance().put(AppConstans.profilename,providerName);
         address = getIntent().getStringExtra("address");
         email = getIntent().getStringExtra("email");
         age = getIntent().getStringExtra("age");
         lengthOfservice = getIntent().getStringExtra("lengthOfservice");
-        SPUtils.getInstance().put(AppConstans.servicelength,lengthOfservice);
-        userLenghtexp.setText((lengthOfservice != null ? lengthOfservice : "N/A")+" "+taon);
+        SPUtils.getInstance().put(AppConstans.bookcount,lengthOfservice);
         Log.d(TAG, "Storing Provider Name: " + providerName);
         SPUtils.getInstance().put(AppConstans.providerName, providerName);
         Log.d(TAG, "Storing Email: " + email);
         SPUtils.getInstance().put(AppConstans.providers, key);
         SPUtils.getInstance().put(AppConstans.email, email);
         name.setText((providerName != null ? providerName : "N/A"));
-        userAddress.setText(location+": " + (address != null ? address : "N/A"));
+        userAddress.setText((address != null ? address : "N/A"));
         messageImg.setOnClickListener(view -> chat());
-        initTabs();
+        if(description !=null){
+            description_view.setText(description);
+        }else{
+            description_view.setVisibility(View.GONE);
+        }
+
+        savedataprofile(providerName,image,email,address,key,isOnline,age,lengthOfservice,description);
+
         Glide.with(this)
                 .load(image)
                 .transform(new CircleCrop())
-                .error(R.mipmap.man)
+                .placeholder(R.drawable.baseline_person_24)
+                .error(R.drawable.baseline_person_24)
                 .into(profileimage);
-
         databaseReference = FirebaseDatabase.getInstance().getReference();
         userAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,13 +160,13 @@ public class providerProfile2 extends AppCompatActivity {
                 intent.putExtra("image",image);
                 intent.putExtra("email",email);
                 startActivity(intent);
-                overridePendingTransition(0,0);
                 finish();
             }
         });
-
+        InitTitle();
+        initFragment();
         initShowbook();
-
+        fetchServices();
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,43 +185,31 @@ public class providerProfile2 extends AppCompatActivity {
 
     }
 
-    private void chat() {
-        Intent intent = new Intent(getApplicationContext(), User_list.class);
-        startActivity(intent);
-    }
-    private void initShowbook() {
-        startService(new Intent(this, MessageNotificationService.class));
-        TextView badgeCount = findViewById(R.id.badge_count);
-        String badgenum = SPUtils.getInstance().getString(AppConstans.booknum);
-        Log.d("badgenum","Badge: "+badgenum);
-        if(badgenum.isEmpty() || badgenum.equals("null")){
-            badgeCount.setText("0");
-        }else{
-            badgeCount.setVisibility(View.VISIBLE);
-            badgeCount.setText(badgenum);
+    private void savedataprofile(String providerName, String image, String email, String address, String key, boolean isOnline,String age,String service_length,String description) {
+        SPUtils.getInstance().put(AppConstans.providerName, providerName);
+        SPUtils.getInstance().put(AppConstans.image, image);
+        SPUtils.getInstance().put(AppConstans.providerEmail, email);
+        SPUtils.getInstance().put(AppConstans.address, address);
+        SPUtils.getInstance().put(AppConstans.key, key);
+        SPUtils.getInstance().put(AppConstans.isOnline, isOnline);
+        SPUtils.getInstance().put(AppConstans.provider_age, age);
+        SPUtils.getInstance().put(AppConstans.service_length, service_length);
+        SPUtils.getInstance().put(AppConstans.description, description);
 
-        }
-
-        bell.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), history_book.class);
-                intent.putExtra("bookprovideremail", bookprovideremail);
-                startActivity(intent);
-            }
-        });
 
     }
 
-    private void initTabs() {
+    private void InitTitle() {
         mTitles = new String[]{
-                "Portfolio","Service","Reviews"
+                "Portfolio","Services","Reviews"
 
         };
-        mTabEntities = new ArrayList<>();
+    }
+    private void initFragment() {
+        ArrayList<CustomTabEntity> list = new ArrayList<>();
         for (int i = 0; i < mTitles.length; i++) {
             final int j = i;
-            mTabEntities.add(new CustomTabEntity() {
+            list.add(new CustomTabEntity() {
                 @Override
                 public String getTabTitle() {
                     return mTitles[j];
@@ -213,10 +227,9 @@ public class providerProfile2 extends AppCompatActivity {
             });
         }
 
+        hmua_tab.setTabData(list);
 
-        tab_profile.setTabData(mTabEntities);
-
-        tab_profile.setOnTabSelectListener(new OnTabSelectListener() {
+        hmua_tab.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
                 viewPager.setCurrentItem(position);
@@ -224,10 +237,8 @@ public class providerProfile2 extends AppCompatActivity {
 
             @Override
             public void onTabReselect(int position) {
-
             }
         });
-
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -235,8 +246,7 @@ public class providerProfile2 extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                tab_profile.setCurrentTab(position);
-
+                hmua_tab.setCurrentTab(position);
             }
 
             @Override
@@ -244,6 +254,72 @@ public class providerProfile2 extends AppCompatActivity {
         });
     }
 
+    private void fetchServices() {
+        DatabaseReference serviceRef = FirebaseDatabase.getInstance().getReference("Cover_photo").child(key);
+        serviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    List<Service> services = new ArrayList<>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Service service = snapshot.getValue(Service.class);
+                        String image = service.getImageUrl();
+                        Log.d("Banners","image: "+image);
+                        services.add(service);
+                        setupBanner(services);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error fetching services: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void setupBanner(List<Service> services) {
+        if (providerProfile2.this != null) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            providerProfile2.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int screenWidth = displayMetrics.widthPixels;
+            int heightInPixels = Utils.dp2px(providerProfile2.this, 200);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(screenWidth, heightInPixels);
+            banner.setLayoutParams(lp);
+            banner.setAdapter(new coverAdapter_user(services, providerProfile2.this))
+                    .setIndicator(new CircleIndicator(providerProfile2.this))
+                    .setOnBannerListener((data, position) -> {
+                        // Handle banner click events
+                    })
+                    .start();
+        }
+    }
+
+    private void chat() {
+        Intent intent = new Intent(getApplicationContext(), User_list.class);
+        startActivity(intent);
+    }
+    private void initShowbook() {
+        startService(new Intent(this, MessageNotificationService.class));
+        TextView badgeCount = findViewById(R.id.badge_count);
+        String badgenum = SPUtils.getInstance().getString(AppConstans.booknum);
+        if(badgenum.isEmpty() || badgenum.equals("null")){
+            SPUtils.getInstance().put(AppConstans.booknum, "0");
+        }else{
+            badgeCount.setVisibility(View.VISIBLE);
+            badgeCount.setText(badgenum);
+
+        }
+        bell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), history_book.class);
+                intent.putExtra("bookprovideremail", bookprovideremail);
+                startActivity(intent);
+            }
+        });
+
+    }
 
 
     private void changeStatusBarColor(int color) {

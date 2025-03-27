@@ -224,7 +224,7 @@ public class AddService_view_event extends AppCompatActivity {
     }
 
     private void saveServiceToDatabase(String serviceName, int servicePrice, String imageUrl, String gender) {
-        Service service = new Service(serviceName, servicePrice, imageUrl, gender,key); // Include gender
+        Service service = new Service(serviceName, servicePrice, imageUrl, gender,key,""); // Include gender
 
         if (key != null) {
             databaseReference.child(key).setValue(service)

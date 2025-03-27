@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -312,5 +313,10 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
         Dialog timepick = new Dialog();
         String key = schedule.getKey();
         timepick.timepicker(getActivity(), schedule.getTime(), userName, userImageUrl, key);
+    }
+    @Override
+    public void onResume() {
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        super.onResume();
     }
 }

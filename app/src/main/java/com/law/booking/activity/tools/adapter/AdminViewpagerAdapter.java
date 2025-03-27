@@ -6,10 +6,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.law.booking.activity.Fragments.AdminFrag.Admin_dashboard_fragment;
+import com.law.booking.activity.Fragments.AdminFrag.Admin_homedashboard;
 import com.law.booking.activity.Fragments.AdminFrag.CalendarAdminFragment;
 import com.law.booking.activity.Fragments.AdminFrag.Data_analytics_fragment;
-import com.law.booking.activity.Fragments.AdminFrag.MyServicePriceFragment;
-import com.law.booking.activity.Fragments.AdminFrag.admin_profileFragment;
 
 public class AdminViewpagerAdapter extends FragmentPagerAdapter {
 
@@ -22,13 +22,13 @@ public class AdminViewpagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new MyServicePriceFragment();
+                return new Admin_homedashboard();
             case 1:
                 return new CalendarAdminFragment();
             case 2:
                 return new Data_analytics_fragment();
             case 3:
-                return new admin_profileFragment();
+                return new Admin_dashboard_fragment();
             default:
                 return null;
         }

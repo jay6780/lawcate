@@ -28,7 +28,7 @@ import com.law.booking.activity.tools.Model.Service;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
-import com.law.booking.activity.tools.adapter.portfolioAdapter;
+import com.law.booking.activity.tools.adapter.PortfolioAdapter;
 import com.law.booking.R;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.List;
 public class PortfolioFragment extends Fragment {
 
     private DatabaseReference serviceRef,guessRef;
-    private portfolioAdapter serviceAdapter;
+    private PortfolioAdapter serviceAdapter;
     private ViewSkeletonScreen skeletonScreen;
     private LinearLayout ll_skeleton;
     private RecyclerView myserviceRecycler;
@@ -104,7 +104,7 @@ public class PortfolioFragment extends Fragment {
                         }
                     }
                 }
-                serviceAdapter = new portfolioAdapter(services, getContext());
+                serviceAdapter = new PortfolioAdapter(services, getContext());
                 myserviceRecycler.setAdapter(serviceAdapter);
             }
 

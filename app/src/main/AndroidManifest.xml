@@ -58,6 +58,34 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="face" />
+        <activity
+            android:name=".activity.MainPageActivity.Provider.FullScreenImage_cover"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.MainPageActivity.Provider.FullScreenImage_cover_user"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activity.MainPageActivity.Provider.FullScreenImage_profile_user"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activity.MainPageActivity.Admin.CoverUpload"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activity.MainPageActivity.Admin.Multpile_upload"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".activity.MainPageActivity.Provider.FullScreenImageActivity3"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.MainPageActivity.Guess.nearby_activity"

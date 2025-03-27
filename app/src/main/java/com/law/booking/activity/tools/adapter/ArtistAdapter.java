@@ -169,7 +169,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
         holder.itemView.setOnClickListener(view -> {
             openProfile(provider.getEmail(), provider.getUsername(), provider.getImage(),
                     provider.getAddress(), provider.getAge(), provider.getLengthOfService(),
-                    provider.getKey(),provider.isOnline());
+                    provider.getKey(),provider.isOnline(),provider.getDescription());
         });
     }
 
@@ -180,7 +180,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
     }
 
     private void openProfile(String email, String username, String image, String address, String age, String lengthOfservice,
-                             String key,boolean isOnline) {
+                             String key,boolean isOnline,String description) {
         Intent intent = new Intent(context, providerProfile2.class);
         intent.putExtra("email", email);
         intent.putExtra("username", username);
@@ -190,6 +190,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
         intent.putExtra("lengthOfservice", lengthOfservice);
         intent.putExtra("key", key);
         intent.putExtra("isOnline", isOnline);
+        intent.putExtra("description", description);
+
         context.startActivity(intent);
 //        if(context instanceof Activity){
 //            ((Activity) context).finish();

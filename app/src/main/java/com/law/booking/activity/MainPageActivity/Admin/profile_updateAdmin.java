@@ -102,11 +102,11 @@ public class profile_updateAdmin extends AppCompatActivity {
     private Uri userImageUri;
     private boolean isImagePicked = false;
     private boolean isFaceDetected = false;
-    private EditText phoneNumberEditText,birthdays,addressUser;
+    private EditText phoneNumberEditText,birthdays,addressUser,shortdescription;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_update_admin);
+        setContentView(R.layout.activity_lawyer_profile);
 
         // Set the title of the action bar
         getSupportActionBar().setTitle(R.string.myProfile);
@@ -128,6 +128,7 @@ public class profile_updateAdmin extends AppCompatActivity {
         updateButton = findViewById(R.id.btn23);
         ageEditText = findViewById(R.id.age);
         fullnameEditText = findViewById(R.id.name);
+        shortdescription = findViewById(R.id.shortdescription);
         addressUser = findViewById(R.id.address);
         lenghtofserviceEditText = findViewById(R.id.lenghtofservice);
         phone = findViewById(R.id.Phone);
@@ -144,6 +145,7 @@ public class profile_updateAdmin extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
+            String description = intent.getStringExtra("description");
             String username = intent.getStringExtra("username");
             String email = intent.getStringExtra("email");
             String image = intent.getStringExtra("image");
@@ -156,6 +158,7 @@ public class profile_updateAdmin extends AppCompatActivity {
             usernameEditText.setText(username);
             ageEditText.setText(age);
             addressUser.setText(address);
+            shortdescription.setText(description);
             addressUser.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -194,6 +197,7 @@ public class profile_updateAdmin extends AppCompatActivity {
                 }
 
                 // Collect data from the EditText fields
+                String description = shortdescription.getText().toString().trim();
                 String fullname = fullnameEditText.getText().toString().trim();
                 String age = ageEditText.getText().toString().trim();
                 String username = usernameEditText.getText().toString().trim();
@@ -202,6 +206,10 @@ public class profile_updateAdmin extends AppCompatActivity {
                 String phoneNumber = phoneNumberEditText.getText().toString().trim();
                 String lengthService = lenghtofserviceEditText.getText().toString().trim();
 
+                if (TextUtils.isEmpty(description)) {
+                    lenghtofserviceEditText.setError("Please enter your description");
+                    return;
+                }
                 // Validate input fields
                 if (TextUtils.isEmpty(lengthService)) {
                     lenghtofserviceEditText.setError("Please enter your service length");
@@ -256,6 +264,7 @@ public class profile_updateAdmin extends AppCompatActivity {
                 userRef.child("age").setValue(age);
                 userRef.child("lengthOfService").setValue(lengthService);
                 userRef.child("userId").setValue(userId);
+                userRef.child("description").setValue(description);
                 // If image is picked, upload it
                 if (isImagePicked) {
                     Uri imageUri = getImageUri();

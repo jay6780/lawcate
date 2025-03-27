@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -233,5 +234,11 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
                 refreshLayout.finishRefresh(false);
             }
         }, 100);
+    }
+
+    @Override
+    public void onResume() {
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        super.onResume();
     }
 }

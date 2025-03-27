@@ -12,25 +12,26 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.law.booking.R;
-import com.law.booking.activity.MainPageActivity.Provider.FullScreenImage_cover;
+import com.law.booking.activity.MainPageActivity.Provider.FullScreenImage_cover_user;
 import com.law.booking.activity.tools.Model.Service;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 import com.youth.banner.adapter.BannerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class coverAdapter extends BannerAdapter<Service, coverAdapter.ServiceViewHolder> {
+public class coverAdapter_user extends BannerAdapter<Service, coverAdapter_user.ServiceViewHolder> {
     private Context context;
 
     // Constructor
-    public coverAdapter(List<Service> serviceList, Context context) {
+    public coverAdapter_user(List<Service> serviceList, Context context) {
         super(serviceList);
         this.context = context;
     }
@@ -45,18 +46,15 @@ public class coverAdapter extends BannerAdapter<Service, coverAdapter.ServiceVie
     @Override
     public void onBindView(@NonNull ServiceViewHolder holder, Service data, int position, int size) {
         String imageUrl = data.getImageUrl();
-        int drawableResId = 0;
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
             loadImageFromUrl(holder.imageView, imageUrl);
-        } else {
-            drawableResId = loadDrawable(holder.imageView, data.getName());
-        }
 
+        }
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String key = SPUtils.getInstance().getString(AppConstans.KEY);
                 DatabaseReference pictureref = FirebaseDatabase.getInstance().getReference("Cover_photo").child(key);
                 pictureref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -70,7 +68,7 @@ public class coverAdapter extends BannerAdapter<Service, coverAdapter.ServiceVie
                         }
 
                         if (!imageUrls.isEmpty()) {
-                            Intent intent = new Intent(view.getContext(), FullScreenImage_cover.class);
+                            Intent intent = new Intent(view.getContext(), FullScreenImage_cover_user.class);
                             intent.putStringArrayListExtra("image_list", new ArrayList<>(imageUrls));
                             intent.putExtra("position", 0);
                             context.startActivity(intent);
@@ -94,26 +92,6 @@ public class coverAdapter extends BannerAdapter<Service, coverAdapter.ServiceVie
         Glide.with(imageView.getContext())
                 .load(imageUrl)
                 .into(imageView);
-    }
-
-    private int loadDrawable(ImageView imageView, String serviceName) {
-        int drawableResId = 0;
-        if (serviceName.contains("Light Makeup")) {
-            drawableResId = R.mipmap.imgesample1;
-        } else if (serviceName.contains("Smokey-eye Makeup")) {
-            drawableResId = R.mipmap.imagesample3;
-        } else if (serviceName.contains("Wedding makeup")) {
-            drawableResId = R.mipmap.imagesample4;
-        } else if (serviceName.contains("Graduation light makeup look")) {
-            drawableResId = R.mipmap.imagesample7;
-        } else if (serviceName.contains("Service and events")) {
-            drawableResId = R.mipmap.makeup;
-        }
-        Glide.with(imageView.getContext())
-                .load(drawableResId)
-                .into(imageView);
-
-        return drawableResId; // Return the drawable resource ID
     }
 
     static class ServiceViewHolder extends RecyclerView.ViewHolder {

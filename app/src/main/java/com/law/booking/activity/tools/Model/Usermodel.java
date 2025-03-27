@@ -26,6 +26,8 @@ public class Usermodel {
     private int bookcount;
     private int bookcomplete;
     private int bookcancel;
+    private String description;
+
     public Usermodel() {
     }
 
@@ -41,6 +43,9 @@ public class Usermodel {
         this.birthday = birthday;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
     public int getBookcancel() {
         return bookcancel;

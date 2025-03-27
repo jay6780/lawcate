@@ -8,21 +8,33 @@ public class Service {
     private String gender;
     private boolean isChecked;  // New field to track checkbox state
     private String key;
+    private String description;
+    private String caption;
     // Default constructor
     public Service() {
     }
 
     // Parameterized constructor
-    public Service(String name, int price, String imageUrl, String gender,String key) {
+    public Service(String name, int price, String imageUrl, String gender,String key,String description) {
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
         this.gender = gender;
         this.isChecked = false;
         this.key =  key;
+        this.description = description;
     }
 
     // Getter and setter for 'name'
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public String getName() {
         return name;
     }

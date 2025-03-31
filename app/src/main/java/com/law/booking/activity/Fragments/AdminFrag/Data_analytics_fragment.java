@@ -1,6 +1,7 @@
 package com.law.booking.activity.Fragments.AdminFrag;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -28,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.law.booking.R;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -35,7 +38,9 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Data_analytics_fragment extends Fragment implements OnRefreshListener {
@@ -46,12 +51,15 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
     private LinearLayout linear_graph;
     private SmartRefreshLayout refreshLayout;
     private boolean isRefresh = false;
+    private MaterialSpinner timeStampSpinner;
+    private String timeStampValue;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_data_analytics_fragment, container, false);
         barGraph = view.findViewById(R.id.barGraph);
         pieChart = view.findViewById(R.id.piechart);
+        timeStampSpinner = view.findViewById(R.id.date_spinner);
         linear_graph = view.findViewById(R.id.linear_graph);
         refreshLayout = view.findViewById(R.id.refreshLayout);
         complete_txt = view.findViewById(R.id.complete_txt);
@@ -61,43 +69,24 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
         linear_graph.setVisibility(View.VISIBLE);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableRefresh(true);
+        init_barChart();
         initFirebase();
+        timeStampSpinner.setItems("All", "Day","Week","Month");
+
+        timeStampSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                timeStampValue = item;
+                initFirebase();
+            }
+        });
         return view;
     }
 
-    private void initFirebase() {
+
+    private void init_barChart() {
         String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(key);
-
-        DatabaseReference piechartref = FirebaseDatabase.getInstance().getReference("Lawname").child(key);
-
-        piechartref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    List<PieEntry> entries = new ArrayList<>();
-
-                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                        String lawType = childSnapshot.getKey();
-                        Float value = childSnapshot.getValue(Float.class);
-
-                        if (lawType != null && value != null) {
-                            entries.add(new PieEntry(value, lawType));
-                        }
-                    }
-
-                    updatePieChart(entries);
-                } else {
-                    Log.d(TAG, "No data found for Lawname with key: " + key);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "Failed to load law type: " + databaseError.getMessage());
-            }
-        });
-
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -120,20 +109,83 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+
     }
 
+    private void initFirebase() {
+        String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference piechartref = FirebaseDatabase.getInstance().getReference("Lawname").child(key);
+
+        piechartref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, Integer> entryMap = new HashMap<>();
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        String lawType = childSnapshot.child("serviceName").getValue(String.class);
+                        Integer value = childSnapshot.child("count").getValue(Integer.class);
+                        String timeStampStr = childSnapshot.child("timeStamp").getValue(String.class);
+                        Log.d("TimeStamp","value: "+timeStampStr);
+
+                        if (applyFlexibleFilter(timeStampStr)){
+                            if (lawType != null && value != null) {
+                                entryMap.put(lawType, entryMap.getOrDefault(lawType, 0) + value);
+                            }
+                        }
+                    }
+
+                    List<PieEntry> entries = new ArrayList<>();
+                    for (Map.Entry<String, Integer> entry : entryMap.entrySet()) {
+                        entries.add(new PieEntry(entry.getValue(), entry.getKey()));
+                    }
+
+                    updatePieChart(entries);
+                } else {
+                    Log.d(TAG, "No data found for Lawname.");
+                    updatePieChart(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Failed to load law type: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private boolean applyFlexibleFilter(String timeStampMillis) {
+        if (timeStampValue == null || timeStampValue.equals("All")) {
+            return true;
+        }
+        long currentTime = System.currentTimeMillis();
+        long timeDiff = currentTime - Long.parseLong(timeStampMillis);
+
+        switch (timeStampValue) {
+            case "Day":
+                return timeDiff <= 24 * 60 * 60 * 1000;
+            case "Week":
+                return timeDiff <= 21 * 24 * 60 * 60 * 1000 && timeDiff > 3 * 24 * 60 * 60 * 1000;
+            case "Month":
+                return timeDiff <= 30 * 24 * 60 * 60 * 1000 && timeDiff > 21 * 24 * 60 * 60 * 1000;
+            default:
+                return true;
+        }
+    }
+
+
     private void updatePieChart(List<PieEntry> entries) {
+        pieChart.clear();
         if (entries.isEmpty()) {
             Log.d(TAG, "No data available to update PieChart");
+            pieChart.invalidate();
             return;
         }
-
         List<Integer> colors = getRandomColors(entries.size());
 
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(colors);
         dataSet.setValueTextSize(12f);
-
         dataSet.setValueTextColors(getContrastingTextColors(colors));
 
         PieData pieData = new PieData(dataSet);
@@ -144,6 +196,8 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
         pieChart.getDescription().setEnabled(false);
         pieChart.invalidate();
     }
+
+
 
     private List<Integer> getRandomColors(int size) {
         List<Integer> colors = new ArrayList<>();

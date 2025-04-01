@@ -320,74 +320,46 @@ public class Paymentreceipt extends AppCompatActivity {
 
 
     private void savedbookcounting(String key) {
+        String timeStamp = String.valueOf(System.currentTimeMillis());
         DatabaseReference hmuaref = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("Lawyer")
-                .child(key)
-                .child("bookcount");
-        hmuaref.get().addOnSuccessListener(snapshot -> {
-            int currentCount = 0;
-            if (snapshot.exists()) {
-                currentCount = snapshot.getValue(Integer.class);
-            }
-            int newCount = currentCount + 1;
-            hmuaref.setValue(newCount)
-                    .addOnSuccessListener(aVoid ->
-                            Log.d("FirebaseDB", "Count updated successfully to " + newCount))
-                    .addOnFailureListener(e ->
-                            Log.e("FirebaseDB", "Error updating count", e));
-        }).addOnFailureListener(e ->
-                Log.e("FirebaseDB", "Error fetching count", e));
+                .child("Lawyer_data")
+                .child(key);
+        String pushkey = hmuaref.push().getKey();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("timeStamp", timeStamp);
+        data.put("bookcount", 1);
+        data.put("pushkey", pushkey);
+        data.put("LawyerId", key);
+
+        hmuaref.child(pushkey).setValue(data)
+                .addOnSuccessListener(aVoid ->
+                        Log.d("FirebaseDB", "Count updated successfully"))
+                .addOnFailureListener(e ->
+                        Log.e("FirebaseDB", "Error updating count", e));
     }
+
 
     private void savedlaw_count(String key) {
         DatabaseReference ref = FirebaseDatabase.getInstance()
                 .getReference("Lawname")
                 .child(key);
-
         String timeStamp = String.valueOf(System.currentTimeMillis());
         String pushkey = ref.push().getKey();
-        pushdata(ref, pushkey, timeStamp, serviceName, key, 1);
-        incrementTotalBookingCount(key);
-        }
-
-    private void incrementTotalBookingCount(String lawyerId) {
-        DatabaseReference ref = FirebaseDatabase.getInstance()
-                .getReference("Lawyer")
-                .child(lawyerId)
-                .child("totalBookings");
-
-        ref.get().addOnSuccessListener(snapshot -> {
-            int currentCount = 0;
-            if (snapshot.exists()) {
-                currentCount = snapshot.getValue(Integer.class);
-            }
-            int finalCurrentCount = currentCount;
-            ref.setValue(currentCount + 1)
-                    .addOnSuccessListener(aVoid ->
-                            Log.d("FirebaseDB", "Total booking count updated to " + (finalCurrentCount + 1)))
-                    .addOnFailureListener(e ->
-                            Log.e("FirebaseDB", "Error updating total booking count", e));
-        }).addOnFailureListener(e ->
-                Log.e("FirebaseDB", "Error fetching total booking count", e));
-    }
-
-
-    private void pushdata(DatabaseReference ref, String pushkey, String timeStamp,
-                          String serviceName, String lawyerId, int count) {
         Map<String, Object> data = new HashMap<>();
         data.put("timeStamp", timeStamp);
         data.put("key", pushkey);
         data.put("serviceName", serviceName);
-        data.put("count", count);
-        data.put("lawyerId", lawyerId);
+        data.put("count", 1);
+        data.put("lawyerId", key);
 
         ref.child(pushkey).setValue(data)
                 .addOnSuccessListener(aVoid ->
                         Log.d("FirebaseDB", "Booking added with count = 1"))
                 .addOnFailureListener(e ->
                         Log.e("FirebaseDB", "Error adding booking", e));
-    }
+        }
 
 
     private void savEBookIdforAdmin(String chatId,String key,String snapshotkey) {

@@ -48,17 +48,18 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <com.jaredrummler.materialspinner.MaterialSpinner
+                        android:id="@+id/date_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"/>
+
                     <com.github.mikephil.charting.charts.BarChart
                         android:id="@+id/barGraph"
                         android:layout_width="match_parent"
                         android:layout_marginTop="10dp"
                         android:layout_height="350dp"/>
 
-                    <com.jaredrummler.materialspinner.MaterialSpinner
-                        android:id="@+id/date_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"/>
 
                     <com.github.mikephil.charting.charts.PieChart
                         android:id="@+id/piechart"

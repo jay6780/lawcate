@@ -43,8 +43,10 @@ import com.law.booking.activity.tools.Utils.SPUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_admin.BookingViewHolder> {
 
@@ -142,6 +144,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                 if (currentUser != null) {
                                     String currentUserId = currentUser.getUid();
                                     String currentUserEmail = currentUser.getEmail();
+                                    savedbookcounting(currentUserId);
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
@@ -197,7 +200,6 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                 if (currentUser != null) {
                                     String currentUserId = currentUser.getUid();
-                                    savedbookcounting(currentUserId);
                                     String currentUserEmail = currentUser.getEmail();
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
@@ -237,24 +239,23 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     }
 
     private void savedbookcounting(String key) {
+        String timeStamp = String.valueOf(System.currentTimeMillis());
         DatabaseReference hmuaref = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("Lawyer")
-                .child(key)
-                .child("bookcomplete");
-        hmuaref.get().addOnSuccessListener(snapshot -> {
-            int currentCount = 0;
-            if (snapshot.exists()) {
-                currentCount = snapshot.getValue(Integer.class);
-            }
-            int newCount = currentCount + 1;
-            hmuaref.setValue(newCount)
-                    .addOnSuccessListener(aVoid ->
-                            Log.d("FirebaseDB", "Count updated successfully to " + newCount))
-                    .addOnFailureListener(e ->
-                            Log.e("FirebaseDB", "Error updating count", e));
-        }).addOnFailureListener(e ->
-                Log.e("FirebaseDB", "Error fetching count", e));
+                .child("Lawyer_data")
+                .child(key);
+        String pushkey = hmuaref.push().getKey();
+        Map<String, Object> data = new HashMap<>();
+        data.put("timeStamp", timeStamp);
+        data.put("bookcomplete", 1);
+        data.put("pushkey", pushkey);
+        data.put("LawyerId", key);
+        hmuaref.child(pushkey).setValue(data)
+                .addOnSuccessListener(aVoid ->
+                        Log.d("FirebaseDB", "Count updated successfully"))
+                .addOnFailureListener(e ->
+                        Log.e("FirebaseDB", "Error updating count", e));
+
     }
 
     private void openMap(String email,String name,String image,String key) {

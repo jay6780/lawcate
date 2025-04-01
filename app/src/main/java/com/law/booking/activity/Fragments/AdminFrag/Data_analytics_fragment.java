@@ -32,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.law.booking.R;
-import com.law.booking.activity.tools.Model.Usermodel;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
@@ -78,6 +77,7 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 timeStampValue = item;
                 initFirebase();
+                init_barChart();
             }
         });
         return view;
@@ -85,32 +85,61 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
 
 
     private void init_barChart() {
+        barGraph.clear();
+        barGraph.invalidate();
+
+        summary(0, 0, 0);
+
         String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(key);
+        DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer_data").child(key);
+
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    Usermodel user = dataSnapshot.getValue(Usermodel.class);
-                    if(user !=null){
-                        int bookcount = user.getBookcount();
-                        int bookcomplete = user.getBookcomplete();
-                        int bookcancel = user.getBookcancel();
-                        summary(bookcount, bookcomplete, bookcancel);
-                        Log.d(TAG,"Book data: "+"bookcount: "+ bookcount +","+"bookcomplete: "+bookcomplete+","+"bookcancel: "+bookcancel);
-                        setupBarChart(bookcount, bookcomplete, bookcancel);
+                    long totalBookCount = 0;
+                    long totalBookCancel = 0;
+                    long totalBookComplete = 0;
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        Long bookCount = childSnapshot.child("bookcount").getValue(Long.class);
+                        Long bookCancel = childSnapshot.child("bookcancel").getValue(Long.class);
+                        Long bookComplete = childSnapshot.child("bookcomplete").getValue(Long.class);
+                        String timeStampStr = childSnapshot.child("timeStamp").getValue(String.class);
+
+                        totalBookCount += (bookCount != null) ? bookCount : 0;
+                        totalBookCancel += (bookCancel != null) ? bookCancel : 0;
+                        totalBookComplete += (bookComplete != null) ? bookComplete : 0;
+
+                        if(timeStampStr !=null){
+                            int bookingCount = (int) totalBookCount;
+                            int bookingCancel = (int) totalBookCancel;
+                            int bookingComplete = (int) totalBookComplete;
+
+                            if (applyFlexibleFilter(timeStampStr)) {
+                                summary(bookingCount, bookingCancel, bookingComplete);
+                                setupBarChart(bookingCount, bookingComplete, bookingCancel);
+                            }
+                        }
                     }
+//
+//                    Log.d("FIREBASE_LOG", "Merged Data: " +
+//                            "Total Book Count: " + totalBookCount + ", " +
+//                            "Total Book Cancel: " + totalBookCancel + ", " +
+//                            "Total Book Complete: " + totalBookComplete);
+
+                } else {
+                    Log.d("FIREBASE_LOG", "No data found in Lawyer_data.");
                 }
-
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FIREBASE_LOG", "Error: " + databaseError.getMessage());
             }
         });
-
     }
+
+
 
     private void initFirebase() {
         String key = FirebaseAuth.getInstance().getCurrentUser().getUid();

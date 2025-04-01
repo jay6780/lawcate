@@ -2,6 +2,7 @@ package com.law.booking.activity.tools.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,14 @@ public class Completebook_adapter_admin extends RecyclerView.Adapter<Completeboo
         holder.time.setText(booking.getTime());
         holder.date.setText(booking.getDate());
         holder.cancel.setText("View Summary");
+
+        if(booking.isReschedule()) {
+            holder.reschedule.setText("Rescheduled");
+            holder.reschedule.setTextColor(Color.parseColor("#F7374F"));
+            holder.reschedule.setVisibility(View.VISIBLE);
+        }
+
+
         if(booking.getLawType()!= null){
             holder.lawyer_typetxt.setTextColor(ContextCompat.getColor(context, R.color.light_blue));
             holder.lawyer_typetxt.setText(booking.getLawType());
@@ -85,13 +94,14 @@ public class Completebook_adapter_admin extends RecyclerView.Adapter<Completeboo
     }
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,time,date,servicename,price,lawyer_typetxt;
+        TextView nameTextView,time,date,servicename,price,lawyer_typetxt,reschedule;
         ImageView avatar;
         AppCompatButton cancel;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
             cancel = itemView.findViewById(R.id.cancel);
             lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
+            reschedule = itemView.findViewById(R.id.reschedule);
             price = itemView.findViewById(R.id.price);
             servicename = itemView.findViewById(R.id.servicename);
             nameTextView = itemView.findViewById(R.id.username);

@@ -113,4 +113,6 @@ public class AppConstans {
     public static final String provider_age = "provider_age";
     public static final String service_length = "service_length";
     public static final String description ="description";
+    public static final String rescheddate ="rescheddate" ;
+    public static final String previousTime = "previousTime";
 }

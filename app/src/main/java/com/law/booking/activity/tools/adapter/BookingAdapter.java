@@ -5,8 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,14 +17,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ak.ColoredDate;
+import com.ak.KalendarView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +40,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.law.booking.R;
-import com.law.booking.activity.MainPageActivity.Guess.Guess_summary;
 import com.law.booking.activity.MainPageActivity.bookingUi.Bookingmap;
 import com.law.booking.activity.MainPageActivity.bookingUi.Bookingmap2;
 import com.law.booking.activity.MainPageActivity.chat.chatActivity;
@@ -47,8 +51,10 @@ import com.law.booking.activity.tools.Utils.SPUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -69,7 +75,9 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     private  String guessEmail = SPUtils.getInstance().getString(AppConstans.userEmail);
     private  String guessAge = SPUtils.getInstance().getString(AppConstans.age);
     private  String guessAddress = SPUtils.getInstance().getString(AppConstans.addressUser);
+    private boolean isReschedule;
     private boolean isConfirmed;
+    private String new_Time,new_Date;
     public BookingAdapter(List<Booking2> bookingList ,Context context) {
         this.bookingList = bookingList;
         this.context = context;
@@ -87,7 +95,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     @NonNull
     @Override
     public BookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.booking_adapter_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.booking_layout_user, parent, false);
         return new BookingViewHolder(view);
     }
 
@@ -100,8 +108,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
         holder.servicename.setText(booking.getServiceName());
         holder.price.setText(context.getString(R.string.price)+": " + booking.getPrice() + " php");
-
-
         if(booking.getLawType()!= null){
             holder.lawyer_typetxt.setTextColor(ContextCompat.getColor(context, R.color.light_blue));
             holder.lawyer_typetxt.setText(booking.getLawType());
@@ -114,126 +120,303 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                 .placeholder(R.drawable.baseline_person_24)
                 .into(holder.avatar);
 
-
-        if(isConfirmed){
-            holder.viewsummary.setVisibility(View.VISIBLE);
-        }else{
-            holder.cancel.setVisibility(View.VISIBLE);
+        if(booking.isReschedule()) {
+            holder.reschedule.setText("Rescheduled");
+            holder.reschedule.setTextColor(Color.parseColor("#F7374F"));
+            holder.reschedule.setVisibility(View.VISIBLE);
         }
 
+        if(isConfirmed){
+            holder.dots_option.setVisibility(View.GONE);
+        }else{
+            holder.dots_option.setVisibility(View.VISIBLE);
+        }
 
-        holder.viewsummary.setOnClickListener(new View.OnClickListener() {
+        holder.dots_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, Guess_summary.class);
-                intent.putExtra("email",booking.getEmail());
-                intent.putExtra("username", booking.getProviderName());
-                intent.putExtra("image", booking.getImage());
-                intent.putExtra("key", booking.getKey());
-                intent.putExtra("serviceName", booking.getServiceName());
-                intent.putExtra("price",booking.getPrice());
-                intent.putExtra("heads",booking.getHeads());
-                intent.putExtra("phonenumber",booking.getPhonenumber());
-                intent.putExtra("date",booking.getDate());
-                intent.putExtra("time",booking.getTime());
-                intent.putExtra("paymentMethod",booking.getPaymentMethod());
-                intent.putExtra("snapshotkey",booking.getSnapshotkey());
-                context.startActivity(intent);
+                String options [] = {"Cancel", "Reschedule","Chat lawyer"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Options");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                     switch (which){
+                         case 0:
+                             cancelbook(booking);
+                             isReschedule = false;
+                             break;
+                         case 1:
+                             AlertDialog.Builder dateTimePickerDialog = new AlertDialog.Builder(context);
+                             dateTimePickerDialog.setTitle("Reschedule Booking");
+                             dateTimePickerDialog.setCancelable(true);
+                             View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_date_time_picker, null);
+                             dateTimePickerDialog.setView(dialogView);
+
+                             KalendarView mKalendarView = dialogView.findViewById(R.id.kalendar);
+                             TimePicker timePicker = dialogView.findViewById(R.id.timePicker);
+                             timePicker.setIs24HourView(false);
+
+                             List<ColoredDate> highlightedDates = new ArrayList<>();
+                          
+                             DatabaseReference scheduleRef = FirebaseDatabase.getInstance().getReference("Mysched").child(booking.getKey());
+
+                             scheduleRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                 @Override
+                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                     for (DataSnapshot datesnapshot : snapshot.getChildren()) {
+                                         Date dateStr = datesnapshot.child("date").getValue(Date.class);
+                                         if (dateStr != null) {
+                                             highlightedDates.add(new ColoredDate(dateStr, context.getResources().getColor(R.color.red_holiday)));
+                                         }
+                                     }
+                                     mKalendarView.setColoredDates(highlightedDates);
+
+                                 }
+
+                                 @Override
+                                 public void onCancelled(@NonNull DatabaseError error) { }
+                             });
+
+                             dateTimePickerDialog.setPositiveButton("Confirm", (dialog1, which1) -> {
+                                 Date selectedDate = mKalendarView.getSelectedDate();
+                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                                 String selectedDateStr = sdf.format(selectedDate);
+
+                                 boolean isDateHighlighted = false;
+                                 for (ColoredDate coloredDate : highlightedDates) {
+                                     String highlightedDateStr = sdf.format(coloredDate.getDate());
+                                     if (highlightedDateStr.equals(selectedDateStr)) {
+                                         isDateHighlighted = true;
+                                         break;
+                                     }
+                                 }
+
+                                 if (!isDateHighlighted) {
+                                     Toast.makeText(context, "Please select a highlighted date", Toast.LENGTH_SHORT).show();
+                                     return;
+                                 }
+
+                                 SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+                                 new_Date = dateFormat.format(selectedDate);
+
+                                 int hour = timePicker.getHour();
+                                 int minute = timePicker.getMinute();
+                                 String amPm = (hour >= 12) ? "PM" : "AM";
+                                 int displayHour = (hour > 12) ? hour - 12 : (hour == 0 ? 12 : hour);
+                                 new_Time = String.format(Locale.getDefault(), "%d:%02d %s", displayHour, minute, amPm);
+
+                                 if (new_Time.isEmpty()) {
+                                     Toast.makeText(context, "Please select a time", Toast.LENGTH_SHORT).show();
+                                     return;
+                                 }
+
+                                 SPUtils.getInstance().put(AppConstans.previousTime, booking.getTime());
+                                 SPUtils.getInstance().put(AppConstans.rescheddate, booking.getDate());
+                                 isReschedule = true;
+                                 reschedulebook(booking, new_Date, new_Time);
+                             });
+
+
+                             dateTimePickerDialog.setNegativeButton("Cancel", (dialog1, which1) -> dialog.dismiss());
+                             dateTimePickerDialog.show();
+                             break;
+
+                         case 2:
+                             openMap(booking);
+                             break;
+                     }
+                    }
+                });
+                builder.show();
+
             }
         });
+    }
 
-        holder.cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(context)
-                        .setTitle(context.getString(R.string.cancel_msg))
-                        .setMessage(context.getString(R.string.sure_cancel))
-                        .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Show progress dialog while processing cancellation
-                                ProgressDialog progressDialog = new ProgressDialog(context);
-                                progressDialog.setMessage(context.getString(R.string.cancelling_book));
-                                progressDialog.setCancelable(false);
-                                progressDialog.show();
 
-                                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                                if (currentUser != null) {
-                                    String currentUserId = currentUser.getUid();
-                                    savedcancel(booking.getKey());
-                                    String currentUserEmail = SPUtils.getInstance().getString(AppConstans.userEmail);;
-                                    initRecentpackages(booking.getServiceName());
 
-                                    // Use a Handler to delay the checkIfUserIsGuess call (for smooth UI interaction)
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // Then, call checkIfUserIsGuess
-                                            checkIfUserIsGuess(
-                                                    currentUserId,
-                                                    booking.getTime(),
-                                                    booking.getHeads(),
-                                                    booking.getPaymentMethod(),
-                                                    booking.getServiceName(),
-                                                    booking.getPrice(),
-                                                    booking.getDate(),
-                                                    booking.getAddress(),
-                                                    booking.getEmail(),
-                                                    currentUserEmail,
-                                                    booking.getProviderName(),
-                                                    booking.getImage(),
-                                                    context,
-                                                    booking.getKey(),
-                                                    booking.getAge(),
-                                                    booking.getLengthOfservice(),
-                                                    booking.getPhonenumber(),
-                                                    booking.getSnapshotkey(),
-                                                    booking.getLawType()
-                                            );
-                                            progressDialog.dismiss();
-                                        }
-                                    }, 500); // Delay of 500 milliseconds to simulate processing time and allow UI to update
+    private void openMap(Booking2 booking) {
+        DatabaseReference events = FirebaseDatabase.getInstance().getReference("ADMIN").child(booking.getKey());
+        events.get().addOnCompleteListener(task -> {
+            Intent intent;
+            if (task.isSuccessful() && task.getResult().exists()) {
+                intent = new Intent(context, Bookingmap.class);
+            } else {
+                intent = new Intent(context, Bookingmap2.class);
+            }
+            intent.putExtra("address", booking.getAddress());
+            intent.putExtra("age", booking.getAge());
+            intent.putExtra("date", booking.getDate());
+            intent.putExtra("email", booking.getEmail());
+            intent.putExtra("heads", booking.getHeads());
+            intent.putExtra("image", booking.getImage());
+            intent.putExtra("lengthOfService", booking.getLengthOfservice());
+            intent.putExtra("phoneNumber", booking.getPhonenumber());
+            intent.putExtra("price", booking.getPrice());
+            intent.putExtra("providerName", booking.getProviderName());
+            intent.putExtra("serviceName", booking.getServiceName());
+            intent.putExtra("time", booking.getTime());
+            intent.putExtra("cash", booking.getPaymentMethod());
+            intent.putExtra("key", booking.getKey());
+            context.startActivity(intent);
+            if (context instanceof Activity) {
+                ((Activity) context).finish();
+            }
+        });
+    }
+
+    private void reschedulebook(Booking2 booking,String new_Date,String new_Time ) {
+        new AlertDialog.Builder(context)
+                .setTitle("Reschedule book")
+                .setMessage("Are you sure want to reschedule?")
+                .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(new_Date == null ){
+                            Toast.makeText(context,"Please select new date",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if(new_Time == null){
+                            Toast.makeText(context,"Please select new time",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage("Rescheduling book....");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser != null) {
+                            String currentUserId = currentUser.getUid();
+                            savedcancel(booking.getKey());
+                            resched_change(booking,new_Date,new_Time);
+                            String currentUserEmail = SPUtils.getInstance().getString(AppConstans.userEmail);
+                            initRecentpackages(booking.getServiceName());
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Then, call checkIfUserIsGuess
+                                    checkIfUserIsGuess(
+                                            currentUserId,
+                                            booking.getTime(),
+                                            booking.getHeads(),
+                                            booking.getPaymentMethod(),
+                                            booking.getServiceName(),
+                                            booking.getPrice(),
+                                            booking.getDate(),
+                                            booking.getAddress(),
+                                            booking.getEmail(),
+                                            currentUserEmail,
+                                            booking.getProviderName(),
+                                            booking.getImage(),
+                                            context,
+                                            booking.getKey(),
+                                            booking.getAge(),
+                                            booking.getLengthOfservice(),
+                                            booking.getPhonenumber(),
+                                            booking.getSnapshotkey(),
+                                            booking.getLawType()
+                                    );
+                                    progressDialog.dismiss();
                                 }
-                            }
-                        })
-                        .setNegativeButton(context.getString(R.string.no), null)
-                        .show();
-            }
-        });
+                            }, 500);
+                        }
+                    }
+                })
+                .setNegativeButton(context.getString(R.string.no), null)
+                .show();
+    }
 
-        holder.itemView.setOnClickListener(view -> {
-            DatabaseReference events = FirebaseDatabase.getInstance().getReference("ADMIN").child(booking.getKey());
-            events.get().addOnCompleteListener(task -> {
-                Intent intent;
-                if (task.isSuccessful() && task.getResult().exists()) {
-                    intent = new Intent(view.getContext(), Bookingmap.class);
-                } else {
-                    intent = new Intent(view.getContext(), Bookingmap2.class);
-                }
-                intent.putExtra("address", booking.getAddress());
-                intent.putExtra("age", booking.getAge());
-                intent.putExtra("date", booking.getDate());
-                intent.putExtra("email", booking.getEmail());
-                intent.putExtra("heads", booking.getHeads());
-                intent.putExtra("image", booking.getImage());
-                intent.putExtra("lengthOfService", booking.getLengthOfservice());
-                intent.putExtra("phoneNumber", booking.getPhonenumber());
-                intent.putExtra("price", booking.getPrice());
-                intent.putExtra("providerName", booking.getProviderName());
-                intent.putExtra("serviceName", booking.getServiceName());
-                intent.putExtra("time", booking.getTime());
-                intent.putExtra("cash", booking.getPaymentMethod());
-                intent.putExtra("key", booking.getKey());
+    private void resched_change(Booking2 booking2, String new_Date, String new_Time) {
+        String curruntUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        DatabaseReference myBookUserRef = FirebaseDatabase.getInstance().getReference("MybookUser");
+        DatabaseReference bookRef = FirebaseDatabase.getInstance().getReference("Mybook");
+        String chatRoomId = createChatRoomId(curruntUserEmail, booking2.getEmail());
 
-                // Start the appropriate activity
-                context.startActivity(intent);
+        myBookUserRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("time").setValue(new_Time)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "MybookUser updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update MybookUser", e));
 
-                // Finish the current activity if it's an instance of Activity
-                if (context instanceof Activity) {
-                    ((Activity) context).finish();
-                }
-            });
-        });
+        myBookUserRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("date").setValue(new_Date)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "MybookUser updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update MybookUser", e));
+
+        bookRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("time").setValue(new_Time)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "Mybook updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update Mybook", e));
+
+        bookRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("date").setValue(new_Date)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "Mybook updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update Mybook", e));
+
+        bookRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("reschedule").setValue(true)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "Mybook updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update Mybook", e));
+
+        myBookUserRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("reschedule").setValue(true)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "Mybook updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update Mybook", e));
+
+    }
+
+
+
+
+    private void cancelbook(Booking2 booking) {
+        new AlertDialog.Builder(context)
+                .setTitle(context.getString(R.string.cancel_msg))
+                .setMessage(context.getString(R.string.sure_cancel))
+                .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage(context.getString(R.string.cancelling_book));
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser != null) {
+                            String currentUserId = currentUser.getUid();
+                            savedcancel(booking.getKey());
+                            String currentUserEmail = SPUtils.getInstance().getString(AppConstans.userEmail);;
+                            initRecentpackages(booking.getServiceName());
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Then, call checkIfUserIsGuess
+                                    checkIfUserIsGuess(
+                                            currentUserId,
+                                            booking.getTime(),
+                                            booking.getHeads(),
+                                            booking.getPaymentMethod(),
+                                            booking.getServiceName(),
+                                            booking.getPrice(),
+                                            booking.getDate(),
+                                            booking.getAddress(),
+                                            booking.getEmail(),
+                                            currentUserEmail,
+                                            booking.getProviderName(),
+                                            booking.getImage(),
+                                            context,
+                                            booking.getKey(),
+                                            booking.getAge(),
+                                            booking.getLengthOfservice(),
+                                            booking.getPhonenumber(),
+                                            booking.getSnapshotkey(),
+                                            booking.getLawType()
+                                    );
+                                    progressDialog.dismiss();
+                                }
+                            }, 500);
+                        }
+                    }
+                })
+                .setNegativeButton(context.getString(R.string.no), null)
+                .show();
     }
 
     private void savedcancel(String key) {
@@ -312,7 +495,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                     }
                     String finalLocationLink = locationLink;
                     eventsRef.get().addOnCompleteListener(task -> {
-                        String availedMessage;
+                        String availedMessage = null;
                         String serviceListJson = SPUtils.getInstance().getString(AppConstans.serviceNamesList, "[]");
                         Type type = new TypeToken<List<String>>() {}.getType();
                         serviceNamesList = new Gson().fromJson(serviceListJson, type);
@@ -328,57 +511,72 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
                         String packages = String.join(" ,", serviceNamesList);
                         Log.d("list", "PackageList: " + packages);
+                        String previousTime = SPUtils.getInstance().getString(AppConstans.previousTime);
+                        String rescheddate = SPUtils.getInstance().getString(AppConstans.rescheddate);
+                        if(isReschedule){
+                            availedMessage = "Hi, I'm " + username + " " +
+                                    "I Reschedule " + previousTime + " " + rescheddate + " "+
+                                    "change to " +new_Time+" "+new_Date +" "+
+                                    "law name choose "+serviceName+" "+"My location: " + finalLocationLink + "\n" +
+                                    "Thank you!";
 
-                        if (task.isSuccessful() && task.getResult().exists()) {
-                            availedMessage = "Hi, I'm " + username + "\n" +
-                                    "I'm sorry I cancel:\n" +
-                                    "Service Name: " + serviceName + "\n" +
-                                    "Which package: " + serviceNamesList + "\n" +
-                                    "Selected schedule: " + "time: " + time + "\n" +
-                                    "date: " + date + "\n" +
-                                    "Number of Heads: " + heads + "\n" +
-                                    "Price: " + price + " php" + "\n" +
-                                    "My location: " + finalLocationLink + "\n" +
-                                    "Thank you!";
-                        } else {
-                            // Event is not saved in "Events", don't include the packages
-                            availedMessage = "Hi, I'm " + username + "\n" +
-                                    "I'm sorry I cancel:\n" +
-                                    "Selected schedule:" + " time: " + time + "\n" +
-                                    "law name choose: "+serviceName+"\n"+
-                                    "date: " + date + "\n" +
-                                    "My location: " + finalLocationLink + "\n" +
-                                    "Thank you!";
+                        }else{
+                            if (task.isSuccessful() && task.getResult().exists()) {
+                                availedMessage = "Hi, I'm " + username + "\n" +
+                                        "I'm sorry I cancel:\n" +
+                                        "Service Name: " + serviceName + "\n" +
+                                        "Which package: " + serviceNamesList + "\n" +
+                                        "Selected schedule: " + "time: " + time + "\n" +
+                                        "date: " + date + "\n" +
+                                        "Number of Heads: " + heads + "\n" +
+                                        "Price: " + price + " php" + "\n" +
+                                        "My location: " + finalLocationLink + "\n" +
+                                        "Thank you!";
+                            } else {
+                                // Event is not saved in "Events", don't include the packages
+                                availedMessage = "Hi, I'm " + username + "\n" +
+                                        "I'm sorry I cancel:\n" +
+                                        "Selected schedule:" + " time: " + time + "\n" +
+                                        "law name choose: "+serviceName+"\n"+
+                                        "date: " + date + "\n" +
+                                        "My location: " + finalLocationLink + "\n" +
+                                        "Thank you!";
+                          }
                         }
 
-                        Log.d(TAG, availedMessage);
-                        SPUtils.getInstance().put(AppConstans.availedMessage, availedMessage);
-                        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        checkAndCreateChatRoom(provideremail, providerName, image, curruntUserEmail, context, address, key, availedMessage);
-                        String timestamp = String.valueOf(System.currentTimeMillis());
-                        Booking2 booking = new Booking2(providerName, serviceName, price, heads, phonenumber, date, time, image, address, provideremail, age, lengthOfservice, cash, key,snapshotkey,timestamp);
-                        Booking2 booking2 = new Booking2(guessUsername, serviceName, price, heads, guessPhone, date, time, guessImage, guessAddress, guessEmail, guessAge, lengthOfservice, cash, uid,snapshotkey,timestamp);
-                        String chatRoomId = createChatRoomId(curruntUserEmail, provideremail);
-                        String snapshotKey2 = SPUtils.getInstance().getString(AppConstans.snapshotkey);
-                        CancelbookArtist.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking2)
-                                .addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        Log.d(TAG, "Cancel data saved successfully.");
-                                    }
-                                });
+                        if(isReschedule){
+                            checkAndCreateChatRoom(provideremail, providerName, image, curruntUserEmail, context, address, key, availedMessage);
+                        }else{
+                            Log.d(TAG, availedMessage);
+                            SPUtils.getInstance().put(AppConstans.availedMessage, availedMessage);
+                            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            String timestamp = String.valueOf(System.currentTimeMillis());
+                            Booking2 booking = new Booking2(providerName, serviceName, price, heads, phonenumber, date, time, image, address, provideremail, age, lengthOfservice, cash, key,snapshotkey,timestamp);
+                            Booking2 booking2 = new Booking2(guessUsername, serviceName, price, heads, guessPhone, date, time, guessImage, guessAddress, guessEmail, guessAge, lengthOfservice, cash, uid,snapshotkey,timestamp);
+                            String chatRoomId = createChatRoomId(curruntUserEmail, provideremail);
+                            checkAndCreateChatRoom(provideremail, providerName, image, curruntUserEmail, context, address, key, availedMessage);
+                            String snapshotKey2 = SPUtils.getInstance().getString(AppConstans.snapshotkey);
+                            CancelbookArtist.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking2)
+                                    .addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            Log.d(TAG, "Cancel data saved successfully.");
+                                        }
+                                    });
 
-                        cancelled.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking)
-                                .addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        Log.d(TAG, "Cancel data saved successfully.");
-                                        book.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
-                                        MybookUser.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
-                                        RecentAvailed.child(uid).removeValue();
-                                        RecentAvailed_event.child(key).removeValue();
-                                        setCancelled(chatRoomId,snapshotkey,lawType);
-                                        decreasebookCount(key);
-                                    }
-                                });
+                            cancelled.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking)
+                                    .addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            Log.d(TAG, "Cancel data saved successfully.");
+                                            book.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
+                                            MybookUser.child(chatRoomId).child("bookInfo").child(snapshotkey).removeValue();
+                                            RecentAvailed.child(uid).removeValue();
+                                            RecentAvailed_event.child(key).removeValue();
+                                            setCancelled(chatRoomId,snapshotkey,lawType);
+                                            decreasebookCount(key);
+                                        }
+                                    });
+                        }
+
                     });
 
                 }
@@ -475,8 +673,14 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                     intent.putExtra("providerEmail", provideremail);
                     intent.putExtra("address", address);
                     intent.putExtra("key", key);
+                    String msg;
+                    if(isReschedule){
+                        msg = "Reschedule success";
+                    }else{
+                        msg = "Cancel Success";
+                    }
                     if (!availedmessage.equals(previousMessage)) {
-                        Toast.makeText(context, "Cancel Success", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                         intent.putExtra("cancelledmessage", availedmessage);
                     }else{
                         Toast.makeText(context,"Already cancelled",Toast.LENGTH_SHORT).show();
@@ -487,7 +691,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(context, "Failed to check chat room", Toast.LENGTH_SHORT).show();
@@ -516,20 +719,19 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
     }
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,time,date,servicename,price,lawyer_typetxt;
-        ImageView avatar;
-        AppCompatButton cancel,viewsummary;
+        TextView nameTextView,time,date,servicename,price,lawyer_typetxt,reschedule;
+        ImageView avatar,dots_option;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
-            viewsummary = itemView.findViewById(R.id.viewsummary);
             lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
-            cancel = itemView.findViewById(R.id.cancel);
             servicename = itemView.findViewById(R.id.servicename);
+            reschedule = itemView.findViewById(R.id.reschedule);
             nameTextView = itemView.findViewById(R.id.username);
             date = itemView.findViewById(R.id.date);
             avatar = itemView.findViewById(R.id.provider_avatar);
             price = itemView.findViewById(R.id.price);
             time = itemView.findViewById(R.id.time);
+            dots_option = itemView.findViewById(R.id.dots_option);
         }
     }
 }

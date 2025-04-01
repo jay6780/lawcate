@@ -46,6 +46,8 @@
                 android:src="@mipmap/man" />
         </LinearLayout>
 
+
+
         <TextView
             android:id="@+id/username"
             android:layout_width="wrap_content"
@@ -125,35 +127,13 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@id/cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_info"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="10dp"
+        <ImageView
+            android:id="@+id/dots_option"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:visibility="gone"
-            android:layout_marginBottom="10dp"
-            android:layout_toRightOf="@+id/ll1"
-            android:background="@drawable/cancel_bg"
-            android:text="Complete"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@id/confirmed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_info"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="15dp"
-            android:visibility="gone"
-            android:layout_marginBottom="10dp"
-            android:layout_toRightOf="@+id/cancel"
-            android:background="@drawable/cancel_bg"
-            android:text="Confirm"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+            android:layout_alignParentEnd="true"
+            android:src="@mipmap/dots" />
     </RelativeLayout>
 
 

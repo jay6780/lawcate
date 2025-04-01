@@ -136,7 +136,7 @@ public class Confirmedfragment_user extends Fragment {
 
                         Collections.sort(bookingList, (b1, b2) -> b2.getTimestamp().compareTo(b1.getTimestamp()));
 
-                        bookingAdapter.isConfirmed(false);
+                        bookingAdapter.isConfirmed(true);
                         bookingAdapter.notifyDataSetChanged();
                         bookrecycler.setAdapter(bookingAdapter);
                     }

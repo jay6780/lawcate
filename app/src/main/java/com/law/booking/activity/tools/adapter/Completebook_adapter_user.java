@@ -3,6 +3,7 @@ package com.law.booking.activity.tools.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,14 @@ public class Completebook_adapter_user extends RecyclerView.Adapter<Completebook
             holder.lawyer_typetxt.setVisibility(View.GONE);
         }
 
+        if(booking.isReschedule()) {
+            holder.reschedule.setText("Rescheduled");
+            holder.reschedule.setTextColor(Color.parseColor("#F7374F"));
+            holder.reschedule.setVisibility(View.VISIBLE);
+        }
+
+
+
         holder.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,11 +100,12 @@ public class Completebook_adapter_user extends RecyclerView.Adapter<Completebook
     }
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,time,date,servicename,price,lawyer_typetxt;
+        TextView nameTextView,time,date,servicename,price,lawyer_typetxt,reschedule;
         ImageView avatar;
         AppCompatButton cancel;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
+            reschedule = itemView.findViewById(R.id.reschedule);
             cancel = itemView.findViewById(R.id.cancel);
             lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
             price = itemView.findViewById(R.id.price);

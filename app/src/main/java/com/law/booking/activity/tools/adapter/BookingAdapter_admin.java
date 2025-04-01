@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Handler;
@@ -107,6 +108,14 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                 .placeholder(R.drawable.baseline_person_24)
                 .into(holder.avatar);
 
+        if(booking.isReschedule()) {
+            holder.reschedule.setText("Rescheduled");
+            holder.reschedule.setTextColor(Color.parseColor("#F7374F"));
+            holder.reschedule.setVisibility(View.VISIBLE);
+        }
+
+
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,7 +177,8 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                                     booking.getLengthOfservice(),
                                                     booking.getPhonenumber(),
                                                     booking.getSnapshotkey(),
-                                                    booking.getLawType()
+                                                    booking.getLawType(),
+                                                    booking.isReschedule()
                                             );
                                             progressDialog.dismiss();
                                         }
@@ -224,7 +234,8 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                                                     booking.getLengthOfservice(),
                                                     booking.getPhonenumber(),
                                                     booking.getSnapshotkey(),
-                                                    booking.getLawType()
+                                                    booking.getLawType(),
+                                                    booking.isReschedule()
                                             );
                                             progressDialog.dismiss();
                                         }
@@ -356,7 +367,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     }
 
     private void checkIfUserIsGuess(String userId, String time, String heads, String cash, String serviceName, String price, String date, String address, String provideremail, String curruntUserEmail,
-                                    String providerName, String image, Context context, String key, String age, String lengthOfservice, String phonenumber,String snapshotkey,String lawType) {
+                                    String providerName, String image, Context context, String key, String age, String lengthOfservice, String phonenumber,String snapshotkey,String lawType,boolean isRescheduled) {
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer").child(userId);
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -402,9 +413,9 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                     SPUtils.getInstance().put(AppConstans.availedMessage, availedMessage);
                     checkAndCreateChatRoom(provideremail, providerName, image, curruntUserEmail, context, address, key, availedMessage);
                     String timestamp = String.valueOf(System.currentTimeMillis());
-                    Booking booking = new Booking(providerName, serviceName, price, heads, phonenumber, date, time, image, address, provideremail, age, lengthOfservice, cash, key,timestamp,snapshotkey);
+                    Booking booking = new Booking(providerName, serviceName, price, heads, phonenumber, date, time, image, address, provideremail, age, lengthOfservice, cash, key,timestamp,snapshotkey,isRescheduled);
                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    Booking booking2 = new Booking(adminUsername, serviceName, price, heads, adminPhone, date, time, adminImage, adminAddress, adminEmail, adminAge, SPUtils.getInstance().getString(AppConstans.AdminLenght), cash, uid,timestamp,snapshotkey);
+                    Booking booking2 = new Booking(adminUsername, serviceName, price, heads, adminPhone, date, time, adminImage, adminAddress, adminEmail, adminAge, SPUtils.getInstance().getString(AppConstans.AdminLenght), cash, uid,timestamp,snapshotkey,isRescheduled);
                     String chatRoomId = createChatRoomId(curruntUserEmail, provideremail);
 
                     if(isConfirmed) {
@@ -580,12 +591,13 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     }
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView,time,date,servicename,price,lawyer_typetxt;
+        TextView nameTextView,time,date,servicename,price,lawyer_typetxt,reschedule;
         ImageView avatar;
         AppCompatButton cancel,confirmed;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
             confirmed = itemView.findViewById(R.id.confirmed);
+            reschedule = itemView.findViewById(R.id.reschedule);
             lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
             cancel = itemView.findViewById(R.id.cancel);
             servicename = itemView.findViewById(R.id.servicename);

@@ -18,6 +18,7 @@ public class Booking2 {
     private String snapshotkey;
     private String timestamp;
     private String lawType;
+    private boolean reschedule;
 
     // Default constructor
     public Booking2() {
@@ -47,6 +48,10 @@ public class Booking2 {
 
     // Setters
 
+
+    public boolean isReschedule() {
+        return reschedule;
+    }
 
     public String getLawType() {
         return lawType;

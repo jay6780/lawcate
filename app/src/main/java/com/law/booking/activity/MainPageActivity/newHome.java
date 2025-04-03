@@ -65,6 +65,7 @@ import com.law.booking.activity.events.account_manageactivity;
 import com.law.booking.activity.events.history_book_event;
 import com.law.booking.activity.events.setEvent_admin;
 import com.law.booking.activity.myfavorites;
+import com.law.booking.activity.settingsAdmin.admin_settings;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
@@ -122,7 +123,7 @@ public class newHome extends AppCompatActivity {
     private ImageView adminbell,event_bell;
     private TextView badge_count_admin,event_badge,status;
     private boolean isGuess = false;
-    private LinearLayout admin_chatSupport;
+    private LinearLayout admin_chatSupport,settings_lawyer;
     private PermissionsDialogue.Builder alertPermissions;
     private String description;
 
@@ -138,6 +139,7 @@ public class newHome extends AppCompatActivity {
         initAppUpdate();
         manage_accounts = findViewById(R.id.manage_accounts);
         sidenav = findViewById(R.id.sidenav);
+        settings_lawyer = findViewById(R.id.settings_lawyer);
         changeStatusBarColor(getResources().getColor(R.color.white2));
         initSkeleton();
         initGone();
@@ -852,7 +854,12 @@ public class newHome extends AppCompatActivity {
                 } else if (v.getId() == R.id.manage_accounts) {
                     Intent intent = new Intent(getApplicationContext(), account_manageactivity.class);
                     startActivity(intent);
+                }else if (v.getId() == R.id.settings_lawyer) {
+                    Intent intent = new Intent(getApplicationContext(), admin_settings.class);
+                    startActivity(intent);
                 }
+
+
             }
         };
 
@@ -877,6 +884,7 @@ public class newHome extends AppCompatActivity {
         findViewById(R.id.setEventAdmin).setOnClickListener(clickListener);
         findViewById(R.id.event_bell).setOnClickListener(clickListener);
         findViewById(R.id.bell).setOnClickListener(clickListener);
+        findViewById(R.id.settings_lawyer).setOnClickListener(clickListener);
     }
 
 
@@ -922,10 +930,13 @@ public class newHome extends AppCompatActivity {
                                 setSuperAdmin.setVisibility(View.VISIBLE);
                                 createadmin.setVisibility(View.VISIBLE);
                                 update.setVisibility(View.VISIBLE);
+                                settings_lawyer.setVisibility(View.GONE);
                             } else {
+
                                 setSuperAdmin.setVisibility(View.GONE);
                                 createadmin.setVisibility(View.GONE);
                                 update.setVisibility(View.GONE);
+                                settings_lawyer.setVisibility(View.VISIBLE);
                             }
 
                             lenght = user.getLengthOfService();

@@ -857,7 +857,11 @@ public class newHome extends AppCompatActivity {
                 }else if (v.getId() == R.id.settings_lawyer) {
                     Intent intent = new Intent(getApplicationContext(), admin_settings.class);
                     startActivity(intent);
+                }else if (v.getId() == R.id.terms_condition) {
+                   Dialog termsdialog = new Dialog();
+                   termsdialog.terms_andCondtionDialog(newHome.this);
                 }
+
 
 
             }
@@ -885,6 +889,8 @@ public class newHome extends AppCompatActivity {
         findViewById(R.id.event_bell).setOnClickListener(clickListener);
         findViewById(R.id.bell).setOnClickListener(clickListener);
         findViewById(R.id.settings_lawyer).setOnClickListener(clickListener);
+        findViewById(R.id.terms_condition).setOnClickListener(clickListener);
+
     }
 
 

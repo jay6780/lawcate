@@ -113,10 +113,10 @@ public class Data_analyticsactivity extends AppCompatActivity {
                     if(user !=null){
                         int bookcount = user.getBookcount();
                         int bookcomplete = user.getBookcomplete();
-                        int bookcancel = user.getBookcancel();
-                        summary(bookcount, bookcomplete, bookcancel);
-                        Log.d(TAG,"Book data: "+"bookcount: "+ bookcount +","+"bookcomplete: "+bookcomplete+","+"bookcancel: "+bookcancel);
-                        setupBarChart(bookcount, bookcomplete, bookcancel);
+//                        int bookcancel = user.getBookcancel();
+//                        summary(bookcount, bookcomplete, bookcancel);
+//                        Log.d(TAG,"Book data: "+"bookcount: "+ bookcount +","+"bookcomplete: "+bookcomplete+","+"bookcancel: "+bookcancel);
+                        setupBarChart(bookcount, bookcomplete, 1);
                     }
                 }
 

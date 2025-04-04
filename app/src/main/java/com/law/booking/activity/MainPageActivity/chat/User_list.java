@@ -25,18 +25,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
+import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.bookingUi.history_book;
 import com.law.booking.activity.MainPageActivity.newHome;
+import com.law.booking.activity.tools.Model.Message;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.ProviderAdapter;
 import com.law.booking.activity.tools.adapter.emptyAdapter;
-import com.law.booking.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,6 +58,7 @@ public class User_list extends AppCompatActivity {
     private ImageView deleteBtn,bell;
     private TextView delete_num;
     private ImageView settings;
+    private String TAG = "ImUser_List";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +70,7 @@ public class User_list extends AppCompatActivity {
         backBtn = findViewById(R.id.back);
         userSearch = findViewById(R.id.search);
         delete_num = findViewById(R.id.delete_num);
+        Log.d(TAG,"OKAY");
         settings = findViewById(R.id.settings);
         providerRecycler.setLayoutManager(new LinearLayoutManager(this));
         currentUserEmail = SPUtils.getInstance().getString(AppConstans.userEmail);
@@ -203,7 +207,6 @@ public class User_list extends AppCompatActivity {
         }
     }
 
-
     private void filterProviderList(String query) {
         ArrayList<Usermodel> filteredList = new ArrayList<>();
         for (Usermodel user : providerList) {
@@ -261,7 +264,6 @@ public class User_list extends AppCompatActivity {
     private void fetchProvidersForConnectedUsers(ArrayList<String> connectedUsers) {
         for (String email : connectedUsers) {
             fetchProviderForEmail(email, "Lawyer");
-            fetchProviderForEmail(email, "ADMIN");
         }
     }
     private void fetchProviderForEmail(String targetEmail, String node) {
@@ -287,14 +289,32 @@ public class User_list extends AppCompatActivity {
 
                             if (!alreadyExists) {
                                 usermodel.setKey(snapshot.getKey());
-                                String name = usermodel.getName();
                                 boolean isOnline = usermodel.isOnline();
-                                SPUtils.getInstance().put(AppConstans.isOnline,isOnline);
-                                String time = usermodel.getTimestamp();
-                                String log = name +" "+ time+ " "+isOnline;
-                                Log.d("timelogs", "UserData: " + log);
-                                providerList.add(usermodel);
-                                providerAdapter.notifyDataSetChanged();
+                                SPUtils.getInstance().put(AppConstans.isOnline, isOnline);
+
+                                // Fetch the last message timestamp from the chat room
+                                String chatRoomId = createChatRoomId(currentUserEmail, targetEmail);
+                                DatabaseReference chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId).child("messages");
+                                chatRoomRef.orderByChild("timestamp").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
+                                            Message lastMessage = messageSnapshot.getValue(Message.class);
+                                            if (lastMessage != null) {
+                                                Log.d("lastmessage", "value: " + lastMessage.getTimestamp());
+                                                usermodel.setLastMessageTimestamp(lastMessage.getTimestamp());
+                                                providerList.add(usermodel);
+                                                Collections.sort(providerList, timestampComparator);
+                                                providerAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.e("User_list", "Error fetching last message timestamp: " + databaseError.getMessage());
+                                    }
+                                });
                             } else {
                                 Log.d("User_list", "Provider already exists: " + targetEmail);
                             }
@@ -314,6 +334,21 @@ public class User_list extends AppCompatActivity {
                 Log.e("User_list", node + " DatabaseError: " + databaseError.getMessage());
             }
         });
+    }
+    private final Comparator<Usermodel> timestampComparator = (user1, user2) -> {
+        long timestamp1 = user1.getLastMessageTimestamp();
+        long timestamp2 = user2.getLastMessageTimestamp();
+        return Long.compare(timestamp2, timestamp1);
+    };
+
+    private String createChatRoomId(String email1, String email2) {
+        String chatRoomId = email1.compareTo(email2) < 0
+                ? email1.replace(".", "_") + "_" + email2.replace(".", "_")
+                : email2.replace(".", "_") + "_" + email1.replace(".", "_");
+
+        SPUtils.getInstance().put(AppConstans.ChatRoomId, chatRoomId);
+
+        return chatRoomId;
     }
 
     private void changeStatusBarColor(int color) {

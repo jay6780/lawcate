@@ -54,6 +54,30 @@
             android:text="@string/My_Favorites"
             android:textSize="14sp"/>
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/terms_condition"
+        android:layout_below="@+id/favorites"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="15dp"
+            android:src="@mipmap/terms"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:fontFamily="@font/inter"
+            android:text="Terms and conditions"
+            android:textSize="14sp"/>
+    </LinearLayout>
 
 
 <LinearLayout

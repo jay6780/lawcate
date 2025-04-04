@@ -16,7 +16,7 @@
         <LinearLayout
             android:id="@+id/ll1"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="230dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"

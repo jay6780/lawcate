@@ -2,6 +2,7 @@ package com.law.booking.activity.Fragments.UserFragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,6 +16,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -126,6 +129,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
     private void moveCameraToAddresses(List<String> addressList) {
+        Log.d("AddressList","value: "+addressList);
         if (addressList.isEmpty()) {
             Toast.makeText(getContext(), "No addresses found", Toast.LENGTH_SHORT).show();
             return;
@@ -167,31 +171,37 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
     private void fetchProvidersAndShowMarkers(String selectedAddress) {
-        String city = null;
-        String countrycode = null;
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        String userProvince = null;
+        String selectedProvince = null;
 
         try {
-            List<Address> addresses = geocoder.getFromLocation(userLocation.latitude, userLocation.longitude, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                city = address.getLocality();
-                countrycode = address.getCountryName();
+            List<Address> userAddresses = geocoder.getFromLocation(userLocation.latitude, userLocation.longitude, 1);
+            List<Address> selectedAddresses = geocoder.getFromLocationName(selectedAddress, 1);
+
+            if (userAddresses != null && !userAddresses.isEmpty()) {
+                userProvince = userAddresses.get(0).getAdminArea();
             }
+
+            if (selectedAddresses != null && !selectedAddresses.isEmpty()) {
+                selectedProvince = selectedAddresses.get(0).getAdminArea();
+            }
+
         } catch (IOException e) {
-            Log.e("MapFragment", "Error geocoding destination location: " + e.getMessage());
+            Log.e("MapFragment", "Error checking provinces: " + e.getMessage());
         }
 
-        if (city == null || selectedAddress == null || !selectedAddress.contains(city)) {
+        if (userProvince == null || selectedProvince == null || !userProvince.equalsIgnoreCase(selectedProvince)) {
             MarkerOptions destinationMarkerOptions = new MarkerOptions()
                     .position(userLocation)
-                    .title(city + ", " + countrycode)
-                    .snippet("No providers found")
+                    .title("Different Province")
+                    .snippet("No providers found in your province")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             googleMap.addMarker(destinationMarkerOptions);
-            Toast.makeText(getContext(), "providers not found", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "No providers found in your province", Toast.LENGTH_SHORT).show();
             return;
-        }
+
+    }
 
 
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
@@ -211,25 +221,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             return true;
                         }
                         RouteFetcher routeFetcher = new RouteFetcher();
+                        ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                        progressDialog.setMessage("Loading....");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
                         routeFetcher.fetchRouteData(getLatLngFromAddress(usermodel.getAddress()), currentLatLng, new RouteFetcher.RouteFetchListener() {
                             @Override
                             public void onSuccess(JSONObject jsonResponse) {
-                                try {
-                                    JSONObject route = jsonResponse.getJSONObject("route");
-                                    int distanceMeters = route.getInt("distance");
-                                    double updatedDistanceKm = distanceMeters / 1000.0;
-                                    Log.d("KM", "Distance: " + updatedDistanceKm + " km");
-
-                                    Dialog showmapkm = new Dialog();
-                                    showmapkm.mapkmdialog(getActivity(), usermodel.getAddress(), usermodel.getName(), updatedDistanceKm, usermodel.getImage(), usermodel);
-
-                                } catch (JSONException e) {
-                                    Log.e("MapFragment", "Error parsing JSON response: " + e.getMessage());
-                                }
+                                new Handler(Looper.getMainLooper()).post(() -> {
+                                    progressDialog.dismiss();
+                                    try {
+                                        JSONObject route = jsonResponse.getJSONObject("route");
+                                        int distanceMeters = route.getInt("distance");
+                                        double updatedDistanceKm = distanceMeters / 1000.0;
+                                        Log.d("KM", "Distance: " + updatedDistanceKm + " km");
+                                        Dialog showmapkm = new Dialog();
+                                        showmapkm.mapkmdialog(getActivity(), usermodel.getAddress(), usermodel.getName(), updatedDistanceKm, usermodel.getImage(), usermodel);
+                                    } catch (JSONException e) {
+                                        Log.e("MapFragment", "Error parsing JSON response: " + e.getMessage());
+                                    }
+                                });
                             }
 
                             @Override
                             public void onError(String errorMessage) {
+                                new Handler(Looper.getMainLooper()).post(() -> {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getActivity(), "Failed to fetch route: " + errorMessage, Toast.LENGTH_SHORT).show();
+                                });
+
                                 Log.e("MapFragment", "Error fetching route data: " + errorMessage);
                             }
                         });

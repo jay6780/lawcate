@@ -58,7 +58,7 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
     private MapResultAdapter adapter;
     private List<String> searchResults = new ArrayList<>();
     private EditText mapSearch;
-    private String selectedAddress,name,phone,username,image,email,lengthOfService,age;
+    private String selectedAddress,name,phone,username,image,email,lengthOfService,age,description;
     private AppCompatButton skip;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
@@ -82,6 +82,7 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
         selectedAddress = getIntent().getStringExtra("address");
         username = getIntent().getStringExtra("username");
         name = getIntent().getStringExtra("name");
+        description = getIntent().getStringExtra("description");
         phone = getIntent().getStringExtra("phone");
         email = getIntent().getStringExtra("email");
         lengthOfService = getIntent().getStringExtra("lengthOfService");
@@ -142,6 +143,7 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
                 intent.putExtra("email", email);
                 intent.putExtra("lengthOfService", lengthOfService);
                 intent.putExtra("age", age);
+                intent.putExtra("description", description);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 finish();
@@ -321,6 +323,7 @@ public class MapSelectActivity_profile extends AppCompatActivity implements OnMa
         intent.putExtra("email", email);
         intent.putExtra("lengthOfService", lengthOfService);
         intent.putExtra("age", age);
+        intent.putExtra("description", description);
         startActivity(intent);
         overridePendingTransition(0, 0);
         finish();

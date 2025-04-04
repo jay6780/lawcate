@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ak.ColoredDate;
+import com.ak.KalendarView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,8 +47,10 @@ import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +64,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     private String chatRoomId;
     private boolean isConfirmed;
     private boolean isCompleted;
+    private boolean isReschedule;
     private DatabaseReference databaseReference,chatroomIds,book,
             Mybook,transactionMap,confirmed_client,confirmed_lawyer;
     private List<String> serviceNamesList;
@@ -66,6 +74,8 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     private  String adminEmail = SPUtils.getInstance().getString(AppConstans.Adminemail);
     private  String adminAge = SPUtils.getInstance().getString(AppConstans.AdminAge);
     private  String adminAddress = SPUtils.getInstance().getString(AppConstans.AdminAdress);
+    private String new_Time,new_Date;
+    private String options [];
     public BookingAdapter_admin(List<Booking2> bookingList , Context context) {
         this.bookingList = bookingList;
         this.context = context;
@@ -128,10 +138,117 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
         Log.d("COnfirmedkey","COnfirmedkey: "+booking.getKey());
 
         if(isCompleted){
-            holder.confirmed.setVisibility(View.VISIBLE);
+           holder.dots_option.setVisibility(View.VISIBLE);
         }else{
+            holder.dots_option.setVisibility(View.GONE);
             holder.cancel.setVisibility(View.VISIBLE);
         }
+
+
+        holder.dots_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String options [] = {"Confirm", "Reschedule","Chat Client"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Options");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:
+                                cofirmbook(booking);
+                                isReschedule = false;
+                                break;
+                            case 1:
+                                AlertDialog.Builder dateTimePickerDialog = new AlertDialog.Builder(context);
+                                dateTimePickerDialog.setTitle("Reschedule Booking");
+                                dateTimePickerDialog.setCancelable(true);
+                                View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_date_time_picker, null);
+                                dateTimePickerDialog.setView(dialogView);
+
+                                KalendarView mKalendarView = dialogView.findViewById(R.id.kalendar);
+                                TimePicker timePicker = dialogView.findViewById(R.id.timePicker);
+                                timePicker.setIs24HourView(false);
+
+                                List<ColoredDate> highlightedDates = new ArrayList<>();
+                                String lawyweUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                DatabaseReference scheduleRef = FirebaseDatabase.getInstance().getReference("Mysched").child(lawyweUserId);
+
+                                scheduleRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot datesnapshot : snapshot.getChildren()) {
+                                            Date dateStr = datesnapshot.child("date").getValue(Date.class);
+                                            if (dateStr != null) {
+                                                highlightedDates.add(new ColoredDate(dateStr, context.getResources().getColor(R.color.red_holiday)));
+                                            }
+                                        }
+                                        mKalendarView.setColoredDates(highlightedDates);
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) { }
+                                });
+
+                                dateTimePickerDialog.setPositiveButton("Confirm", (dialog1, which1) -> {
+                                    Date selectedDate = mKalendarView.getSelectedDate();
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                                    String selectedDateStr = sdf.format(selectedDate);
+
+                                    boolean isDateHighlighted = false;
+                                    for (ColoredDate coloredDate : highlightedDates) {
+                                        String highlightedDateStr = sdf.format(coloredDate.getDate());
+                                        if (highlightedDateStr.equals(selectedDateStr)) {
+                                            isDateHighlighted = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!isDateHighlighted) {
+                                        Toast.makeText(context, "Please select a highlighted date", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+                                    new_Date = dateFormat.format(selectedDate);
+
+                                    int hour = timePicker.getHour();
+                                    int minute = timePicker.getMinute();
+                                    String amPm = (hour >= 12) ? "PM" : "AM";
+                                    int displayHour = (hour > 12) ? hour - 12 : (hour == 0 ? 12 : hour);
+                                    new_Time = String.format(Locale.getDefault(), "%d:%02d %s", displayHour, minute, amPm);
+
+                                    if (new_Time.isEmpty()) {
+                                        Toast.makeText(context, "Please select a time", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
+                                    SPUtils.getInstance().put(AppConstans.previousTime, booking.getTime());
+                                    SPUtils.getInstance().put(AppConstans.rescheddate, booking.getDate());
+                                    isReschedule = true;
+                                    reschedulebook(booking, new_Date, new_Time);
+                                });
+
+
+                                dateTimePickerDialog.setNegativeButton("Cancel", (dialog1, which1) -> dialog.dismiss());
+                                dateTimePickerDialog.show();
+                                break;
+
+                            case 2:
+                                openMap(booking.getEmail(),booking.getProviderName(),
+                                        booking.getImage(),booking.getKey());
+                                break;
+                        }
+                    }
+                });
+                builder.show();
+
+            }
+        });
+
+
 
 
         holder.cancel.setOnClickListener(new View.OnClickListener() {
@@ -192,62 +309,148 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
         });
 
 
-        holder.confirmed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(context)
-                        .setTitle("Cofirmed book?")
-                        .setMessage("Are you sure want to confirm this book?")
-                        .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                isConfirmed = true;
-                                ProgressDialog progressDialog = new ProgressDialog(context);
-                                progressDialog.setMessage("Confirm booking....");
-                                progressDialog.setCancelable(false);
-                                progressDialog.show();
 
-                                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                                if (currentUser != null) {
-                                    String currentUserId = currentUser.getUid();
-                                    String currentUserEmail = currentUser.getEmail();
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // Then, call checkIfUserIsGuess
-                                            checkIfUserIsGuess(
-                                                    currentUserId,
-                                                    booking.getTime(),
-                                                    booking.getHeads(),
-                                                    booking.getPaymentMethod(),
-                                                    booking.getServiceName(),
-                                                    booking.getPrice(),
-                                                    booking.getDate(),
-                                                    booking.getAddress(),
-                                                    booking.getEmail(),
-                                                    currentUserEmail,
-                                                    booking.getProviderName(),
-                                                    booking.getImage(),
-                                                    context,
-                                                    booking.getKey(),
-                                                    booking.getAge(),
-                                                    booking.getLengthOfservice(),
-                                                    booking.getPhonenumber(),
-                                                    booking.getSnapshotkey(),
-                                                    booking.getLawType(),
-                                                    booking.isReschedule()
-                                            );
-                                            progressDialog.dismiss();
-                                        }
-                                    }, 500); // Delay of 500 milliseconds to simulate processing time and allow UI to update
-                                }
-                            }
-                        })
-                        .setNegativeButton(context.getString(R.string.no), null)
-                        .show();
-            }
-        });
     }
+
+    private void cofirmbook(Booking2 booking) {
+        new AlertDialog.Builder(context)
+                .setTitle("Cofirmed book?")
+                .setMessage("Are you sure want to confirm this book?")
+                .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        isConfirmed = true;
+                        ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage("Confirm booking....");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser != null) {
+                            String currentUserId = currentUser.getUid();
+                            String currentUserEmail = currentUser.getEmail();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Then, call checkIfUserIsGuess
+                                    checkIfUserIsGuess(
+                                            currentUserId,
+                                            booking.getTime(),
+                                            booking.getHeads(),
+                                            booking.getPaymentMethod(),
+                                            booking.getServiceName(),
+                                            booking.getPrice(),
+                                            booking.getDate(),
+                                            booking.getAddress(),
+                                            booking.getEmail(),
+                                            currentUserEmail,
+                                            booking.getProviderName(),
+                                            booking.getImage(),
+                                            context,
+                                            booking.getKey(),
+                                            booking.getAge(),
+                                            booking.getLengthOfservice(),
+                                            booking.getPhonenumber(),
+                                            booking.getSnapshotkey(),
+                                            booking.getLawType(),
+                                            booking.isReschedule()
+                                    );
+                                    progressDialog.dismiss();
+                                }
+                            }, 500);
+                        }
+                    }
+                })
+                .setNegativeButton(context.getString(R.string.no), null)
+                .show();
+    }
+
+    private void reschedulebook(Booking2 booking,String new_Date,String new_Time ) {
+        new AlertDialog.Builder(context)
+                .setTitle("Reschedule book?")
+                .setMessage("Are you sure want to Reschedule this book?")
+                .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setMessage("Reschedule booking....");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser != null) {
+                            String currentUserId = currentUser.getUid();
+                            String currentUserEmail = currentUser.getEmail();
+                            resched_change(booking,new_Date,new_Time);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Then, call checkIfUserIsGuess
+                                    checkIfUserIsGuess(
+                                            currentUserId,
+                                            booking.getTime(),
+                                            booking.getHeads(),
+                                            booking.getPaymentMethod(),
+                                            booking.getServiceName(),
+                                            booking.getPrice(),
+                                            booking.getDate(),
+                                            booking.getAddress(),
+                                            booking.getEmail(),
+                                            currentUserEmail,
+                                            booking.getProviderName(),
+                                            booking.getImage(),
+                                            context,
+                                            booking.getKey(),
+                                            booking.getAge(),
+                                            booking.getLengthOfservice(),
+                                            booking.getPhonenumber(),
+                                            booking.getSnapshotkey(),
+                                            booking.getLawType(),
+                                            booking.isReschedule()
+                                    );
+                                    progressDialog.dismiss();
+                                }
+                            }, 500);
+                        }
+                    }
+                })
+                .setNegativeButton(context.getString(R.string.no), null)
+                .show();
+    }
+
+    private void resched_change(Booking2 booking2, String new_Date, String new_Time) {
+        String curruntUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        DatabaseReference myBookUserRef = FirebaseDatabase.getInstance().getReference("MybookUser");
+        DatabaseReference bookRef = FirebaseDatabase.getInstance().getReference("Mybook");
+        String chatRoomId = createChatRoomId(curruntUserEmail, booking2.getEmail());
+
+        myBookUserRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("time").setValue(new_Time)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "MybookUser updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update MybookUser", e));
+
+        myBookUserRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("date").setValue(new_Date)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "MybookUser updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update MybookUser", e));
+
+        bookRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("time").setValue(new_Time)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "Mybook updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update Mybook", e));
+
+        bookRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("date").setValue(new_Date)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "Mybook updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update Mybook", e));
+
+        bookRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("reschedule").setValue(true)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "Mybook updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update Mybook", e));
+
+        myBookUserRef.child(chatRoomId).child("bookInfo").child(booking2.getSnapshotkey()).child("reschedule").setValue(true)
+                .addOnSuccessListener(unused -> Log.d("Reschedule", "Mybook updated successfully"))
+                .addOnFailureListener(e -> Log.e("Reschedule", "Failed to update Mybook", e));
+
+    }
+
+
 
     private void savedbookcounting(String key) {
         String timeStamp = String.valueOf(System.currentTimeMillis());
@@ -392,13 +595,23 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
 //                        }
 //                    }
                     String availedMessage = null;
-                    if(isConfirmed){
-                         availedMessage = "Hi, I'm " + username + "\n" +
+                    String previousTime = SPUtils.getInstance().getString(AppConstans.previousTime);
+                    String rescheddate = SPUtils.getInstance().getString(AppConstans.rescheddate);
+
+                    if(isReschedule) {
+                        availedMessage = "Hi, I'm " + username + " " +
+                                "I Reschedule " + previousTime + " " + rescheddate + " " +
+                                "change to " + new_Time + " " + new_Date + " " +
+                                "law name choose " + serviceName + " "+
+                                "Thank you!";
+                    }else if(isConfirmed){
+                        availedMessage = "Hi, I'm " + username + "\n" +
                                 "The book has been confirmed with:\n" +
-                                 "law name select by client: "+serviceName+"\n"+
+                                "law name select by client: "+serviceName+"\n"+
                                 "Selected schedule: " + "time: " + time + "\n" +
                                 "date: " + date + "\n" +
                                 "Thank you!";
+
                     }else{
                         availedMessage = "Hi, I'm " + username + "\n" +
                                 "The book has been complete with:\n" +
@@ -417,6 +630,10 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     Booking booking2 = new Booking(adminUsername, serviceName, price, heads, adminPhone, date, time, adminImage, adminAddress, adminEmail, adminAge, SPUtils.getInstance().getString(AppConstans.AdminLenght), cash, uid,timestamp,snapshotkey,isRescheduled);
                     String chatRoomId = createChatRoomId(curruntUserEmail, provideremail);
+
+                    if(isReschedule){
+                        checkAndCreateChatRoom(provideremail, providerName, image, curruntUserEmail, context, address, key, availedMessage);
+                    }
 
                     if(isConfirmed) {
                         confirmed_lawyer.child(chatRoomId).child("bookInfo").child(snapshotkey).setValue(booking2)
@@ -550,6 +767,8 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                         intent.putExtra("cancelledmessage", availedmessage);
                         if(isConfirmed){
                             Toast.makeText(context, "Confirmed Success", Toast.LENGTH_SHORT).show();
+                        }else if (isReschedule){
+                            Toast.makeText(context, "Reschedule Success", Toast.LENGTH_SHORT).show();
                         }else{
                             Toast.makeText(context, "Complete Success", Toast.LENGTH_SHORT).show();
                         }
@@ -592,14 +811,14 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
 
     public static class BookingViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView,time,date,servicename,price,lawyer_typetxt,reschedule;
-        ImageView avatar;
-        AppCompatButton cancel,confirmed;
+        ImageView avatar,dots_option;
+        AppCompatButton cancel;
         public BookingViewHolder(@NonNull View itemView) {
             super(itemView);
-            confirmed = itemView.findViewById(R.id.confirmed);
+            cancel = itemView.findViewById(R.id.cancel);
+            dots_option = itemView.findViewById(R.id.dots_option);
             reschedule = itemView.findViewById(R.id.reschedule);
             lawyer_typetxt = itemView.findViewById(R.id.lawyer_typetxt);
-            cancel = itemView.findViewById(R.id.cancel);
             servicename = itemView.findViewById(R.id.servicename);
             nameTextView = itemView.findViewById(R.id.username);
             date = itemView.findViewById(R.id.date);

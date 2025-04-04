@@ -1,7 +1,11 @@
 package com.law.booking.activity.MainPageActivity.Provider;
 
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -23,6 +27,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,6 +38,9 @@ import com.app.hubert.guide.model.GuidePage;
 import com.app.hubert.guide.model.HighLight;
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.SkeletonScreen;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -189,6 +197,9 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
         okbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!selectedLocation.equals("Select Location")) {
+                    initfirebaseData(selectedLocation, dialog);
+                }
                 dialog.dismiss();
             }
         });
@@ -208,7 +219,7 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
                     case 0:
                         break;
                     case 1:
-                        fetchlocation(dialogView, "Select Location",dialog);
+                        fetchLocation(dialogView, "Select Location",dialog);
                         break;
                 }
             }
@@ -220,72 +231,76 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
 
         dialog.show();
     }
-    private void fetchlocation(View dialogView, String defaultRegion,DialogPlus dialogPlus) {
-        String provinceUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=province+in+Philippines&key=" + BuildConfig.mapApikey;
-        String cityUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=city+in+Philippines&key=" + BuildConfig.mapApikey;
-        OkHttpClient client = new OkHttpClient();
-        Request provinceRequest = new Request.Builder()
-                .url(provinceUrl)
-                .build();
+    @SuppressLint("MissingPermission")
+    private void fetchLocation(View dialogView, String defaultRegion, DialogPlus dialogPlus) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
 
-        Request cityRequest = new Request.Builder()
-                .url(cityUrl)
-                .build();
 
-        client.newCall(provinceRequest).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-            }
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.isSuccessful() && response.body() != null) {
-                    String jsonResponse = response.body().string();
-                    List<String> provinces = parseRegions(jsonResponse);
+                            try {
+                                String placesUrl = "https://maps.googleapis.com/maps/api/place/search/json?&location="
+                                        + latitude + ","
+                                        + longitude + "&radius=5000&types=Municipality&sensor=false&key=" + BuildConfig.mapApikey;
 
-                    client.newCall(cityRequest).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                            e.printStackTrace();
-                        }
+                                OkHttpClient client = new OkHttpClient();
+                                Request places = new Request.Builder()
+                                        .url(placesUrl)
+                                        .build();
 
-                        @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            if (response.isSuccessful() && response.body() != null) {
-                                String jsonResponse = response.body().string();
-                                List<String> cities = parseRegions(jsonResponse);
-                                provinces.addAll(cities);
-                                provinces.add(0, defaultRegion);
+                                client.newCall(places).enqueue(new Callback() {
+                                    @Override
+                                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                        e.printStackTrace();
+                                    }
 
-                                runOnUiThread(() -> {
-                                    Spinner type = dialogView.findViewById(R.id.type_spinner);
-                                    ArrayAdapter<String> regionAdapter = new ArrayAdapter<>(hmua.this,
-                                            android.R.layout.simple_spinner_item, provinces);
-                                    regionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    type.setAdapter(regionAdapter);
+                                    @Override
+                                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                        if (response.isSuccessful() && response.body() != null) {
+                                            String jsonResponse = response.body().string();
+                                            List<String> provinces = parseRegions(jsonResponse);
+                                            provinces.addAll(provinces);
+                                            provinces.add(0,defaultRegion);
+                                            runOnUiThread(() -> {
+                                                Spinner type = dialogView.findViewById(R.id.type_spinner);
+                                                ArrayAdapter<String> regionAdapter = new ArrayAdapter<>(hmua.this,
+                                                        android.R.layout.simple_spinner_item, provinces);
+                                                regionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                                type.setAdapter(regionAdapter);
+                                                type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                                    @Override
+                                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                                        selectedLocation = provinces.get(position).trim().toLowerCase();
+                                                    }
 
-                                    type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                        @Override
-                                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                            selectedLocation = provinces.get(position).trim().toLowerCase();
-                                            if (!selectedLocation.equals("Select Location")) {
-                                                initfirebaseData(selectedLocation,dialogPlus);
-                                            }
+                                                    @Override
+                                                    public void onNothingSelected(AdapterView<?> parent) {
+                                                    }
+                                                });
+                                            });
                                         }
-
-                                        @Override
-                                        public void onNothingSelected(AdapterView<?> parent) {
-                                        }
-                                    });
+                                    }
                                 });
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
                         }
-                    });
-                }
-            }
-        });
+                    }
+
+                });
     }
+
     private void initShowGuide() {
         NewbieGuide.with(this)
                 .setLabel("filter settings")
@@ -364,7 +379,6 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
                                 (isSuperAdmin == null || !isSuperAdmin) &&
                                 (isVerify == null || isVerify)) {
                             if (dialogPlus != null && dialogPlus.isShowing()) {
-                                dialogPlus.dismiss();
                             }
                             providerList.add(usermodel);
                         }

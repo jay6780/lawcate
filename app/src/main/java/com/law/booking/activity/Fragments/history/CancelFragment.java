@@ -112,12 +112,6 @@ public class CancelFragment extends Fragment {
             mybookRef.child(chatId).child("bookInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(!dataSnapshot.exists()){
-                        Log.d("HistoryBook", "data not exists");
-                        bookingAdapter.notifyDataSetChanged();
-                        bookrecycler.setAdapter(nodata);
-                        return;
-                    }
                     for (DataSnapshot databook : dataSnapshot.getChildren()) {
                         Booking2 booking = databook.getValue(Booking2.class);
                         if (booking != null && booking.getSnapshotkey().equals(snapshotkey)) {
@@ -132,7 +126,6 @@ public class CancelFragment extends Fragment {
                         Collections.sort(bookingList, (b1, b2) -> b2.getTimestamp().compareTo(b1.getTimestamp()));
                         bookingAdapter.notifyDataSetChanged();
                         bookrecycler.setAdapter(bookingAdapter);
-
                     }
                 }
 

@@ -16,18 +16,13 @@ public class Usermodel {
     private String address;
     private String key;
     private String timestamp;
-    private boolean isCorporate;
-    private boolean isCriminal;
-    private boolean isFamily;
-    private boolean isImmigration;
-    private boolean isProperty;
-    private boolean isVerify;
-    private float ratings;
     private int bookcount;
     private int bookcomplete;
-    private int bookcancel;
+    private String uid;
+    private String servicefee;
     private String description;
-
+    private long lastMessageTimestamp;
+    private String qrcode;
     public Usermodel() {
     }
 
@@ -43,16 +38,40 @@ public class Usermodel {
         this.birthday = birthday;
     }
 
+    public String getQrcode() {
+        return qrcode;
+    }
+
+    public long getLastMessageTimestamp() {
+        return lastMessageTimestamp;
+    }
+
+    public void setLastMessageTimestamp(long lastMessageTimestamp) {
+        this.lastMessageTimestamp = lastMessageTimestamp;
+    }
+
     public String getDescription() {
         return description;
     }
 
-    public int getBookcancel() {
-        return bookcancel;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setBookcancel(int bookcancel) {
-        this.bookcancel = bookcancel;
+    public String getServicefee() {
+        return servicefee;
+    }
+
+    public void setServicefee(String servicefee) {
+        this.servicefee = servicefee;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public int getBookcomplete() {
@@ -69,30 +88,6 @@ public class Usermodel {
 
     public void setBookcount(int bookcount) {
         this.bookcount = bookcount;
-    }
-
-    public boolean isVerify() {
-        return isVerify;
-    }
-
-    public boolean isCorporate() {
-        return isCorporate;
-    }
-
-    public boolean isCriminal() {
-        return isCriminal;
-    }
-
-    public boolean isFamily() {
-        return isFamily;
-    }
-
-    public boolean isImmigration() {
-        return isImmigration;
-    }
-
-    public boolean isProperty() {
-        return isProperty;
     }
 
     public boolean isSuperAdmin() {
@@ -210,13 +205,5 @@ public class Usermodel {
 
     public void setOnline(boolean online) {
         this.online = online;
-    }
-
-    public float getRatings() {
-        return ratings;
-    }
-
-    public void setRatings(float ratings) {
-        this.ratings = ratings;
     }
 }

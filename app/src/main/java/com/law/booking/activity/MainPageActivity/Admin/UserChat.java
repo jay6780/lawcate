@@ -1,11 +1,5 @@
 package com.law.booking.activity.MainPageActivity.Admin;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +11,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ethanhua.skeleton.Skeleton;
 import com.ethanhua.skeleton.SkeletonScreen;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,16 +25,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.newHome;
+import com.law.booking.activity.tools.Model.Message;
 import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Service.MessageNotificationService;
-import com.law.booking.activity.MainPageActivity.newHome;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.law.booking.activity.tools.adapter.UserchatAdapter;
 import com.law.booking.activity.tools.adapter.emptyAdapter;
-import com.law.booking.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,6 +53,7 @@ public class UserChat extends AppCompatActivity {
     private SkeletonScreen skeletonScreen;
     private LinearLayout ll_skeleton;
     private boolean isSkeletonShown = false;
+    private String TAG = "ImUser_chat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,7 @@ public class UserChat extends AppCompatActivity {
         emptyAdapter = new emptyAdapter(this);
         providerRecycler.setAdapter(providerAdapter);
         ll_skeleton.setVisibility(View.VISIBLE);
+        Log.d(TAG,"OKAY");
         Intent intent = new Intent(this, MessageNotificationService.class);
         startService(intent);
         initSkeleton();
@@ -213,11 +218,32 @@ public class UserChat extends AppCompatActivity {
                             Usermodel usermodel = snapshot.getValue(Usermodel.class);
                             if (usermodel != null) {
                                 usermodel.setKey(snapshot.getKey());
-                                providerList.add(usermodel);
-                                providerAdapter.notifyDataSetChanged();
+                                String chatRoomId = createChatRoomId(currentUserEmail, targetEmail);
+                                DatabaseReference chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId).child("messages");
+                                chatRoomRef.orderByChild("timestamp").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
+                                            Message lastMessage = messageSnapshot.getValue(Message.class);
+                                            if (lastMessage != null) {
+                                                Log.d("lastmessage", "value: " + lastMessage.getTimestamp());
+                                                usermodel.setLastMessageTimestamp(lastMessage.getTimestamp());
+                                                providerList.add(usermodel);
+                                                Collections.sort(providerList, timestampComparator);
+                                                providerAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.e("User_list", "Error fetching last message timestamp: " + databaseError.getMessage());
+                                    }
+                                });
+                            } else {
+                                Log.d("User_list", "Provider already exists: " + targetEmail);
                             }
                         }
-
                         providerFound = true;
                         break;
                     }
@@ -237,7 +263,20 @@ public class UserChat extends AppCompatActivity {
             }
         });
     }
+    private final Comparator<Usermodel> timestampComparator = (user1, user2) -> {
+        long timestamp1 = user1.getLastMessageTimestamp();
+        long timestamp2 = user2.getLastMessageTimestamp();
+        return Long.compare(timestamp2, timestamp1);
+    };
+    private String createChatRoomId(String email1, String email2) {
+        String chatRoomId = email1.compareTo(email2) < 0
+                ? email1.replace(".", "_") + "_" + email2.replace(".", "_")
+                : email2.replace(".", "_") + "_" + email1.replace(".", "_");
 
+        SPUtils.getInstance().put(AppConstans.ChatRoomId, chatRoomId);
+
+        return chatRoomId;
+    }
 
     private void changeStatusBarColor(int color) {
         Window window = getWindow();

@@ -117,7 +117,6 @@ public class HistoryBookFragment extends Fragment {
             mybookRef.child(chatId).child("bookInfo").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(!dataSnapshot.exists()){
                     for (DataSnapshot databook : dataSnapshot.getChildren()) {
                         Booking2 booking = databook.getValue(Booking2.class);
                         if (booking != null && booking.getSnapshotkey().equals(snapshotkey)) {
@@ -134,8 +133,6 @@ public class HistoryBookFragment extends Fragment {
                         bookingAdapter.isConfirmed(false);
                         bookingAdapter.notifyDataSetChanged();
                         bookrecycler.setAdapter(bookingAdapter);
-
-                        }
 
                     }
                 }

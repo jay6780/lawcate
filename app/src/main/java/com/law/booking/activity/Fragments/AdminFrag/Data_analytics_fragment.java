@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +36,7 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,6 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
     private BarChart barGraph;
     private PieChart pieChart;
     private TextView complete_txt, cancel_txt, total_txt, content;
-    private LinearLayout linear_graph;
     private SmartRefreshLayout refreshLayout;
     private boolean isRefresh = false;
     private MaterialSpinner timeStampSpinner;
@@ -55,22 +54,20 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_data_analytics_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_data_analytics_fragment2, container, false);
         barGraph = view.findViewById(R.id.barGraph);
         pieChart = view.findViewById(R.id.piechart);
         timeStampSpinner = view.findViewById(R.id.date_spinner);
-        linear_graph = view.findViewById(R.id.linear_graph);
         refreshLayout = view.findViewById(R.id.refreshLayout);
         complete_txt = view.findViewById(R.id.complete_txt);
         cancel_txt = view.findViewById(R.id.cancel_txt);
         content = view.findViewById(R.id.content);
         total_txt = view.findViewById(R.id.total_txt);
-        linear_graph.setVisibility(View.VISIBLE);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableRefresh(true);
         init_barChart();
         initFirebase();
-        timeStampSpinner.setItems("All", "Day","Week","Month");
+        timeStampSpinner.setItems("All", "1 day","2 days","3 days","Week","Month");
 
         timeStampSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
             @Override
@@ -187,16 +184,30 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
         if (timeStampValue == null || timeStampValue.equals("All")) {
             return true;
         }
+
         long currentTime = System.currentTimeMillis();
-        long timeDiff = currentTime - Long.parseLong(timeStampMillis);
+        long timestamp = Long.parseLong(timeStampMillis); // Ensure this is in milliseconds
+        long timeDiff = currentTime - timestamp;
+
+        Log.d("TimeFilter", "Current Time: " + currentTime);
+        Log.d("TimeFilter", "Timestamp: " + timestamp);
+        Log.d("TimeFilter", "Time Difference: " + timeDiff);
 
         switch (timeStampValue) {
-            case "Day":
-                return timeDiff <= 24 * 60 * 60 * 1000;
+            case "1 day":
+                return timeDiff <= 24 * 60 * 60 * 1000 && timeDiff > 0;
+            case "2 days":
+                return timeDiff <= 48 * 60 * 60 * 1000 && timeDiff > 24 * 60 * 60 * 1000;
+            case "3 days":
+                return timeDiff <= 72 * 60 * 60 * 1000 && timeDiff > 48 * 60 * 60 * 1000;
             case "Week":
-                return timeDiff <= 21 * 24 * 60 * 60 * 1000 && timeDiff > 3 * 24 * 60 * 60 * 1000;
+                return timeDiff <= 7 * 24 * 60 * 60 * 1000 && timeDiff > 3 * 24 * 60 * 60 * 1000;
             case "Month":
-                return timeDiff <= 30 * 24 * 60 * 60 * 1000 && timeDiff > 21 * 24 * 60 * 60 * 1000;
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MONTH, -1);
+                long oneMonthAgo = calendar.getTimeInMillis();
+
+                return timeDiff <= currentTime - oneMonthAgo && timeDiff > 21 * 24 * 60 * 60 * 1000;
             default:
                 return true;
         }
@@ -205,11 +216,14 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
 
     private void updatePieChart(List<PieEntry> entries) {
         pieChart.clear();
+
+        // If no data, log and invalidate chart
         if (entries.isEmpty()) {
             Log.d(TAG, "No data available to update PieChart");
             pieChart.invalidate();
             return;
         }
+
         List<Integer> colors = getRandomColors(entries.size());
 
         PieDataSet dataSet = new PieDataSet(entries, "");
@@ -221,8 +235,10 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
         pieChart.setData(pieData);
 
         pieChart.setUsePercentValues(true);
+
         pieChart.setEntryLabelTextSize(12f);
         pieChart.getDescription().setEnabled(false);
+        pieChart.getLegend().setEnabled(false);
         pieChart.invalidate();
     }
 
@@ -262,9 +278,9 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
     }
 
     private void summary(int bookcount, int bookcomplete, int bookcancel) {
-        total_txt.setText("The total book is: " + bookcount);
-        complete_txt.setText("Complete booking is: " + bookcomplete);
-        cancel_txt.setText("Cancel booking is: " + bookcancel);
+        total_txt.setText(String.valueOf(bookcount));
+        complete_txt.setText("Complete: "+bookcomplete);
+        cancel_txt.setText("Cancel: "+bookcancel);
 
         if (bookcount > 0) {
             double completePercentage = ((double) bookcomplete / bookcount) * 100;
@@ -287,6 +303,12 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
         dataSet.setColors(colors);
         dataSet.setValueTextSize(12f);
 
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getBarLabel(BarEntry barEntry) {
+                return String.valueOf((int) barEntry.getY());
+            }
+        });
         BarData data = new BarData(dataSet);
         barGraph.setData(data);
         barGraph.getXAxis().setGranularity(1f);
@@ -313,6 +335,7 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
             if(isRefresh){
                 refreshLayout.finishRefresh();
                 initFirebase();
+                init_barChart();
             }else{
                 refreshLayout.finishRefresh(false);
             }

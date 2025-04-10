@@ -1,6 +1,7 @@
 package com.law.booking.activity.MainPageActivity.Admin;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -31,6 +33,7 @@ public class Timeframeactivity extends AppCompatActivity {
     TextView title;
     AppCompatButton saved;
     TimePicker timePicker;
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,20 +63,27 @@ public class Timeframeactivity extends AppCompatActivity {
         scheduleSpinner.setAdapter(scheduleAdapter);
 
         scheduleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 1:
                         timevalue = "Morning schedule";
                         databasename = "Morning_slot";
+                        timePicker.setHour(6);
+                        timePicker.setMinute(0);
                         break;
                     case 2:
                         timevalue = "Afternoon schedule";
                         databasename = "Afternoon_slot";
+                        timePicker.setHour(12);
+                        timePicker.setMinute(0);
                         break;
                     case 3:
                         timevalue = "Evening schedule";
                         databasename = "Evening_slot";
+                        timePicker.setHour(18);
+                        timePicker.setMinute(0);
                         break;
                     default:
                         timevalue = null;
@@ -82,22 +92,70 @@ public class Timeframeactivity extends AppCompatActivity {
                 }
             }
 
-            @Override
+                @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
 
-        timePicker.setIs24HourView(false); // Use 12-hour format
+        timePicker.setIs24HourView(true);
 
         timePicker.setOnTimeChangedListener((view, hourOfDay, minute) -> {
+            boolean isValid = false;
             String amPm = (hourOfDay >= 12) ? "PM" : "AM";
             int displayHour = (hourOfDay > 12) ? hourOfDay - 12 : (hourOfDay == 0 ? 12 : hourOfDay);
             String selectedTime = String.format("%d:%02d %s", displayHour, minute, amPm);
 
             if (timevalue != null) {
+                int correctedHour = hourOfDay;
+                int correctedMinute = minute;
+
+                switch (timevalue) {
+                    case "Morning schedule":
+                        if (hourOfDay < 6) {
+                            correctedHour = 6;
+                            correctedMinute = 0;
+                        } else if (hourOfDay >= 12) {
+                            correctedHour = 11;
+                            correctedMinute = 59;
+                        }
+                        isValid = (correctedHour >= 6 && correctedHour < 12);
+                        break;
+
+                    case "Afternoon schedule":
+                        if (hourOfDay < 12) {
+                            correctedHour = 12;
+                            correctedMinute = 0;
+                        } else if (hourOfDay >= 18) {
+                            correctedHour = 17;
+                            correctedMinute = 59;
+                        }
+                        isValid = (correctedHour >= 12 && correctedHour < 18);
+                        break;
+
+                    case "Evening schedule":
+                        if (hourOfDay < 18) {
+                            correctedHour = 18;
+                            correctedMinute = 0;
+                        } else if (hourOfDay > 22) {
+                            correctedHour = 22;
+                            correctedMinute = 0;
+                        }
+                        isValid = (correctedHour >= 18 && correctedHour <= 22);
+                        break;
+                }
+
+                if (!isValid || hourOfDay != correctedHour || minute != correctedMinute) {
+                    timePicker.setHour(correctedHour);
+                    timePicker.setMinute(correctedMinute);
+                    displayHour = (correctedHour > 12) ? correctedHour - 12 : (correctedHour == 0 ? 12 : correctedHour);
+                    amPm = (correctedHour >= 12) ? "PM" : "AM";
+                    selectedTime = String.format("%d:%02d %s", displayHour, correctedMinute, amPm);
+                }
+
                 title.setText(timevalue + ": " + selectedTime);
                 saved.setVisibility(View.VISIBLE);
-                saved.setOnClickListener(view1 -> showConfirmationDialog(selectedTime));
+                String finalSelectedTime = selectedTime;
+                saved.setOnClickListener(view1 -> showConfirmationDialog(finalSelectedTime));
             }
         });
 

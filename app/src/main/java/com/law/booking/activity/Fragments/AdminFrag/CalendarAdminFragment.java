@@ -1,7 +1,10 @@
 package com.law.booking.activity.Fragments.AdminFrag;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ak.ColoredDate;
@@ -28,14 +30,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.law.booking.R;
+import com.law.booking.activity.MainPageActivity.Admin.Timeframeactivity;
+import com.law.booking.activity.MainPageActivity.Admin.Timeview_update;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.OnScheduleLongClickListener;
 import com.law.booking.activity.tools.Model.Schedule;
 import com.law.booking.activity.tools.Model.Schedule2;
 import com.law.booking.activity.tools.Model.Schedule4;
 import com.law.booking.activity.tools.adapter.ScheduleAdapter;
-import com.law.booking.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -43,6 +49,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class CalendarAdminFragment extends Fragment implements OnScheduleLongClickListener {
@@ -82,12 +89,13 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
         myschedule = view.findViewById(R.id.myschedule);
         clear = view.findViewById(R.id.clear);
         clear.setVisibility(View.VISIBLE);
-        scheduleAdapter = new ScheduleAdapter(scheduleList, this,getContext());
-        myschedule.setLayoutManager(new LinearLayoutManager(getContext()));
-        myschedule.setAdapter(scheduleAdapter);
+//        scheduleAdapter = new ScheduleAdapter(scheduleList, this,getContext());
+//        myschedule.setLayoutManager(new LinearLayoutManager(getContext()));
+//        myschedule.setAdapter(scheduleAdapter);
         mKalendarView.setDateSelector(selectedDate -> handleDateSelection(selectedDate));
         clear.setOnClickListener(v -> showClearScheduleDialog());
         saved.setOnClickListener(click ->showSaveScheduleDialog());
+        myschedule.setVisibility(View.GONE);
     }
 
     private void fetchSchedules() {
@@ -118,7 +126,7 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
                         highlightedDates.add(new ColoredDate(schedule.getDate(), getResources().getColor(R.color.red_holiday)));
                     }
                     mKalendarView.setColoredDates(highlightedDates);
-                    scheduleAdapter.notifyDataSetChanged();
+//                    scheduleAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -157,33 +165,78 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
 
     private void handleDateSelection(Date selectedDate) {
         dateExists = false;
+        Schedule2 existingSchedule = null;
 
         for (Schedule2 schedule : scheduleList) {
             if (isSameDay(schedule.getDate(), selectedDate)) {
                 Log.d("month", "data: " + schedule.getDate());
                 dateExists = true;
+                existingSchedule = schedule;
                 break;
             }
         }
 
-        if (dateExists) {
+        if (dateExists && existingSchedule != null) {
             saved.setVisibility(View.GONE);
-            selectedDates.clear();
-            Toast.makeText(getContext(), "This date is already scheduled.", Toast.LENGTH_SHORT).show();
-        } else {
-            if (selectedDates.contains(selectedDate)) {
-                selectedDates.remove(selectedDate);
-                removeHighlightForDate(selectedDate);
-            } else {
-                selectedDates.add(selectedDate);
-                addHighlightForDate(selectedDate);
-                saved.setVisibility(View.VISIBLE);
+
+            Schedule2 finalSchedule = existingSchedule;
+            String dateString = String.valueOf(finalSchedule.getDate());
+            String formattedDateString = "";
+            try {
+                SimpleDateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+                Date date = originalFormat.parse(dateString);
+                SimpleDateFormat targetFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+                formattedDateString = targetFormat.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                formattedDateString = dateString;
             }
+            new AlertDialog.Builder(getContext())
+                    .setTitle(formattedDateString)
+                    .setItems(new String[]{"Delete", "Set time frame", "View save schedule"}, (dialog, which) -> {
+                        String key = finalSchedule.getKey();
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                        if (which == 0) {
+                            deleteschedule(finalSchedule, getContext());
+                        } else if (which == 1) {
+                            Intent gototime = new Intent(getContext(), Timeframeactivity.class);
+                            gototime.putExtra("key", key);
+                            gototime.putExtra("date", String.valueOf(finalSchedule.getDate()));
+                            gototime.putExtra("userId", userId);
+                            startActivity(gototime);
+                            if (getContext() instanceof Activity) {
+                                ((Activity) getContext()).overridePendingTransition(0, 0);
+                            }
+                        } else if (which == 2) {
+                            Intent gototime = new Intent(getContext(), Timeview_update.class);
+                            gototime.putExtra("key", key);
+                            gototime.putExtra("date", String.valueOf(finalSchedule.getDate()));
+                            gototime.putExtra("userId", userId);
+                            startActivity(gototime);
+                            if (getContext() instanceof Activity) {
+                                ((Activity) getContext()).overridePendingTransition(0, 0);
+                            }
+                        }
+                    })
+                    .show();
+        } else {
+            selectedDates.add(selectedDate);
+            addHighlightForDate(selectedDate);
+            saved.setVisibility(View.VISIBLE);
+
         }
 
         updateHighlightedDates();
     }
 
+    private void deleteschedule(Schedule2 schedule2,Context context) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String key = schedule2.getKey();
+        Log.d("deletekey","Deletekey: "+key);
+        Dialog deletetime = new Dialog();
+        deletetime.deletetime(context,userId,key);
+    }
     private boolean isSameDay(Date date1, Date date2) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
@@ -211,6 +264,10 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
         for (Date date : selectedDates) {
             highlightedDates.add(new ColoredDate(date, getResources().getColor(R.color.red_holiday)));
         }
+        for (Schedule2 schedule : scheduleList) {
+            highlightedDates.add(new ColoredDate(schedule.getDate(), getResources().getColor(R.color.red_holiday)));
+        }
+
         mKalendarView.setColoredDates(highlightedDates);
     }
 
@@ -300,7 +357,7 @@ public class CalendarAdminFragment extends Fragment implements OnScheduleLongCli
                             highlightedDates.clear();
                             selectedDates.clear();
                             mKalendarView.setColoredDates(highlightedDates);
-                            scheduleAdapter.notifyDataSetChanged();
+//                            scheduleAdapter.notifyDataSetChanged();
                         } else {
                             Toast.makeText(getContext(), "Failed to clear scheduled dates.", Toast.LENGTH_SHORT).show();
                         }

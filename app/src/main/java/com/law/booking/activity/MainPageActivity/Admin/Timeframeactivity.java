@@ -70,7 +70,7 @@ public class Timeframeactivity extends AppCompatActivity {
                     case 1:
                         timevalue = "Morning schedule";
                         databasename = "Morning_slot";
-                        timePicker.setHour(6);
+                        timePicker.setHour(7);
                         timePicker.setMinute(0);
                         break;
                     case 2:
@@ -111,12 +111,12 @@ public class Timeframeactivity extends AppCompatActivity {
 
                 switch (timevalue) {
                     case "Morning schedule":
-                        if (hourOfDay < 6) {
-                            correctedHour = 6;
+                        if (hourOfDay < 7) {
+                            correctedHour = 7;
                             correctedMinute = 0;
                         } else if (hourOfDay >= 12) {
                             correctedHour = 11;
-                            correctedMinute = 59;
+                            correctedMinute = 0;
                         }
                         isValid = (correctedHour >= 6 && correctedHour < 12);
                         break;
@@ -126,8 +126,8 @@ public class Timeframeactivity extends AppCompatActivity {
                             correctedHour = 12;
                             correctedMinute = 0;
                         } else if (hourOfDay >= 18) {
-                            correctedHour = 17;
-                            correctedMinute = 59;
+                            correctedHour = 18;
+                            correctedMinute = 0;
                         }
                         isValid = (correctedHour >= 12 && correctedHour < 18);
                         break;
@@ -136,12 +136,13 @@ public class Timeframeactivity extends AppCompatActivity {
                         if (hourOfDay < 18) {
                             correctedHour = 18;
                             correctedMinute = 0;
-                        } else if (hourOfDay > 22) {
-                            correctedHour = 22;
+                        } else if (hourOfDay > 23) {
+                            correctedHour = 23;
                             correctedMinute = 0;
                         }
-                        isValid = (correctedHour >= 18 && correctedHour <= 22);
+                        isValid = (correctedHour >= 18 && correctedHour <= 23);
                         break;
+
                 }
 
                 if (!isValid || hourOfDay != correctedHour || minute != correctedMinute) {

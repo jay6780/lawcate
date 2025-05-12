@@ -3,6 +3,7 @@ package com.law.booking.activity.Fragments.UserFragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -48,6 +49,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -74,13 +76,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private MapView mapView;
     private LatLng userLocation;
-    private LatLng destinationLocation;
-    private LatLng providerlocation,eventlocation;
+
     private LocationCallback locationCallback;
     private Bundle mapstate;
-    private double distanceKm;
     private LatLng currentLatLng;
     private FloatingActionButton refresh;
+    private Marker currentLocationMarker;
     @Nullable
     @Override
 
@@ -140,8 +141,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             try {
                 List<Address> addresses = geocoder.getFromLocationName(addressStr, 1);
                 if (addresses != null && !addresses.isEmpty()) {
-                    Address address = addresses.get(0);
-                    providerlocation = new LatLng(address.getLatitude(), address.getLongitude());
                     fetchProvidersAndShowMarkers(addressStr);
 
                 } else {
@@ -171,6 +170,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
     private void fetchProvidersAndShowMarkers(String selectedAddress) {
+
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         String userProvince = null;
         String selectedProvince = null;
@@ -215,11 +215,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 googleMap.setOnMarkerClickListener(marker -> {
                     Usermodel usermodel = (Usermodel) marker.getTag();
-                    if (usermodel != null) {
-                        if (currentLatLng == null) {
-                            Log.e("MapFragment", "Current location is null. Cannot fetch route data.");
-                            return true;
-                        }
+                    if (usermodel == null || currentLatLng == null) {
+                        currentLocationMarker.showInfoWindow();
+                        return true;
+                    }
+
+                        Log.d("CurrentLatlang", "value: " + currentLatLng);
                         RouteFetcher routeFetcher = new RouteFetcher();
                         ProgressDialog progressDialog = new ProgressDialog(getActivity());
                         progressDialog.setMessage("Loading....");
@@ -235,9 +236,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                         JSONObject route = jsonResponse.getJSONObject("route");
                                         int distanceMeters = route.getInt("distance");
                                         double updatedDistanceKm = distanceMeters / 1000.0;
+
+                                        int durationSeconds = route.getInt("duration");
+                                        int hours = durationSeconds / 3600;
+                                        int minutes = (durationSeconds % 3600) / 60;
+                                        int seconds = durationSeconds % 60;
+                                        String durationText;
+                                        if (hours > 0) {
+                                            durationText = String.format("%d hrs %d min", hours, minutes);
+                                        } else if (minutes > 0) {
+                                            durationText = String.format("%d min", minutes);
+                                        } else {
+                                            durationText = String.format("%d sec", seconds);
+                                        }
+                                        Log.d("Duration", "Formatted duration: " + durationText);
                                         Log.d("KM", "Distance: " + updatedDistanceKm + " km");
                                         Dialog showmapkm = new Dialog();
-                                        showmapkm.mapkmdialog(getActivity(), usermodel.getAddress(), usermodel.getName(), updatedDistanceKm, usermodel.getImage(), usermodel);
+                                        showmapkm.mapkmdialog(getActivity(), usermodel.getAddress(), usermodel.getName(), updatedDistanceKm, usermodel.getImage(), usermodel, durationText);
                                     } catch (JSONException e) {
                                         Log.e("MapFragment", "Error parsing JSON response: " + e.getMessage());
                                     }
@@ -254,7 +269,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 Log.e("MapFragment", "Error fetching route data: " + errorMessage);
                             }
                         });
-                    }
                     return true;
                 });
 
@@ -326,6 +340,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void notExistprovider() {
+        LatLng destinationLocation = null;
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         String addressText = "Unknown location";
         try {
@@ -387,10 +402,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
+
+
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
+
+
         requestAndSetUserLocation();
     }
 
@@ -404,6 +423,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     if (location != null) {
                         userLocation = new LatLng(location.getLatitude(), location.getLongitude());
                         initdatabase();
+                        initMe();
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 14));
                         geocodeLocation(userLocation);
                         startLocationUpdates();
@@ -416,6 +436,80 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 });
     }
 
+    private void initMe() {
+        String myUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference merReference = FirebaseDatabase.getInstance().getReference("Client").child(myUserId);
+        merReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String name = snapshot.child("name").getValue(String.class);
+                String image = snapshot.child("image").getValue(String.class);
+//                Log.d("MyInfo","value: "+"name: "+name +" image: "+image);
+                if(name !=null && image!=null){
+                    loadUserImageAndAddMarker(name,image,userLocation);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    private void loadUserImageAndAddMarker(String name, String image, LatLng offsetLocation) {
+        Context context = getContext();
+        if (context == null) {
+            Log.e("MapFragment", "Context is null, cannot create Geocoder.");
+            return;
+        }
+
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        try {
+            List<android.location.Address> addresses = geocoder.getFromLocation(offsetLocation.latitude, offsetLocation.longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                StringBuilder locationText = new StringBuilder();
+                android.location.Address address = addresses.get(0);
+                if (address.getThoroughfare() != null) {
+                    locationText.append(address.getThoroughfare());
+                }
+                if (address.getLocality() != null) {
+                    locationText.append(", ").append(address.getLocality());
+                }
+                if (address.getSubAdminArea() != null) {
+                    locationText.append(", ").append(address.getSubAdminArea());
+                }
+
+
+                Glide.with(getContext())
+                        .asBitmap()
+                        .load(image)
+                        .override(100, 100)
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                Bitmap circularBitmap = getCircularBitmap(resource);
+                                MarkerOptions markerOptions = new MarkerOptions()
+                                        .position(offsetLocation)
+                                        .title(name)
+                                        .snippet("Address: " + locationText)
+                                        .icon(BitmapDescriptorFactory.fromBitmap(circularBitmap));
+                                if (currentLocationMarker != null) {
+                                    currentLocationMarker.remove();
+                                }
+                                currentLocationMarker = googleMap.addMarker(markerOptions);
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private void geocodeLocation(LatLng latLng) {
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
@@ -426,6 +520,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 if (address.getSubThoroughfare() != null) {
                     locationText.append(" ").append(address.getSubThoroughfare());
                 }
+                currentLocationMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title(locationText.toString()));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+                currentLocationMarker.showInfoWindow();
             }
         } catch (IOException e) {
             Log.e("MapFragment", "Geocoding failed: " + e.getMessage());

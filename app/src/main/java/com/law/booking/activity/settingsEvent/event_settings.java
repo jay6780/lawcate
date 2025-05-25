@@ -2,7 +2,6 @@ package com.law.booking.activity.settingsEvent;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,16 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.law.booking.R;
 import com.law.booking.activity.Application.TinkerApplications;
+import com.law.booking.activity.MainPageActivity.Admin.Api_settings_activity;
 import com.law.booking.activity.MainPageActivity.newHome;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 
-public class event_settings extends AppCompatActivity {
+public class event_settings extends AppCompatActivity implements View.OnClickListener {
     private Spinner languageSpinner;
     private String selectedLanguage;
     private ImageView back;
-    private RelativeLayout rl1,law_switch;
-    private View lawview;
+    private RelativeLayout rl1,law_switch,Rl_apikey;
+    private View lawview,apiview;
     String textvalue = SPUtils.getInstance().getString(AppConstans.selectLang);
     private String TAG = "Change_langact";
     @Override
@@ -34,16 +34,29 @@ public class event_settings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_langact);
         law_switch = findViewById(R.id.law_switch);
+        apiview = findViewById(R.id.apiview);
+        Rl_apikey = findViewById(R.id.Rl_apikey);
         lawview = findViewById(R.id.lawview);
         back = findViewById(R.id.back);
         rl1 = findViewById(R.id.relative_switch);
+        //initialized onClick
+        Rl_apikey.setOnClickListener(this);
+        back.setOnClickListener(this);
+        rl1.setOnClickListener(this);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
         changeStatusBarColor(getResources().getColor(R.color.purple_theme));
-        Log.d(TAG,"selectedLang: "+textvalue);
+//        Log.d(TAG,"selectedLang: "+textvalue);
 
+        boolean isSuperAdmin = SPUtils.getInstance().getBoolean(AppConstans.isSuperAdmin);
+//        Log.d("IsSuperAdmin","value: "+isSuperAdmin);
+        if(isSuperAdmin){
+            Rl_apikey.setVisibility(View.VISIBLE);
+            apiview.setVisibility(View.VISIBLE);
+        }
         if(SPUtils.getInstance().getBoolean(AppConstans.userType)){
             law_switch.setVisibility(View.VISIBLE);
             lawview.setVisibility(View.VISIBLE);
@@ -102,6 +115,26 @@ public class event_settings extends AppCompatActivity {
         rl1.setOnClickListener(view -> switchaccount());
     }
 
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.relative_switch:
+                switchaccount();
+                break;
+            case R.id.Rl_apikey:
+                Intent gotoApi = new Intent(getApplicationContext(), Api_settings_activity.class);
+                gotoApi.putExtra("googleApi",SPUtils.getInstance().getString(AppConstans.googleMapApi));
+                gotoApi.putExtra("magicApi",SPUtils.getInstance().getString(AppConstans.magicApi));
+                overridePendingTransition(0,0);
+                startActivity(gotoApi);
+                break;
+            case R.id.back:
+                onBackPressed();
+                break;
+        }
+    }
+
     private void switchaccount() {
       Intent swtichaccount = new Intent(getApplicationContext(), switch_account_event.class);
       startActivity(swtichaccount);
@@ -116,4 +149,5 @@ public class event_settings extends AppCompatActivity {
         finish();
         super.onBackPressed();
     }
+
 }

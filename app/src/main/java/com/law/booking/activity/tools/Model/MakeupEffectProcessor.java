@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 
 import org.json.JSONObject;
 
@@ -59,7 +60,7 @@ public class MakeupEffectProcessor {
         Request request = new Request.Builder()
                 .url("https://api.magicapi.dev/api/v1/ailabtools/ai-makeup/portrait/effects/face-makeup")
                 .post(requestBody)
-                .addHeader("x-magicapi-key", AppConstans.Apikey)
+                .addHeader("x-magicapi-key", SPUtils.getInstance().getString(AppConstans.magicApi))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {

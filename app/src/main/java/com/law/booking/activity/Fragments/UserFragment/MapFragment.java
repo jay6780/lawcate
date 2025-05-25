@@ -59,6 +59,8 @@ import com.law.booking.R;
 import com.law.booking.activity.tools.DialogUtils.Dialog;
 import com.law.booking.activity.tools.Model.RouteFetcher;
 import com.law.booking.activity.tools.Model.Usermodel;
+import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -395,7 +397,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         if (!Places.isInitialized()) {
-            Places.initialize(getContext(), getString(R.string.Apikey));
+            Places.initialize(getContext(),SPUtils.getInstance().getString(AppConstans.googleMapApi));
         }
     }
 

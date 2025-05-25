@@ -167,7 +167,7 @@ public class MapSelectActivity extends AppCompatActivity implements OnMapReadyCa
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), getString(R.string.Apikey));
+            Places.initialize(getApplicationContext(),SPUtils.getInstance().getString(AppConstans.googleMapApi));
         }
     }
 

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.law.booking.activity.tools.Utils.AppConstans;
+import com.law.booking.activity.tools.Utils.SPUtils;
 
 import org.json.JSONObject;
 
@@ -30,7 +31,7 @@ public class RouteFetcher {
         Request request = new Request.Builder()
                 .url(url)
                 .get()
-                .addHeader("x-magicapi-key", AppConstans.Apikey)
+                .addHeader("x-magicapi-key", SPUtils.getInstance().getString(AppConstans.magicApi))
                 .build();
 
         client.newCall(request).enqueue(new okhttp3.Callback() {

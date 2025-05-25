@@ -179,7 +179,7 @@ public class MapSelectActivity_profile3 extends AppCompatActivity implements OnM
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), getString(R.string.Apikey));
+            Places.initialize(getApplicationContext(),SPUtils.getInstance().getString(AppConstans.googleMapApi));
         }
     }
 

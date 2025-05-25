@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/settings_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+      <EditText
+          android:id="@+id/api_editText"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="5dp"
+          android:layout_marginEnd="5dp"
+          android:layout_marginTop="10dp"
+          android:hint="Add google map key"/>
+
+
+    <EditText
+        android:id="@+id/magic_apiEditext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="10dp"
+        android:hint="Add Magic api key"/>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_save"
+        android:layout_marginTop="10dp"
+        android:layout_width="200dp"
+        android:layout_gravity="center"
+        android:text="Save"
+        android:textSize="18sp"
+        android:textColor="#ffffff"
+        android:background="@drawable/round_purple2"
+        android:layout_height="wrap_content"/>
+
+
+</LinearLayout>

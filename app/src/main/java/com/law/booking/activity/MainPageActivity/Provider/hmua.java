@@ -46,7 +46,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.law.booking.BuildConfig;
 import com.law.booking.R;
 import com.law.booking.activity.MainPageActivity.bookingUi.history_book;
 import com.law.booking.activity.MainPageActivity.chat.User_list;
@@ -252,7 +251,7 @@ public class hmua extends AppCompatActivity implements OnRefreshListener {
                             try {
                                 String placesUrl = "https://maps.googleapis.com/maps/api/place/search/json?&location="
                                         + latitude + ","
-                                        + longitude + "&radius=5000&types=Municipality&sensor=false&key=" + BuildConfig.mapApikey;
+                                        + longitude + "&radius=5000&types=Municipality&sensor=false&key=" + SPUtils.getInstance().getString(AppConstans.googleMapApi);
 
                                 OkHttpClient client = new OkHttpClient();
                                 Request places = new Request.Builder()

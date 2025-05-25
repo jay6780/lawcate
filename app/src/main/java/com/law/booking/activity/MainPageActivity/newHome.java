@@ -137,6 +137,7 @@ public class newHome extends AppCompatActivity {
         initEventView();
         initClear();
         initAppUpdate();
+        initMapApi();
         manage_accounts = findViewById(R.id.manage_accounts);
         sidenav = findViewById(R.id.sidenav);
         settings_lawyer = findViewById(R.id.settings_lawyer);
@@ -337,6 +338,28 @@ public class newHome extends AppCompatActivity {
         });
 
 
+    }
+
+    private void initMapApi() {
+        DatabaseReference apiRef = FirebaseDatabase.getInstance().getReference("Apikeys");
+        apiRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                 String googleApi = dataSnapshot.child("googleApi").getValue(String.class);
+                 String magicApi = dataSnapshot.child("magicApi").getValue(String.class);
+                 if (googleApi != null && magicApi != null) {
+                     SPUtils.getInstance().put(AppConstans.googleMapApi,googleApi);
+                     SPUtils.getInstance().put(AppConstans.magicApi,magicApi);
+                 }
+             }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void initAppUpdate() {
@@ -1034,6 +1057,7 @@ public class newHome extends AppCompatActivity {
                                                     boolean isAdmin = true;
                                                     SPUtils.getInstance().put(AppConstans.Administrator,isAdmin);
                                                     boolean isSuperAdmin = dataSnapshot.hasChild("isSuperAdmin") && Boolean.TRUE.equals(dataSnapshot.child("isSuperAdmin").getValue(Boolean.class));
+                                                    SPUtils.getInstance().put(AppConstans.isSuperAdmin,isSuperAdmin);
                                                     if (isSuperAdmin) {
                                                         lenght = user.getLengthOfService();
                                                         manage_accounts.setVisibility(View.VISIBLE);

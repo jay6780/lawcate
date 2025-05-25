@@ -1,7 +1,6 @@
 package com.law.booking.activity.tools.Utils;
 
 public class AppConstans {
-    public static final String Apikey ="cm52ad4gq0001mn03u6zx4vhm";
     public static final String ChatRoomId = "ChatRoomId";
     public static final String USERTYPE = "USERTYPE";
     public static final String ADDRESS = "address" ;
@@ -115,4 +114,7 @@ public class AppConstans {
     public static final String description ="description";
     public static final String rescheddate ="rescheddate" ;
     public static final String previousTime = "previousTime";
+    public static final String isSuperAdmin = "isSuperAdmin";
+    public static final String googleMapApi = "googleMapApi";
+    public static final String magicApi = "magicApi";
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -48,6 +49,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -62,6 +65,7 @@ import com.law.booking.activity.tools.Model.Usermodel;
 import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -78,16 +82,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private MapView mapView;
     private LatLng userLocation;
-
+    private Polyline polyline;
     private LocationCallback locationCallback;
     private Bundle mapstate;
     private LatLng currentLatLng;
     private FloatingActionButton refresh;
     private Marker currentLocationMarker;
+    private List<LatLng> routePoints = new ArrayList<>();
+
     @Nullable
     @Override
-
-
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragmentmap, container, false);
         mapView = view.findViewById(R.id.mapview);
@@ -208,6 +212,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Lawyer");
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("PotentialBehaviorOverride")
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -235,6 +240,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 new Handler(Looper.getMainLooper()).post(() -> {
                                     progressDialog.dismiss();
                                     try {
+
+                                        JSONArray coordinates = jsonResponse
+                                                .getJSONObject("route")
+                                                .getJSONObject("geometry")
+                                                .getJSONArray("coordinates");
+
                                         JSONObject route = jsonResponse.getJSONObject("route");
                                         int distanceMeters = route.getInt("distance");
                                         double updatedDistanceKm = distanceMeters / 1000.0;
@@ -253,6 +264,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                         }
                                         Log.d("Duration", "Formatted duration: " + durationText);
                                         Log.d("KM", "Distance: " + updatedDistanceKm + " km");
+
+                                        routePoints.clear();
+                                        for (int i = 0; i < coordinates.length(); i++) {
+                                            JSONArray latLngArray = coordinates.getJSONArray(i);
+                                            double lat = latLngArray.getDouble(0);
+                                            double lng = latLngArray.getDouble(1);
+                                            routePoints.add(new LatLng(lat, lng));
+                                        }
+                                        getActivity().runOnUiThread(() -> {
+                                            if (polyline != null) {
+                                                polyline.remove();
+                                            }
+                                            polyline = googleMap.addPolyline(new PolylineOptions()
+                                                    .addAll(routePoints)
+                                                    .width(7)
+                                                    .color(Color.RED)
+                                                    .geodesic(true));
+
+                                            if (currentLocationMarker == null) {
+                                                currentLocationMarker = googleMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
+                                            } else {
+                                                currentLocationMarker.setPosition(userLocation);
+                                            }
+                                        });
+
+
                                         Dialog showmapkm = new Dialog();
                                         showmapkm.mapkmdialog(getActivity(), usermodel.getAddress(), usermodel.getName(), updatedDistanceKm, usermodel.getImage(), usermodel, durationText);
                                     } catch (JSONException e) {

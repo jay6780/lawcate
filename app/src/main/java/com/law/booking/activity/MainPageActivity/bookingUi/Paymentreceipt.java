@@ -201,10 +201,13 @@ public class Paymentreceipt extends AppCompatActivity {
         lawyer_type.setItems("Select type", "Legal advice and consultation", "Representation in court", "Document Preparation", "Dispute Resolution");
         lawyer_type.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
             @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                if(!item.equals("Select type")){
-                    lawType = item;
-                    Log.d("SelectedTYPE","TYPE: "+lawType);
+                if (item.equals("Select type")) {
+                    lawType = "Select type";
+                    return;
                 }
+
+                lawType = item;
+//                Log.d("SelectedTYPE", "TYPE: " + lawType);
             }
         });
 

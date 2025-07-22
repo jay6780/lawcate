@@ -165,7 +165,18 @@ public class Bookingmap2 extends AppCompatActivity implements OnMapReadyCallback
         Log.d("lengthOfservices", "lengthOfservices+ " + lengthOfservice);
         key = getIntent().getStringExtra("key");
         ages.setText(getString(R.string.age) + ": " + (age != null ? age : "N/A"));
-        userLenghtexp.setText(getString(R.string.years) + ": " + (lengthOfservice != null ? lengthOfservice : "N/A"));
+
+        try {
+            if(lengthOfservice != null || lengthOfservice.isEmpty()){
+                userLenghtexp.setVisibility(View.GONE);
+            }else{
+                userLenghtexp.setVisibility(View.VISIBLE);
+                userLenghtexp.setText(getString(R.string.years) + ": " +lengthOfservice);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         Log.d(TAG, "Storing Provider Name: " + providerName);
         SPUtils.getInstance().put(AppConstans.providerName, providerName);
         Log.d(TAG, "Storing Email: " + email);

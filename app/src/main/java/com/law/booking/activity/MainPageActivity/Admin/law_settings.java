@@ -69,8 +69,9 @@ public class law_settings extends AppCompatActivity {
         law_names.add("Human Rights Law");
         law_names.add("Tax Law");
         law_names.add("Contract Law");
-        law_names.add("Online");
         law_names.add("On site");
+        law_names.add("Online");
+
 
         FirebaseDatabase.getInstance().getReference("Lawyer").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

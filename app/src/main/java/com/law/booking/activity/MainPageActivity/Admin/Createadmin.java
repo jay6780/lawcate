@@ -1,5 +1,6 @@
 package com.law.booking.activity.MainPageActivity.Admin;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -31,12 +32,14 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.law.booking.R;
-import com.law.booking.activity.Application.TinkerApplications;
+import com.law.booking.activity.MainPageActivity.login;
 import com.law.booking.activity.tools.Utils.Agreement_content;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Createadmin extends AppCompatActivity {
@@ -51,6 +54,7 @@ public class Createadmin extends AppCompatActivity {
     private ImageView password_eye1, password_eye2;
     private CheckBox agreement_cb;
     private boolean isAgreed = false;
+    private List<EditText> editTextList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +75,8 @@ public class Createadmin extends AppCompatActivity {
         password_eye2 = findViewById(R.id.password_eye2);
         phoneEditText = findViewById(R.id.Phone);
         confirmPasswordEditText = findViewById(R.id.confirm_password);
+        
+        initListText();
         registerButton = findViewById(R.id.registered);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("Lawyer");
@@ -122,8 +128,11 @@ public class Createadmin extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TinkerApplications app = (TinkerApplications) Createadmin.this.getApplication();
-                app.clearUserData(false,Createadmin.this);
+                Intent intent = new Intent(getApplicationContext(), login.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                FirebaseAuth.getInstance().signOut();
+                finish();
             }
         });
 
@@ -133,6 +142,15 @@ public class Createadmin extends AppCompatActivity {
                 registerUser();
             }
         });
+    }
+
+    private void initListText() {
+        editTextList.add(nameEditText);
+        editTextList.add(emailEditText);
+        editTextList.add(usernameEditText);
+        editTextList.add(passwordEditText);
+        editTextList.add(phoneEditText);
+        editTextList.add(confirmPasswordEditText);
     }
 
     private void showdagreementdialog() {
@@ -264,12 +282,23 @@ public class Createadmin extends AppCompatActivity {
                             saveUserDetailsToDatabase(user.getUid(), name, email, username,phone);
 
                             Toast.makeText(getApplicationContext(), "Registration successful. Please check your email for verification. "+email, Toast.LENGTH_SHORT).show();
+                            initclear();
                         } else {
                             Toast.makeText(getApplicationContext(), "Registration failed"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
                         }
                     }
                 });
+    }
+
+    private void initclear() {
+        agreement_cb.setChecked(false);
+        isAgreed = false;
+        eye1check2 = false;
+        for(int i = 0;  i < editTextList.size(); i++){
+            editTextList.get(i).setText("");
+        }
+        FirebaseAuth.getInstance().signOut();
     }
 
     private void saveUserDetailsToDatabase(String uid, String name, String email, String username, String phone) {

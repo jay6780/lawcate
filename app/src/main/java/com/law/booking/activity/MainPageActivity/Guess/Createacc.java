@@ -37,6 +37,9 @@ import com.law.booking.activity.tools.Utils.Agreement_content;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Createacc extends AppCompatActivity {
     AppCompatButton back;
     private EditText nameEditText, emailEditText, usernameEditText, passwordEditText, confirmPasswordEditText;
@@ -49,6 +52,7 @@ public class Createacc extends AppCompatActivity {
     private boolean eye1check2 = false;
     private CheckBox agreement_cb;
     private boolean isAgreed = false;
+    private List<EditText> editTextList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +76,7 @@ public class Createacc extends AppCompatActivity {
         registerButton = findViewById(R.id.registered);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("Client");
+        initList();
 
 
         agreement_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -134,6 +139,15 @@ public class Createacc extends AppCompatActivity {
                 registerUser();
             }
         });
+    }
+
+    private void initList() {
+        editTextList.add(nameEditText);
+        editTextList.add(emailEditText);
+        editTextList.add(usernameEditText);
+        editTextList.add(passwordEditText);
+        editTextList.add(phoneEditText);
+        editTextList.add(confirmPasswordEditText);
     }
 
     private void showdagreementdialog() {
@@ -265,12 +279,23 @@ public class Createacc extends AppCompatActivity {
                             saveUserDetailsToDatabase(user.getUid(), name, email, username,phone);
 
                             Toast.makeText(getApplicationContext(), "Registration successful. Please check your email for verification. "+email, Toast.LENGTH_SHORT).show();
+                            initClear();
                         } else {
                             Toast.makeText(getApplicationContext(), "Registration failed"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
                         }
                     }
                 });
+    }
+
+    private void initClear() {
+        agreement_cb.setChecked(false);
+        isAgreed = false;
+        eye1check2 = false;
+        for (int i = 0; i < editTextList.size(); i++){
+            editTextList.get(i).setText("");
+        }
+        FirebaseAuth.getInstance().signOut();
     }
 
     private void saveUserDetailsToDatabase(String uid, String name, String email, String username, String phone) {

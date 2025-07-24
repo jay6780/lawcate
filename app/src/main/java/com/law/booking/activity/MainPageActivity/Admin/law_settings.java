@@ -29,6 +29,9 @@ public class law_settings extends AppCompatActivity {
     ImageView back;
     RecyclerView law_recycler;
     SettingsAdapter_law settingsAdapter;
+    private List<Law_names> button_list = new ArrayList<>();
+    private List<String> law_names = new ArrayList<>();
+    private List<Boolean> booleanList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,19 +48,33 @@ public class law_settings extends AppCompatActivity {
         back.setOnClickListener(view -> onBackPressed());
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         initGuessData(userId);
+        initRecycler();
 
+
+    }
+
+    private void initRecycler() {
+        law_recycler.setLayoutManager(new LinearLayoutManager(law_settings.this));
+        settingsAdapter = new SettingsAdapter_law(law_settings.this,button_list);
+        law_recycler.setAdapter(settingsAdapter);
 
     }
 
 
     private void initGuessData(String userId) {
+        Log.d("myUserId","value: "+userId);
+        law_names.add("Corporate Law");
+        law_names.add("Criminal Law");
+        law_names.add("Family Law");
+        law_names.add("Human Rights Law");
+        law_names.add("Tax Law");
+        law_names.add("Contract Law");
+        law_names.add("Online");
+        law_names.add("On site");
+
         FirebaseDatabase.getInstance().getReference("Lawyer").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Law_names> button_list = new ArrayList<>();
-                if (!dataSnapshot.exists()) {
-                    return;
-                }
                 Boolean isCorporate = dataSnapshot.child("isCorporate").getValue(Boolean.class);
                 Boolean isCriminal = dataSnapshot.child("isCriminal").getValue(Boolean.class);
                 Boolean isFamily = dataSnapshot.child("isFamily").getValue(Boolean.class);
@@ -67,24 +84,21 @@ public class law_settings extends AppCompatActivity {
                 Boolean isOnsite_book = dataSnapshot.child("isOnsite_book").getValue(Boolean.class);
                 Boolean isOnline_book = dataSnapshot.child("isOnline_book").getValue(Boolean.class);
 
-                if(isCorporate !=null &&  isCriminal !=null &&
-                        isFamily !=null &&  isHumanRights !=null
-                        &&  isTax !=null &&isContract !=null &&isOnsite_book !=null &&isOnline_book !=null){
-                    button_list.add(new Law_names("Corporate Law",isCorporate));
-                    button_list.add(new Law_names("Criminal Law",isCriminal));
-                    button_list.add(new Law_names("Family Law",isFamily));
-                    button_list.add(new Law_names("Human Rights Law",isHumanRights));
-                    button_list.add(new Law_names("Tax Law",isTax));
-                    button_list.add(new Law_names("Contract Law",isContract));
-                    button_list.add(new Law_names("Online",isOnline_book));
-                    button_list.add(new Law_names("On site",isOnsite_book));
+                booleanList.add(isCorporate);
+                booleanList.add(isCriminal);
+                booleanList.add(isFamily);
+                booleanList.add(isHumanRights);
+                booleanList.add(isTax);
+                booleanList.add(isContract);
+                booleanList.add(isOnsite_book);
+                booleanList.add(isOnline_book);
+
+                for (int i = 0; i < law_names.size(); i++) {
+                    Boolean value = booleanList.get(i);
+                    button_list.add(new Law_names(law_names.get(i), Boolean.TRUE.equals(value)));
                 }
 
-
-                law_recycler.setLayoutManager(new LinearLayoutManager(law_settings.this));
-                settingsAdapter = new SettingsAdapter_law(law_settings.this,button_list);
-                law_recycler.setAdapter(settingsAdapter);
-
+                settingsAdapter.notifyDataSetChanged();
 
             }
 

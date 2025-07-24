@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -60,6 +61,7 @@ public class login extends AppCompatActivity {
     private CheckBox remember_checkbox;
     private ImageView password_eye1;
     private boolean eye1check = false;
+    boolean isFacebookLogin = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -274,14 +276,18 @@ public class login extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            boolean isFacebookLogin = false;
-            for (UserInfo userInfo : currentUser.getProviderData()) {
-                if (userInfo.getProviderId().equals("facebook.com")) {
-                    isFacebookLogin = true;
-                    break;
+        if(currentUser == null){
+            isFacebookLogin = false;
+            Log.d("CurrentUser","not authenticated");
+//            Toast.makeText(getApplicationContext(),"User not log-in",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        for (UserInfo userInfo : currentUser.getProviderData()) {
+            if (userInfo.getProviderId().equals("facebook.com")) {
+                isFacebookLogin = true;
+                break;
                 }
             }
             if (isFacebookLogin || currentUser.isEmailVerified()) {
@@ -354,7 +360,6 @@ public class login extends AppCompatActivity {
                 Toast.makeText(login.this, "Please verify your email before logging in", Toast.LENGTH_SHORT).show();
                 mAuth.signOut();  // Sign out the user until verification is complete
             }
-        }
     }
 
 

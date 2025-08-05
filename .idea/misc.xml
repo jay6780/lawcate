@@ -36,6 +36,48 @@
         <entry key="..\:/Android studio projects/My_project_practice/booking_version2-master/app/src/main/res/layout/mapheader.xml" value="0.26875" />
         <entry key="..\:/Android studio projects/My_project_practice/booking_version2-master/app/src/main/res/layout/newprofilemenu.xml" value="0.12239583333333333" />
         <entry key="..\:/Android studio projects/My_project_practice/booking_version2-master/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/drawable/remove_black.xml" value="0.224" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/drawable/round_btn.xml" value="0.224" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/drawable/round_button2.xml" value="0.224" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/drawable/round_purple.xml" value="0.2465" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/drawable/round_purple2.xml" value="0.224" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout-land/activity_login.xml" value="0.2275132275132275" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout-sw600dp/activity_login.xml" value="0.16" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout-sw600dp/activity_welcome.xml" value="0.16" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_api_settings.xml" value="0.25" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_bookingmap.xml" value="0.2640625" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_calendar_admin.xml" value="0.13069908814589665" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_calendar_lawyer.xml" value="0.22708333333333333" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_change_langact.xml" value="0.33" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_chat.xml" value="0.1875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_createacc.xml" value="0.18115942028985507" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_createadmin.xml" value="0.26461538461538464" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_login.xml" value="0.17391304347826086" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_paymentreceipt.xml" value="0.13069908814589665" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_switch_account.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/activity_welcome.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/admin_views.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/booking_adapter_layout.xml" value="0.13069908814589665" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/booking_layout_user.xml" value="0.33" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/button_item.xml" value="0.33" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/chat_header1.xml" value="0.24166666666666667" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/delete_header_user.xml" value="0.24166666666666667" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/delete_user.xml" value="0.24166666666666667" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/dialog_date_time_picker.xml" value="0.25" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/drawlayout.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/fragment_data_analytics_fragment.xml" value="0.25" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/fragment_data_analytics_fragment2.xml" value="0.22" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/history_adapter_admin.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/history_adapterlayout.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/home_pageroot.xml" value="0.13069908814589665" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/law_settings_item.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/logout_footer.xml" value="0.24166666666666667" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/map_select.xml" value="0.26" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/message_item.xml" value="0.1875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/new_profile.xml" value="0.25" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/settings_layout.xml" value="0.26875" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/showinfo.xml" value="0.23278985507246377" />
+        <entry key="..\:/Android studio projects/My_project_practice/lawcate/app/src/main/res/layout/user_views.xml" value="0.19927536231884058" />
         <entry key="..\:/Users/user/AndroidStudioProjects/booking/app/src/main/res/drawable/arrow_left.xml" value="0.1545" />
         <entry key="..\:/Users/user/AndroidStudioProjects/booking/app/src/main/res/drawable/back_btn.xml" value="0.202" />
         <entry key="..\:/Users/user/AndroidStudioProjects/booking/app/src/main/res/drawable/bgbtn.xml" value="0.1395" />

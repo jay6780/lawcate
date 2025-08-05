@@ -10,13 +10,20 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/FlycoTabLayout_Lib" />
+            <option value="$PROJECT_DIR$/android-pdf-viewer" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/blinkingloader" />
+            <option value="$PROJECT_DIR$/blurrview" />
             <option value="$PROJECT_DIR$/bubblenavigation" />
+            <option value="$PROJECT_DIR$/custombutton" />
+            <option value="$PROJECT_DIR$/custompermissionsdialogue" />
             <option value="$PROJECT_DIR$/emoticongifkeyboard" />
+            <option value="$PROJECT_DIR$/filepicker" />
             <option value="$PROJECT_DIR$/gifpack-giphy" />
             <option value="$PROJECT_DIR$/kalendarview" />
             <option value="$PROJECT_DIR$/library" />
+            <option value="$PROJECT_DIR$/library2" />
             <option value="$PROJECT_DIR$/photopicker" />
             <option value="$PROJECT_DIR$/proprogressviews" />
             <option value="$PROJECT_DIR$/ratingstarred" />
@@ -25,6 +32,7 @@
             <option value="$PROJECT_DIR$/refresh-header-classics" />
             <option value="$PROJECT_DIR$/refresh-layout-kernel" />
             <option value="$PROJECT_DIR$/reviewratings" />
+            <option value="$PROJECT_DIR$/squareimagebutton" />
             <option value="$PROJECT_DIR$/ucrop" />
           </set>
         </option>

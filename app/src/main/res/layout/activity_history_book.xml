@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/century_gothic"
-            android:text="Schedule"
+            android:text="Pending"
             android:textColor="@color/maroon"
             android:textSize="13sp"
             android:gravity="center" />
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/century_gothic"
-            android:text="Confirmation"
+            android:text="Confirmed"
             android:textColor="@color/maroon"
             android:textSize="13sp"
             android:gravity="center" />
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/century_gothic"
-            android:text="Cancel"
+            android:text="Canceled"
             android:textColor="@color/maroon"
             android:textSize="13sp"
             android:gravity="center" />

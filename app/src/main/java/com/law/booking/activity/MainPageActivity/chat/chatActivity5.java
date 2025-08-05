@@ -240,7 +240,7 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
             public void onClick(View view) {
                 help_layout.setVisibility(View.GONE);
                 sending.setVisibility(View.VISIBLE);
-                String welcomeMessage="To Verify your account you need to passed PRC Or (List of Passers of Supreme court)";
+                String welcomeMessage="To verify your account, you need to pass your IBP ID (Integrated Bar of the Philipppines ID) and your Certificate of Good Standing.";
                 sendInitialMessage(providerEmail, welcomeMessage, providerName, image, key);
             }
         });
@@ -326,7 +326,7 @@ public class chatActivity5 extends AppCompatActivity implements OnMapReadyCallba
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
                                         String welcomeMessage = "Hi, my name is: " + username + "\n" +
-                                                "How may i help you?";
+                                                "How may I help you?";
                                         new Handler().postDelayed(() -> {
                                             help_layout.setVisibility(View.VISIBLE);
                                             sending.setVisibility(View.GONE);

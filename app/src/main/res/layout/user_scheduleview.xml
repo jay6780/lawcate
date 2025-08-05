@@ -43,7 +43,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:text="Find the Lawyer's that fits your Schedule!" />
+                            android:text="Find lawyers that fit your schedule!" />
 
                         <com.ak.KalendarView
                             android:id="@+id/kalendar"
@@ -77,7 +77,7 @@
                 android:visibility="gone"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="Lawyer's available" />
+                android:text="Lawyers available for this date" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/myschedule"

@@ -93,7 +93,7 @@ public class Admin_homedashboard extends Fragment {
 
     private void InitTitle() {
         mTitles = new String[]{
-                "Schedule","Confirmation","Cancel","Completed"
+                "Pending","Confirmed","Canceled","Completed"
 
         };
     }

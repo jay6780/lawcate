@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:text="Find the Lawyer's near you!" />
+            android:text="Find lawyers near you!" />
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapview"
             android:layout_marginTop="5dp"

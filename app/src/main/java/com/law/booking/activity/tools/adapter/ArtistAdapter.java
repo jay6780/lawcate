@@ -53,8 +53,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ProviderVi
         String address = context.getString(R.string.address);
         String years = context.getString(R.string.years);
 
-        String bookcount = "Booking serve: ";
-        String bookcomplete = "Booking complete: ";
+        String bookcount = "Bookings served: ";
+        String bookcomplete = "Bookings completed: ";
 
         holder.nameTextView.setText(provider.getUsername());
 

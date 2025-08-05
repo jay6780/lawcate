@@ -23,9 +23,7 @@
         android:layout_below="@+id/logout"
         android:layout_marginStart="30dp"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:src="@mipmap/scissors_2"
-        android:visibility="visible" />
+        android:paddingRight="4dp" />
 
 
     <ImageView

@@ -22,7 +22,7 @@
         android:layout_gravity="center_vertical"
         android:fontFamily="@font/inter"
         android:gravity="center"
-        android:text="Saved your address"
+        android:text="Save your address"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />

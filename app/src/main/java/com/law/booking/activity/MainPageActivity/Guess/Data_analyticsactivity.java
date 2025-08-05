@@ -194,7 +194,7 @@ public class Data_analyticsactivity extends AppCompatActivity {
             double completePercentage = ((double) bookcomplete / bookcount) * 100;
             double cancelPercentage = ((double) bookcancel / bookcount) * 100;
 
-            content.setText("This lawyer's data represents a success rate of " + String.format("%.2f", completePercentage) + "% and a cancel rate of " + String.format("%.2f", cancelPercentage) + "%");
+            content.setText("This lawyer's data represents a cancel rate of " + String.format("%.2f", completePercentage) + "% and a success rate of " + String.format("%.2f", cancelPercentage) + "%");
         } else {
             content.setText("No booking data available for evaluation.");
         }

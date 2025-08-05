@@ -58,7 +58,7 @@
                                 android:layout_gravity="center"
                                 android:fontStyle="normal"
                                 android:textSize="15sp"
-                                android:text="Total book"/>
+                                android:text="Total booking:"/>
                             <TextView
                                 android:id="@+id/total_txt"
                                 android:layout_width="wrap_content"

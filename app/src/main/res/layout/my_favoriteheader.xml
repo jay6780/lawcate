@@ -35,7 +35,6 @@
         android:layout_marginStart="30dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:src="@mipmap/scissors_2"
         android:visibility="gone" />
 
 

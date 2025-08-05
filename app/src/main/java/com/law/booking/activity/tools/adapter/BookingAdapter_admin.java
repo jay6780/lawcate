@@ -368,7 +368,7 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
     private void reschedulebook(Booking2 booking,String new_Date,String new_Time ) {
         new AlertDialog.Builder(context)
                 .setTitle("Reschedule book?")
-                .setMessage("Are you sure want to Reschedule this book?")
+                .setMessage("Are you sure want to reschedule this booking?")
                 .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -599,25 +599,25 @@ public class BookingAdapter_admin extends RecyclerView.Adapter<BookingAdapter_ad
                     String rescheddate = SPUtils.getInstance().getString(AppConstans.rescheddate);
 
                     if(isReschedule) {
-                        availedMessage = "Hi, I'm " + username + " " +
-                                "I Reschedule " + previousTime + " " + rescheddate + " " +
-                                "change to " + new_Time + " " + new_Date + " " +
-                                "law name choose " + serviceName + " "+
-                                "Thank you!";
+                        availedMessage = "Good day! Apologies for the inconvenience, but due to certain circumstances, I have to reschedule our appointment for: " + "\n" +
+                                "Original Schedule: " + previousTime + ", " + rescheddate + "\n" +
+                                "New Schedule: " + new_Time + ", " + new_Date + "\n" +
+                                "Law Field: " + serviceName + " "+
+                                "Thank you for understanding!";
                     }else if(isConfirmed){
-                        availedMessage = "Hi, I'm " + username + "\n" +
-                                "The book has been confirmed with:\n" +
-                                "law name select by client: "+serviceName+"\n"+
-                                "Selected schedule: " + "time: " + time + "\n" +
-                                "date: " + date + "\n" +
+                        availedMessage = "Good day! I'm Atty." + username + "!" + "\n" +
+                                "Your booking has been confirmed with all the information stated below:\n" +
+                                "Law Field: "+serviceName+"\n"+
+                                "Time: " + time + "\n" +
+                                "Date: " + date + "\n" +
                                 "Thank you!";
 
                     }else{
-                        availedMessage = "Hi, I'm " + username + "\n" +
-                                "The book has been complete with:\n" +
-                                "law name select by client: "+serviceName+"\n"+
-                                "Selected schedule: " + "time: " + time + "\n" +
-                                "date: " + date + "\n" +
+                        availedMessage = "Good day!" + username + "\n" +
+                                "Your appointment has been completed with all the information below:\n" +
+                                "Law Field: "+serviceName+"\n"+
+                                "Time: " + time + "\n" +
+                                "Date: " + date + "\n" +
                                 "Thank you!";
                     }
 

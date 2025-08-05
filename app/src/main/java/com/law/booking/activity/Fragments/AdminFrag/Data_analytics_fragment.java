@@ -279,14 +279,14 @@ public class Data_analytics_fragment extends Fragment implements OnRefreshListen
 
     private void summary(int bookcount, int bookcomplete, int bookcancel) {
         total_txt.setText(String.valueOf(bookcount));
-        complete_txt.setText("Complete: "+bookcomplete);
-        cancel_txt.setText("Cancel: "+bookcancel);
+        complete_txt.setText("Completed: "+bookcancel);
+        cancel_txt.setText("Canceled: "+bookcomplete);
 
         if (bookcount > 0) {
             double completePercentage = ((double) bookcomplete / bookcount) * 100;
             double cancelPercentage = ((double) bookcancel / bookcount) * 100;
 
-            content.setText("This lawyer's data represents a success rate of " + String.format("%.2f", completePercentage) + "% and a cancel rate of " + String.format("%.2f", cancelPercentage) + "%");
+            content.setText("This lawyer's data represents a success rate of " + String.format("%.2f", cancelPercentage) + "% and a cancel rate of " + String.format("%.2f", completePercentage) + "%");
         } else {
             content.setText("No booking data available for evaluation.");
         }

@@ -514,11 +514,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                         String previousTime = SPUtils.getInstance().getString(AppConstans.previousTime);
                         String rescheddate = SPUtils.getInstance().getString(AppConstans.rescheddate);
                         if(isReschedule){
-                            availedMessage = "Hi, I'm " + username + " " +
-                                    "I Reschedule " + previousTime + " " + rescheddate + " "+
-                                    "change to " +new_Time+" "+new_Date +" "+
-                                    "law name choose "+serviceName+" "+"My location: " + finalLocationLink + "\n" +
-                                    "Thank you!";
+                            availedMessage = "c" + "\n" +
+                                    "Original Schedule: " + previousTime + " " + rescheddate + "\n"+
+                                    "New Schedule: " +new_Time+" "+new_Date +"\n"+
+                                    "Law Field: "+serviceName+" "+"My location: " + "\n" +
+                                    "Thank you for understanding!";
 
                         }else{
                             if (task.isSuccessful() && task.getResult().exists()) {
@@ -534,13 +534,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
                                         "Thank you!";
                             } else {
                                 // Event is not saved in "Events", don't include the packages
-                                availedMessage = "Hi, I'm " + username + "\n" +
-                                        "I'm sorry I cancel:\n" +
-                                        "Selected schedule:" + " time: " + time + "\n" +
-                                        "law name choose: "+serviceName+"\n"+
-                                        "date: " + date + "\n" +
-                                        "My location: " + finalLocationLink + "\n" +
-                                        "Thank you!";
+                                availedMessage = "Good day! Apologies for the inconvenience, but due to certain circumstances, I have to cancel our appointment for: " + "\n" +
+                                        "Selected Time:" + time + "\n" +
+                                        "Date: " + date + "\n" +
+                                        "Law Field: "+serviceName+"\n"+
+                                        "Thank you for understanding!";
                           }
                         }
 

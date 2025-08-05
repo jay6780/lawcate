@@ -46,6 +46,12 @@ import com.law.booking.activity.tools.Utils.AppConstans;
 import com.law.booking.activity.tools.Utils.SPUtils;
 import com.orhanobut.dialogplus.DialogPlus;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class login extends AppCompatActivity {
     private EditText emailEditText, passwordEditText;
     private AppCompatButton loginButton;
@@ -425,8 +431,32 @@ public class login extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    TinkerApplications app = (TinkerApplications) getApplicationContext();
-                    app.updatelogin(true, login.this);
+                    String birthday = dataSnapshot.child("birthday").getValue(String.class);
+                    String age = dataSnapshot.child("age").getValue(String.class);
+
+                    Log.d("LoginCheck", "Birthday: " + birthday + ", Age: " + age);
+
+                    if (birthday != null) {
+                        if (isUserAtLeast17(birthday)) {
+                            grantLoginAccess();
+                        } else {
+                            handleUnderageUser();
+                        }
+                    }
+                    else if (age != null) {
+                        try {
+                            if (Integer.parseInt(age) >= 17) {
+                                grantLoginAccess();
+                            } else {
+                                handleUnderageUser();
+                            }
+                        } catch (NumberFormatException e) {
+                            handleInvalidAge();
+                        }
+                    }
+                    else {
+                        handleMissingAgeInfo();
+                    }
                 } else {
                     checkUserInOtherReferences(adminRef, eventsRef);
                 }
@@ -434,10 +464,62 @@ public class login extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
             }
         };
 
         studentRef.addListenerForSingleValueEvent(studentListener);
+    }
+
+    private void grantLoginAccess() {
+        TinkerApplications app = (TinkerApplications) getApplicationContext();
+        app.updatelogin(true, login.this);
+    }
+
+    private void handleUnderageUser() {
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(login.this, "You are below 17 years old. Cannot proceed with login.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void handleInvalidAge() {
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(login.this, "Invalid age information. Cannot proceed with login.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void handleMissingAgeInfo() {
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(login.this, "Age verification required. Cannot proceed with login.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+   //helper calculate birthday year
+    private boolean isUserAtLeast17(String birthday) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            Date birthDate = sdf.parse(birthday);
+
+            if (birthDate == null) {
+                return false;
+            }
+
+            Calendar today = Calendar.getInstance();
+            Calendar birthCalendar = Calendar.getInstance();
+            birthCalendar.setTime(birthDate);
+
+            int age = today.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR);
+            if (today.get(Calendar.MONTH) < birthCalendar.get(Calendar.MONTH) ||
+                    (today.get(Calendar.MONTH) == birthCalendar.get(Calendar.MONTH) &&
+                            today.get(Calendar.DAY_OF_MONTH) < birthCalendar.get(Calendar.DAY_OF_MONTH))) {
+                age--;
+            }
+
+            return age >= 17;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void checkUserInOtherReferences(DatabaseReference adminRef, DatabaseReference eventsRef) {

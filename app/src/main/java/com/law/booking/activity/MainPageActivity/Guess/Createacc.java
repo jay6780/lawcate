@@ -1,5 +1,6 @@
 package com.law.booking.activity.MainPageActivity.Guess;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -13,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +40,7 @@ import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class Createacc extends AppCompatActivity {
@@ -91,7 +94,28 @@ public class Createacc extends AppCompatActivity {
 
 
 
+        usernameEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        Createacc.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int selectedYear,
+                                                  int selectedMonth, int selectedDay) {
+                                String selectedDate = (selectedMonth + 1) + "/" + selectedDay + "/" + selectedYear;
+                                usernameEditText.setText(selectedDate);
+                            }
+                        },
+                        year, month, day);
 
+                datePickerDialog.show();
+            }
+        });
 
 
         password_eye1.setOnClickListener(new View.OnClickListener() {
@@ -236,7 +260,7 @@ public class Createacc extends AppCompatActivity {
         }
 
         if (TextUtils.isEmpty(username)) {
-            usernameEditText.setError("Please enter a username");
+            usernameEditText.setError("Please enter add birthday");
             usernameEditText.requestFocus();
             return;
         }
@@ -302,7 +326,7 @@ public class Createacc extends AppCompatActivity {
         DatabaseReference userRef = mDatabase.child(uid);
         userRef.child("name").setValue(name);
         userRef.child("email").setValue(email);
-        userRef.child("username").setValue(username);
+        userRef.child("birthday").setValue(username);
         userRef.child("phone").setValue(phone);
         userRef.child("userId").setValue(uid); // Save phone number
     }
